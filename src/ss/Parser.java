@@ -38,22 +38,32 @@ public final class Parser {
 	/****************************************************************************
 	* 
 	****************************************************************************/
-	public Sequence parse(final Reader reader) throws IOException {
+	public Sequence parse(final String str) throws IOException {
 
-		System.out.println("parse");
+		return parse(new StringReader(str));
+	}
+
+	/****************************************************************************
+	* 
+	****************************************************************************/
+	public Sequence parse(final Reader reader) throws IOException {
 
 		this.reader = reader;
 		try {
 			this.position = -1;
 			final Sequence result = new Sequence();
+
 			do {
 				final int currentChar = consumeWhitespace(read());
 				if (currentChar == -1) {
 					break;
+				} else if (currentChar == '#') {
+					skipComment();
+				} else if (currentChar != ';') {
+					result.add(parseExpression(currentChar));
 				}
-				result.add(parseExpression(currentChar));
-
 			} while (this.recentChar != -1);
+
 			return result;
 		} finally {
 			this.reader = null;
@@ -66,23 +76,22 @@ public final class Parser {
 	private Sequence parseExpression(int currentChar) throws IOException {
 
 		final Sequence result = new Sequence();
+
 		do {
-			currentChar = consumeWhitespace(read());
+			if (isWhitespace(currentChar)) {
+				currentChar = consumeWhitespace(read());
+			}
 			if (currentChar == '#') {
 				skipComment();
-			} else {
+			} else if (currentChar == '}' | currentChar == ')') {
+				throwUnexpected(currentChar);
+			} else if (currentChar != ';') {
 				result.add(parseValue(currentChar));
+				currentChar = this.recentChar;
 			}
-		} while (this.recentChar != ';');
+		} while (currentChar != ';');
+
 		return result;
-	}
-
-	/****************************************************************************
-	* 
-	****************************************************************************/
-	public Sequence parse(final String str) throws IOException {
-
-		return parse(new StringReader(str));
 	}
 
 	/****************************************************************************
@@ -90,11 +99,9 @@ public final class Parser {
 	****************************************************************************/
 	private Expression parseValue(int currentChar) throws IOException {
 
-		System.out.println("parseValue");
-
 		return switch (currentChar) {
 		case '|' -> parseVariableBlockSeparator(currentChar);
-		case '{' -> parseBlock(currentChar);
+		case '{' -> parseBlock();
 		case '(' -> parseBrackets();
 		case '"' -> parseString();
 		case '\'' -> parseCharacter();
@@ -109,22 +116,23 @@ public final class Parser {
 	private Expression parseVariableBlockSeparator(final int currentChar) throws IOException {
 
 		this.recentChar = currentChar;
-		return new VariableBlockSeparator();
+		return VariableBlockSeparator.instance;
 	}
 
 	/****************************************************************************
 	* 
 	****************************************************************************/
-	private Sequence parseBlock(int currentChar) throws IOException {
-
-		System.out.println("parseBlock");
+	private Sequence parseBlock() throws IOException {
 
 		final Block result = new Block();
 
+		int currentChar = consumeWhitespace(read());
 		while (currentChar != '}') {
 			result.add(parseExpression(currentChar));
-			currentChar = consumeWhitespace(this.recentChar);
+			
+			currentChar = consumeWhitespace(read());
 		}
+		this.recentChar = read();
 
 		return result;
 	}
@@ -134,20 +142,15 @@ public final class Parser {
 	****************************************************************************/
 	private Sequence parseBrackets() throws IOException {
 
-		System.out.println("parseBrackets");
-
 		final Sequence result = new Sequence();
 
 		int currentChar = consumeWhitespace(read());
-		if (currentChar != ')') {
+		while (currentChar != ')') {
 			result.add(parseValue(currentChar));
 			currentChar = consumeWhitespace(this.recentChar);
-			
-			while (currentChar != ')') {
-				result.add(parseValue(currentChar));
-				currentChar = consumeWhitespace(this.recentChar);
-			}
 		}
+		this.recentChar = read();
+
 		return result;
 	}
 
@@ -155,8 +158,6 @@ public final class Parser {
 	* 
 	****************************************************************************/
 	private Expression parseNumber(int currentChar) throws IOException {
-
-		System.out.println("parseNumbler");
 
 		int signum = 1;
 		long integer = 0;
@@ -214,29 +215,26 @@ public final class Parser {
 	****************************************************************************/
 	private StringConstant parseString() throws IOException {
 
-		System.out.println("parseString");
-
 		this.bufIndex = 0;
-		int currentChar;
-		do {
-			currentChar = read();
+		int currentChar = read();
+
+		while (currentChar != '"') {
 			append(switch (currentChar) {
 			case -1 -> throw new EOFException();
 			case '\\' -> parseEscapedCharacter();
 			default -> (char) currentChar;
 			});
-		} while (currentChar != '"');
+			currentChar = read();
+		}
 
 		this.recentChar = read();
-		return new StringConstant(this.bufIndex > 0 ? new String(this.buffer, 0, this.bufIndex) : "");
+		return new StringConstant(new String(this.buffer, 0, this.bufIndex));
 	}
 
 	/****************************************************************************
 	* 
 	****************************************************************************/
 	private CharacterConstant parseCharacter() throws IOException {
-
-		System.out.println("parseCharacter");
 
 		final int currentChar = read();
 		if (currentChar == -1) {
@@ -248,7 +246,7 @@ public final class Parser {
 			} else if (nextChar != '\'') {
 				throwUnexpected(nextChar);
 			}
-			this.recentChar = nextChar;
+			this.recentChar = read();
 			return new CharacterConstant((char) currentChar);
 		}
 	}
@@ -270,7 +268,7 @@ public final class Parser {
 		} while (!isEndOfValue(currentChar));
 
 		this.recentChar = currentChar;
-		return new Symbol(this.bufIndex > 0 ? new String(this.buffer, 0, this.bufIndex) : "");
+		return new Symbol(new String(this.buffer, 0, this.bufIndex));
 	}
 
 	/****************************************************************************
@@ -278,12 +276,11 @@ public final class Parser {
 	****************************************************************************/
 	private void skipComment() throws IOException {
 
-		System.out.println("skipCommant");
-
 		int chr;
 		do {
 			chr = read();
 		} while (!isEndOfComment(chr));
+
 		this.recentChar = chr;
 	}
 
@@ -313,13 +310,9 @@ public final class Parser {
 	****************************************************************************/
 	private char parseHexadecimalCharacter() throws IOException {
 
-		int chr = 0;
-		chr += decimalFromHEX(read());
-		chr <<= 4;
-		chr += decimalFromHEX(read());
-		chr <<= 4;
-		chr += decimalFromHEX(read());
-		chr <<= 4;
+		int chr = decimalFromHEX(read()) << 12;
+		chr += decimalFromHEX(read()) << 8;
+		chr += decimalFromHEX(read()) << 4;
 		chr += decimalFromHEX(read());
 		return (char) chr;
 	}
@@ -332,7 +325,7 @@ public final class Parser {
 		return switch (currentChar) {
 		case '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' -> currentChar - '0';
 		case 'A', 'B', 'C', 'D', 'E', 'F' -> currentChar - 'A' + 10;
-		case 'a', 'b', 'c', 'd', 'e', 'f' -> currentChar - 'e' + 10;
+		case 'a', 'b', 'c', 'd', 'e', 'f' -> currentChar - 'a' + 10;
 		case -1 -> throw new EOFException();
 		default -> throwUnexpected(currentChar);
 		};
@@ -359,10 +352,18 @@ public final class Parser {
 	****************************************************************************/
 	private int consumeWhitespace(int chr) throws IOException {
 
-		while (chr == ' ' | chr == '\b' | chr == '\f' | chr == '\n' | chr == '\r' | chr == '\t') {
+		while (isWhitespace(chr)) {
 			chr = read();
 		}
 		return chr;
+	}
+
+	/****************************************************************************
+	* 
+	****************************************************************************/
+	private static boolean isWhitespace(final int chr) {
+
+		return chr == ' ' | chr == '\b' | chr == '\f' | chr == '\n' | chr == '\r' | chr == '\t';
 	}
 
 	/****************************************************************************
@@ -419,7 +420,7 @@ public final class Parser {
 
 		/*************************************************************************
 		 * 
-		 * @param position  posision of unexpected character.
+		 * @param position  position of unexpected character.
 		 * @param character unexpected character value (zero based).
 		 ************************************************************************/
 		UnexpectedCharacterException(final int position, final char character) {

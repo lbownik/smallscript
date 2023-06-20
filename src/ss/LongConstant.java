@@ -28,6 +28,27 @@ public final class LongConstant implements Expression {
 		
 		return "LongConstant: " + this.value;
 	}
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	@Override
+	public int hashCode() {
+
+		return this.value.hashCode();
+	}
+
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	@Override
+	public boolean equals(final Object o) {
+
+		if (o != null && getClass() == o.getClass()) {
+			return this.value.equals(((LongConstant) o).value);
+		} else {
+			return false;
+		}
+	}
 
 	/****************************************************************************
 	 * 

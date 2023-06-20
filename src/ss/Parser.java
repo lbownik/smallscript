@@ -115,7 +115,7 @@ public final class Parser {
 	****************************************************************************/
 	private Expression parseVariableBlockSeparator(final int currentChar) throws IOException {
 
-		this.recentChar = currentChar;
+		this.recentChar = read();
 		return VariableBlockSeparator.instance;
 	}
 

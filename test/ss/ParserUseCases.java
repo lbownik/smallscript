@@ -22,7 +22,6 @@ import static org.junit.Assert.fail;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.List;
 
 import org.junit.Test;
 
@@ -169,7 +168,7 @@ public class ParserUseCases {
 	@Test
 	public void throwsUnexpected_ForUnexpectedCharacterInDouble() throws Exception {
 
-		//assertUnexpected(".", '.');
+		// assertUnexpected(".", '.');
 		assertUnexpected("-.]", '.');
 		assertUnexpected("1.]", ']');
 	}
@@ -203,14 +202,16 @@ public class ParserUseCases {
 
 		assertStringEquals("abcśżą", "\"abcśżą\";");
 		assertStringEquals("1234567890", "\"1234567890\";");
-		assertStringEquals("!@#$%^&*()_-+=~`.,;:'[]{}|/?", "\"!@#$%^&*()_-+=~`.,;:'[]{}|/?\";");
+		assertStringEquals("!@#$%^&*()_-+=~`.,;:'[]{}|/?",
+				"\"!@#$%^&*()_-+=~`.,;:'[]{}|/?\";");
 		assertStringEquals("ą", "\"\\u0105\";");
 		assertStringEquals("ą", "\"\\u0105\";");
 		assertStringEquals("bąb", "\"b\\u0105b\";");
 		assertStringEquals("ą", "\"\\u0105\";");
 		assertStringEquals("bśb", "\"b\\u015Bb\";");
 		assertStringEquals("bśb", "\"b\\u015bb\";");
-		assertStringEquals("http://feedburner.google.com/fb/a/mailverify?uri=JavaCodeGeeks&loc=en_US",
+		assertStringEquals(
+				"http://feedburner.google.com/fb/a/mailverify?uri=JavaCodeGeeks&loc=en_US",
 				"\"http://feedburner.google.com/fb/a/mailverify?uri=JavaCodeGeeks&loc=en_US\";");
 	}
 
@@ -339,12 +340,12 @@ public class ParserUseCases {
 		assertEquals("or:", s.get(2).value());
 		assertTrue(s.get(3) instanceof LongConstant);
 		assertEquals(Long.valueOf(1), s.get(3).value());
-		
+
 		s = (Sequence) s.get(1);
 		assertEquals(1, s.size());
 		assertTrue(s.get(0) instanceof LongConstant);
 		assertEquals(Long.valueOf(2), s.get(0).value());
-		
+
 	}
 
 	/****************************************************************************
@@ -366,7 +367,7 @@ public class ParserUseCases {
 		assertEquals(1, s.size());
 		s = (Sequence) s.get(0);
 		assertEquals(1, s.size());
-		b = (Block)s.get(0);
+		b = (Block) s.get(0);
 		assertEquals(1, b.size());
 		s = (Sequence) b.get(0);
 		assertEquals(5, s.size());
@@ -382,23 +383,22 @@ public class ParserUseCases {
 		assertEquals(Long.valueOf(1), s.get(4).value());
 
 		s = parse("set add: {:a | a round;} or: 1;");
-		
+		assertEquals(1, s.size());
+		s = (Sequence) s.get(0);
 		assertEquals(5, s.size());
 		assertTrue(s.get(0) instanceof Symbol);
 		assertEquals("set", s.get(0).value());
 		assertTrue(s.get(1) instanceof Symbol);
 		assertEquals("add:", s.get(1).value());
 		assertTrue(s.get(2) instanceof Block);
-		b = (Block)s.get(2);
-		assertEquals(1, b.size());
-		
-		
 		assertTrue(s.get(3) instanceof Symbol);
 		assertEquals("or:", s.get(3).value());
 		assertTrue(s.get(4) instanceof LongConstant);
 		assertEquals(Long.valueOf(1), s.get(4).value());
 
-		s = (Sequence) s.get(2);
+		b = (Block) s.get(2);
+		assertEquals(1, b.size());
+		s = (Sequence) b.get(0);
 		assertEquals(4, s.size());
 		assertTrue(s.get(0) instanceof Symbol);
 		assertEquals(":a", s.get(0).value());
@@ -409,6 +409,8 @@ public class ParserUseCases {
 		assertEquals("round", s.get(3).value());
 
 		s = parse("set {2;}or: 1;");
+		assertEquals(1, s.size());
+		s = (Sequence) s.get(0);
 		assertEquals(4, s.size());
 		assertTrue(s.get(0) instanceof Symbol);
 		assertEquals("set", s.get(0).value());
@@ -417,6 +419,11 @@ public class ParserUseCases {
 		assertEquals("or:", s.get(2).value());
 		assertTrue(s.get(3) instanceof LongConstant);
 		assertEquals(Long.valueOf(1), s.get(3).value());
+		
+		b = (Block)s.get(1);
+		assertEquals(1, b.size());
+		s = (Sequence)b.get(0);
+		assertEquals(Long.valueOf(2), s.get(0).value());
 	}
 
 	/****************************************************************************
@@ -480,10 +487,11 @@ public class ParserUseCases {
 	@Test
 	public void returnsParseTree_forProperProgram() throws Exception {
 
-		Sequence s = parse("# comment\n" + ":MyClass = Object subClass: \"MyClass\";\n" + "\n"
-				+ "MyClass addField \"value\"; #another comment\n"
+		Sequence s = parse("# comment\n" + ":MyClass = Object subClass: \"MyClass\";\n"
+				+ "\n" + "MyClass addField \"value\"; #another comment\n"
 				+ "MYClass addMethod: \"method1\" using: {:self :param1 |\n"
-				+ "     ^ param1 > 0 ifTrue: 0 ifFalse: 1 ;\n" + "};\n" + "\n" + "stdout print (MyClass method1 3);");
+				+ "     param1 > 0 ifTrue: 0 ifFalse: 1 ;\n" + "};\n" + "\n"
+				+ "stdout print (MyClass method1 3);");
 
 		assertEquals(4, s.size());
 	}
@@ -492,7 +500,8 @@ public class ParserUseCases {
 	* 
 	****************************************************************************/
 
-	private void assertUnexpected(final String str, final char unexpectedChar) throws IOException {
+	private void assertUnexpected(final String str, final char unexpectedChar)
+			throws IOException {
 
 		try {
 			Object result = parse(str);
@@ -505,11 +514,12 @@ public class ParserUseCases {
 	/****************************************************************************
 	 * 
 	 ***************************************************************************/
-	private void assertLongEquals(final long expected, final String str) throws Exception {
+	private void assertLongEquals(final long expected, final String str)
+			throws Exception {
 
 		Sequence s = parse(str);
 		assertEquals(1, s.size());
-		
+
 		s = (Sequence) s.get(0);
 		assertEquals(1, s.size());
 		assertEquals(Long.valueOf(expected), s.get(0).value());
@@ -518,11 +528,12 @@ public class ParserUseCases {
 	/****************************************************************************
 	 * 
 	 ***************************************************************************/
-	private void assertDoubleEquals(final double expected, final String str) throws Exception {
+	private void assertDoubleEquals(final double expected, final String str)
+			throws Exception {
 
 		Sequence s = parse(str);
 		assertEquals(1, s.size());
-		
+
 		s = (Sequence) s.get(0);
 		assertEquals(1, s.size());
 		assertEquals(Double.valueOf(expected), s.get(0).value());
@@ -531,11 +542,12 @@ public class ParserUseCases {
 	/****************************************************************************
 	 * 
 	 ***************************************************************************/
-	private void assertStringEquals(final String expected, final String str) throws Exception {
+	private void assertStringEquals(final String expected, final String str)
+			throws Exception {
 
 		Sequence s = parse(str);
 		assertEquals(1, s.size());
-		
+
 		s = (Sequence) s.get(0);
 		assertEquals(1, s.size());
 		assertEquals(expected, s.get(0).value());
@@ -544,7 +556,8 @@ public class ParserUseCases {
 	/****************************************************************************
 	 * 
 	 ***************************************************************************/
-	private void assertCharacterEquals(final Character expected, final String str) throws Exception {
+	private void assertCharacterEquals(final Character expected, final String str)
+			throws Exception {
 
 		Sequence s = parse(str);
 		assertEquals(1, s.size());

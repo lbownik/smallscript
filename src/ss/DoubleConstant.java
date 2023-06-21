@@ -21,13 +21,36 @@ public final class DoubleConstant implements Expression {
 
 		return this.value;
 	}
+
 	/****************************************************************************
 	 * 
 	****************************************************************************/
 	@Override
 	public String toString() {
-		
+
 		return "DoubleConstant: " + this.value;
+	}
+
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	@Override
+	public int hashCode() {
+
+		return this.value.hashCode();
+	}
+
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	@Override
+	public boolean equals(final Object o) {
+
+		if (o != null && getClass() == o.getClass()) {
+			return this.value.equals(((DoubleConstant) o).value);
+		} else {
+			return false;
+		}
 	}
 
 	/****************************************************************************

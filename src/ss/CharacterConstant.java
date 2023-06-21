@@ -9,24 +9,48 @@ public final class CharacterConstant implements Expression {
 	 * 
 	****************************************************************************/
 	public CharacterConstant(final Character value) {
-		
+
 		this.value = value;
 	}
+
 	/****************************************************************************
 	 * 
 	****************************************************************************/
 	@Override
 	public Character value() {
-		
+
 		return this.value;
 	}
+
 	/****************************************************************************
 	 * 
 	****************************************************************************/
 	@Override
 	public String toString() {
-		
+
 		return "CharacterConstant: " + this.value;
+	}
+
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	@Override
+	public int hashCode() {
+
+		return this.value.hashCode();
+	}
+
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	@Override
+	public boolean equals(final Object o) {
+
+		if (o != null && getClass() == o.getClass()) {
+			return this.value.equals(((CharacterConstant) o).value);
+		} else {
+			return false;
+		}
 	}
 
 	/****************************************************************************

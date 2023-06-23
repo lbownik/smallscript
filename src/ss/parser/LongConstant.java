@@ -1,4 +1,7 @@
-package ss;
+package ss.parser;
+
+import ss.runtime.SSLong;
+import ss.runtime.SSObject;
 
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
@@ -50,6 +53,14 @@ public final class LongConstant implements Expression {
 			return false;
 		}
 	}
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	public SSObject toSSObject() {
+
+		return new SSLong(this.value);
+	}
+
 
 	/****************************************************************************
 	 * 

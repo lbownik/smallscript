@@ -1,14 +1,17 @@
-package ss;
+package ss.parser;
+
+import ss.runtime.SSDouble;
+import ss.runtime.SSObject;
 
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
-public final class Symbol implements Expression {
+public final class DoubleConstant implements Expression {
 
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	public Symbol(final String value) {
+	public DoubleConstant(final Double value) {
 
 		this.value = value;
 	}
@@ -17,41 +20,9 @@ public final class Symbol implements Expression {
 	 * 
 	****************************************************************************/
 	@Override
-	public String value() {
+	public Double value() {
 
 		return this.value;
-	}
-
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	public boolean isVariableDeclaration() {
-
-		return this.value.startsWith(":");
-	}
-
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	public boolean isMethodWithArgs() {
-
-		return this.value.endsWith(":");
-	}
-
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	public boolean isNoArgMethod() {
-
-		return !isMethodWithArgs();
-	}
-	
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	public boolean isAssignment() {
-
-		return this.value.equals("=");
 	}
 
 	/****************************************************************************
@@ -60,7 +31,7 @@ public final class Symbol implements Expression {
 	@Override
 	public String toString() {
 
-		return "Symbol: " + this.value;
+		return "DoubleConstant: " + this.value;
 	}
 
 	/****************************************************************************
@@ -79,14 +50,21 @@ public final class Symbol implements Expression {
 	public boolean equals(final Object o) {
 
 		if (o != null && getClass() == o.getClass()) {
-			return this.value.equals(((Symbol) o).value);
+			return this.value.equals(((DoubleConstant) o).value);
 		} else {
 			return false;
 		}
+	}
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	public SSObject toSSObject() {
+
+		return new SSDouble(this.value);
 	}
 
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	private final String value;
+	private final Double value;
 }

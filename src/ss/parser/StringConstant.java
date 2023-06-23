@@ -1,40 +1,46 @@
-package ss;
+package ss.parser;
+
+import ss.runtime.SSObject;
+import ss.runtime.SSString;
 
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
-public final class VariableBlockSeparator implements Expression {
+public final class StringConstant implements Expression {
 
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	private VariableBlockSeparator() {
-		
+	public StringConstant(final String value) {
+
+		this.value = value;
 	}
+
 	/****************************************************************************
 	 * 
 	****************************************************************************/
 	@Override
-	public VariableBlockSeparator value() {
-		
-		return this;
+	public String value() {
+
+		return this.value;
 	}
+
 	/****************************************************************************
 	 * 
 	****************************************************************************/
 	@Override
 	public String toString() {
-		
-		return "VariableBlockSeparator";
+
+		return "StringConstant: " + this.value;
 	}
-	
+
 	/****************************************************************************
 	 * 
 	****************************************************************************/
 	@Override
 	public int hashCode() {
 
-		return 1;
+		return this.value.hashCode();
 	}
 
 	/****************************************************************************
@@ -43,10 +49,23 @@ public final class VariableBlockSeparator implements Expression {
 	@Override
 	public boolean equals(final Object o) {
 
-		return this == o;
+		if (o != null && getClass() == o.getClass()) {
+			return this.value.equals(((StringConstant) o).value);
+		} else {
+			return false;
+		}
 	}
+
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	public final static VariableBlockSeparator instance = new VariableBlockSeparator();
+	public SSObject toSSObject() {
+
+		return new SSString(this.value);
+	}
+
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	private final String value;
 }

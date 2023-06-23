@@ -1,14 +1,17 @@
-package ss;
+package ss.parser;
+
+import ss.runtime.SSChar;
+import ss.runtime.SSObject;
 
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
-public final class DoubleConstant implements Expression {
+public final class CharacterConstant implements Expression {
 
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	public DoubleConstant(final Double value) {
+	public CharacterConstant(final Character value) {
 
 		this.value = value;
 	}
@@ -17,7 +20,7 @@ public final class DoubleConstant implements Expression {
 	 * 
 	****************************************************************************/
 	@Override
-	public Double value() {
+	public Character value() {
 
 		return this.value;
 	}
@@ -28,7 +31,7 @@ public final class DoubleConstant implements Expression {
 	@Override
 	public String toString() {
 
-		return "DoubleConstant: " + this.value;
+		return "CharacterConstant: " + this.value;
 	}
 
 	/****************************************************************************
@@ -47,7 +50,7 @@ public final class DoubleConstant implements Expression {
 	public boolean equals(final Object o) {
 
 		if (o != null && getClass() == o.getClass()) {
-			return this.value.equals(((DoubleConstant) o).value);
+			return this.value.equals(((CharacterConstant) o).value);
 		} else {
 			return false;
 		}
@@ -56,5 +59,13 @@ public final class DoubleConstant implements Expression {
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	private final Double value;
+	public SSObject toSSObject() {
+
+		return new SSChar(this.value);
+	}
+
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	private final Character value;
 }

@@ -1,25 +1,28 @@
-package ss;
+package ss.parser;
+
+import ss.runtime.SSChar;
+import ss.runtime.SSNull;
+import ss.runtime.SSObject;
 
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
-public final class CharacterConstant implements Expression {
+public final class VariableBlockSeparator implements Expression {
 
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	public CharacterConstant(final Character value) {
+	private VariableBlockSeparator() {
 
-		this.value = value;
 	}
 
 	/****************************************************************************
 	 * 
 	****************************************************************************/
 	@Override
-	public Character value() {
+	public VariableBlockSeparator value() {
 
-		return this.value;
+		return this;
 	}
 
 	/****************************************************************************
@@ -28,7 +31,7 @@ public final class CharacterConstant implements Expression {
 	@Override
 	public String toString() {
 
-		return "CharacterConstant: " + this.value;
+		return "VariableBlockSeparator";
 	}
 
 	/****************************************************************************
@@ -37,7 +40,15 @@ public final class CharacterConstant implements Expression {
 	@Override
 	public int hashCode() {
 
-		return this.value.hashCode();
+		return 1;
+	}
+
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	public SSObject toSSObject() {
+
+		return SSNull.instance();
 	}
 
 	/****************************************************************************
@@ -46,15 +57,11 @@ public final class CharacterConstant implements Expression {
 	@Override
 	public boolean equals(final Object o) {
 
-		if (o != null && getClass() == o.getClass()) {
-			return this.value.equals(((CharacterConstant) o).value);
-		} else {
-			return false;
-		}
+		return this == o;
 	}
 
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	private final Character value;
+	public final static VariableBlockSeparator instance = new VariableBlockSeparator();
 }

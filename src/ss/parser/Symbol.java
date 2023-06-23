@@ -1,14 +1,18 @@
-package ss;
+package ss.parser;
+
+import ss.runtime.SSChar;
+import ss.runtime.SSNull;
+import ss.runtime.SSObject;
 
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
-public final class StringConstant implements Expression {
+public final class Symbol implements Expression {
 
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	public StringConstant(final String value) {
+	public Symbol(final String value) {
 
 		this.value = value;
 	}
@@ -25,10 +29,42 @@ public final class StringConstant implements Expression {
 	/****************************************************************************
 	 * 
 	****************************************************************************/
+	public boolean isVariableDeclaration() {
+
+		return this.value.startsWith(":");
+	}
+
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	public boolean isMethodWithArgs() {
+
+		return this.value.endsWith(":");
+	}
+
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	public boolean isNoArgMethod() {
+
+		return !isMethodWithArgs();
+	}
+
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	public boolean isAssignment() {
+
+		return this.value.equals("=");
+	}
+
+	/****************************************************************************
+	 * 
+	****************************************************************************/
 	@Override
 	public String toString() {
 
-		return "StringConstant: " + this.value;
+		return "Symbol: " + this.value;
 	}
 
 	/****************************************************************************
@@ -47,10 +83,18 @@ public final class StringConstant implements Expression {
 	public boolean equals(final Object o) {
 
 		if (o != null && getClass() == o.getClass()) {
-			return this.value.equals(((StringConstant) o).value);
+			return this.value.equals(((Symbol) o).value);
 		} else {
 			return false;
 		}
+	}
+
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	public SSObject toSSObject() {
+
+		return SSNull.instance();
 	}
 
 	/****************************************************************************

@@ -13,7 +13,7 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 //------------------------------------------------------------------------------
-package ss;
+package ss.parser;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -24,6 +24,16 @@ import java.io.IOException;
 import java.io.Reader;
 
 import org.junit.Test;
+
+import ss.parser.Block;
+import ss.parser.CharacterConstant;
+import ss.parser.DoubleConstant;
+import ss.parser.LongConstant;
+import ss.parser.Parser;
+import ss.parser.Sentence;
+import ss.parser.StringConstant;
+import ss.parser.Symbol;
+import ss.parser.VariableBlockSeparator;
 
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
@@ -302,13 +312,13 @@ public class ParserUseCases {
 	@Test
 	public void returnsSymbol_ForProperInput() throws Exception {
 
-		Sequence program;
+		Sentence program;
 		//------------------------------------------------------------------------
 		program = parse("bfnrt;");
 
 		assertEquals(1, program.size());
 		{
-			Sequence expresson = (Sequence) program.get(0);
+			Sentence expresson = (Sentence) program.get(0);
 
 			assertEquals(1, expresson.size());
 			assertEquals("bfnrt", ((Symbol) expresson.get(0)).value());
@@ -318,13 +328,13 @@ public class ParserUseCases {
 
 		assertEquals(2, program.size());
 		{
-			Sequence expression = (Sequence) program.get(0);
+			Sentence expression = (Sentence) program.get(0);
 
 			assertEquals(1, expression.size());
 			assertEquals("abcśżą123!@#$%&*+=", ((Symbol) expression.get(0)).value());
 		}
 		{
-			Sequence expression = (Sequence) program.get(1);
+			Sentence expression = (Sentence) program.get(1);
 
 			assertEquals(1, expression.size());
 			assertEquals("<>?/:::", ((Symbol) expression.get(0)).value());
@@ -334,7 +344,7 @@ public class ParserUseCases {
 
 		assertEquals(1, program.size());
 		{
-			Sequence expression = (Sequence) program.get(0);
+			Sentence expression = (Sentence) program.get(0);
 
 			assertEquals(2, expression.size());
 			assertEquals("abcśżą123!@#$%&*+=", ((Symbol) expression.get(0)).value());
@@ -348,26 +358,26 @@ public class ParserUseCases {
 	@Test
 	public void returnsSequence_ForExpressionInBrackets() throws Exception {
 
-		Sequence program;
+		Sentence program;
 		//------------------------------------------------------------------------
 		program = parse("();");
 
 		assertEquals(1, program.size());
 		{
-			Sequence expression = (Sequence) program.get(0);
+			Sentence expression = (Sentence) program.get(0);
 
-			assertEquals(0, ((Sequence) expression.get(0)).size());
+			assertEquals(0, ((Sentence) expression.get(0)).size());
 		}
 		//------------------------------------------------------------------------
 		program = parse("(set add: \"abc\" or: 1);");
 
 		assertEquals(1, program.size());
 		{
-			Sequence expression = (Sequence) program.get(0);
+			Sentence expression = (Sentence) program.get(0);
 
 			assertEquals(1, expression.size());
 			{
-				Sequence bracketExpr = (Sequence) expression.get(0);
+				Sentence bracketExpr = (Sentence) expression.get(0);
 
 				assertEquals(5, bracketExpr.size());
 				assertEquals("set", bracketExpr.get(0).value());
@@ -382,7 +392,7 @@ public class ParserUseCases {
 
 		assertEquals(1, program.size());
 		{
-			Sequence expression = (Sequence) program.get(0);
+			Sentence expression = (Sentence) program.get(0);
 
 			assertEquals(5, expression.size());
 			assertEquals("set", expression.get(0).value());
@@ -390,7 +400,7 @@ public class ParserUseCases {
 			assertEquals("or:", expression.get(3).value());
 			assertEquals(Long.valueOf(1), expression.get(4).value());
 			{
-				Sequence bracketExp = (Sequence) expression.get(2);
+				Sentence bracketExp = (Sentence) expression.get(2);
 
 				assertEquals(4, bracketExp.size());
 				assertEquals(Long.valueOf(2), bracketExp.get(0).value());
@@ -404,12 +414,12 @@ public class ParserUseCases {
 
 		assertEquals(1, program.size());
 		{
-			Sequence expression = (Sequence) program.get(0);
+			Sentence expression = (Sentence) program.get(0);
 
 			assertEquals(4, expression.size());
 			assertEquals("set", expression.get(0).value());
 			{
-				Sequence bracketExp = (Sequence) expression.get(1);
+				Sentence bracketExp = (Sentence) expression.get(1);
 
 				assertEquals(1, bracketExp.size());
 				assertEquals(Long.valueOf(2), bracketExp.get(0).value());
@@ -425,13 +435,13 @@ public class ParserUseCases {
 	@Test
 	public void returnsBlock_ForExpressionInBraces() throws Exception {
 
-		Sequence program;
+		Sentence program;
 		//------------------------------------------------------------------------
 		program = parse("{};");
 
 		assertEquals(1, program.size());
 		{
-			Sequence expression = (Sequence) program.get(0);
+			Sentence expression = (Sentence) program.get(0);
 
 			assertEquals(1, expression.size());
 			assertEquals(0, ((Block) expression.get(0)).size());
@@ -441,7 +451,7 @@ public class ParserUseCases {
 
 		assertEquals(1, program.size());
 		{
-			Sequence expression = (Sequence) program.get(0);
+			Sentence expression = (Sentence) program.get(0);
 
 			assertEquals(1, expression.size());
 			{
@@ -449,7 +459,7 @@ public class ParserUseCases {
 
 				assertEquals(1, block.size());
 				{
-					Sequence blkExpression = (Sequence) block.get(0);
+					Sentence blkExpression = (Sentence) block.get(0);
 
 					assertEquals(5, blkExpression.size());
 					assertEquals("set", blkExpression.get(0).value());
@@ -465,7 +475,7 @@ public class ParserUseCases {
 
 		assertEquals(1, program.size());
 		{
-			Sequence expression = (Sequence) program.get(0);
+			Sentence expression = (Sentence) program.get(0);
 			assertEquals(5, expression.size());
 			assertEquals("set", expression.get(0).value());
 			assertEquals("add:", expression.get(1).value());
@@ -474,7 +484,7 @@ public class ParserUseCases {
 
 				assertEquals(1, block.size());
 				{
-					Sequence blkExpression = (Sequence) block.get(0);
+					Sentence blkExpression = (Sentence) block.get(0);
 
 					assertEquals(4, blkExpression.size());
 					assertEquals(":a", blkExpression.get(0).value());
@@ -492,7 +502,7 @@ public class ParserUseCases {
 
 		assertEquals(1, program.size());
 		{
-			Sequence expression = (Sequence) program.get(0);
+			Sentence expression = (Sentence) program.get(0);
 			assertEquals(4, expression.size());
 			assertEquals("set", expression.get(0).value());
 			{
@@ -500,7 +510,7 @@ public class ParserUseCases {
 
 				assertEquals(1, block.size());
 				{
-					Sequence blkSequence = (Sequence) block.get(0);
+					Sentence blkSequence = (Sentence) block.get(0);
 
 					assertEquals(1, blkSequence.size());
 					assertEquals(Long.valueOf(2), blkSequence.get(0).value());
@@ -517,7 +527,7 @@ public class ParserUseCases {
 	@Test
 	public void returnsParseTree_forProperProgram() throws Exception {
 
-		Sequence program = parse("""
+		Sentence program = parse("""
 				# comment
 				:MyClass = Object subClass: "MyClass";
 
@@ -531,7 +541,7 @@ public class ParserUseCases {
 
 		assertEquals(4, program.size());
 		{
-			Sequence expression = (Sequence) program.get(0);
+			Sentence expression = (Sentence) program.get(0);
 
 			assertEquals(5, expression.size());
 			assertEquals(":MyClass", expression.get(0).value());
@@ -541,7 +551,7 @@ public class ParserUseCases {
 			assertEquals("MyClass", expression.get(4).value());
 		}
 		{
-			Sequence expression = (Sequence) program.get(1);
+			Sentence expression = (Sentence) program.get(1);
 
 			assertEquals(3, expression.size());
 			assertEquals("MyClass", expression.get(0).value());
@@ -549,7 +559,7 @@ public class ParserUseCases {
 			assertEquals("value", expression.get(2).value());
 		}
 		{
-			Sequence expression = (Sequence) program.get(2);
+			Sentence expression = (Sentence) program.get(2);
 
 			assertEquals(5, expression.size());
 			assertEquals("MyClass", expression.get(0).value());
@@ -561,7 +571,7 @@ public class ParserUseCases {
 
 				assertEquals(1, block.size());
 				{
-					Sequence blkExpression = (Sequence) block.get(0);
+					Sentence blkExpression = (Sentence) block.get(0);
 
 					assertEquals(10, blkExpression.size());
 					assertEquals(":this", blkExpression.get(0).value());
@@ -578,13 +588,13 @@ public class ParserUseCases {
 			}
 		}
 		{
-			Sequence expression = (Sequence) program.get(3);
+			Sentence expression = (Sentence) program.get(3);
 
 			assertEquals(3, expression.size());
 			assertEquals("stdout", expression.get(0).value());
 			assertEquals("print", expression.get(1).value());
 			{
-				Sequence bracketExp = (Sequence) expression.get(2);
+				Sentence bracketExp = (Sentence) expression.get(2);
 
 				assertEquals(4, bracketExp.size());
 				assertEquals("MyClass", bracketExp.get(0).value());
@@ -614,11 +624,11 @@ public class ParserUseCases {
 	 ***************************************************************************/
 	private void assertLongEquals(final long expected, final String str) throws Exception {
 
-		Sequence program = parse(str);
+		Sentence program = parse(str);
 
 		assertEquals(1, program.size());
 
-		Sequence expression = (Sequence) program.get(0);
+		Sentence expression = (Sentence) program.get(0);
 
 		assertEquals(1, expression.size());
 		assertEquals(new LongConstant(expected), expression.get(0));
@@ -629,11 +639,11 @@ public class ParserUseCases {
 	 ***************************************************************************/
 	private void assertDoubleEquals(final double expected, final String str) throws Exception {
 
-		Sequence program = parse(str);
+		Sentence program = parse(str);
 
 		assertEquals(1, program.size());
 
-		Sequence expression = (Sequence) program.get(0);
+		Sentence expression = (Sentence) program.get(0);
 
 		assertEquals(1, expression.size());
 		assertEquals(new DoubleConstant(expected), expression.get(0));
@@ -644,11 +654,11 @@ public class ParserUseCases {
 	 ***************************************************************************/
 	private void assertStringEquals(final String expected, final String str) throws Exception {
 
-		Sequence program = parse(str);
+		Sentence program = parse(str);
 
 		assertEquals(1, program.size());
 
-		Sequence expression = (Sequence) program.get(0);
+		Sentence expression = (Sentence) program.get(0);
 
 		assertEquals(1, expression.size());
 		assertEquals(new StringConstant(expected), expression.get(0));
@@ -659,11 +669,11 @@ public class ParserUseCases {
 	 ***************************************************************************/
 	private void assertCharacterEquals(final Character expected, final String str) throws Exception {
 
-		Sequence program = parse(str);
+		Sentence program = parse(str);
 
 		assertEquals(1, program.size());
 
-		Sequence expression = (Sequence) program.get(0);
+		Sentence expression = (Sentence) program.get(0);
 
 		assertEquals(1, expression.size());
 		assertEquals(new CharacterConstant(expected), expression.get(0));
@@ -674,7 +684,7 @@ public class ParserUseCases {
 	 ***************************************************************************/
 	private void assertEmptySequence(final String str) throws Exception {
 
-		assertTrue(((Sequence) parse(str)).isEmpty());
+		assertTrue(((Sentence) parse(str)).isEmpty());
 	}
 
 	/****************************************************************************
@@ -693,7 +703,7 @@ public class ParserUseCases {
 	/****************************************************************************
 	 * 
 	 ***************************************************************************/
-	private Sequence parse(final String str) throws IOException {
+	private Sentence parse(final String str) throws IOException {
 
 		return new Parser().parse(str);
 	}

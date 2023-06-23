@@ -1,4 +1,4 @@
-package ss;
+package ss.parser;
 
 import static java.util.Arrays.copyOf;
 
@@ -38,7 +38,7 @@ public final class Parser {
 	/****************************************************************************
 	* 
 	****************************************************************************/
-	public Sequence parse(final String str) throws IOException {
+	public Block parse(final String str) throws IOException {
 
 		return parse(new StringReader(str));
 	}
@@ -46,12 +46,12 @@ public final class Parser {
 	/****************************************************************************
 	* 
 	****************************************************************************/
-	public Sequence parse(final Reader reader) throws IOException {
+	public Block parse(final Reader reader) throws IOException {
 
 		this.reader = reader;
 		try {
 			this.position = -1;
-			final Sequence result = new Sequence();
+			final Block result = new Block();
 
 			do {
 				final int currentChar = consumeWhitespace(read());
@@ -73,9 +73,9 @@ public final class Parser {
 	/****************************************************************************
 	* 
 	****************************************************************************/
-	private Sequence parseExpression(int currentChar) throws IOException {
+	private Sentence parseExpression(int currentChar) throws IOException {
 
-		final Sequence result = new Sequence();
+		final Sentence result = new Sentence();
 
 		do {
 			if (isWhitespace(currentChar)) {
@@ -122,7 +122,7 @@ public final class Parser {
 	/****************************************************************************
 	* 
 	****************************************************************************/
-	private Sequence parseBlock() throws IOException {
+	private Sentence parseBlock() throws IOException {
 
 		final Block result = new Block();
 
@@ -140,9 +140,9 @@ public final class Parser {
 	/****************************************************************************
 	* 
 	****************************************************************************/
-	private Sequence parseBrackets() throws IOException {
+	private Sentence parseBrackets() throws IOException {
 
-		final Sequence result = new Sequence();
+		final Sentence result = new Sentence();
 
 		int currentChar = consumeWhitespace(read());
 		while (currentChar != ')') {

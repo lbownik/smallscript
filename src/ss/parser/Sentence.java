@@ -1,7 +1,9 @@
 package ss.parser;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
+import ss.runtime.SSExpression;
 import ss.runtime.SSNull;
 import ss.runtime.SSObject;
 
@@ -33,6 +35,10 @@ public class Sentence extends ArrayList<Expression> implements Expression {
 	****************************************************************************/
 	public SSObject toSSObject() {
 
-		return SSNull.instance();
+		return switch (size()) {
+		case 1 -> get(0).toSSObject();
+		case 2 -> new SSExpression(get(0).toSSObject(), (String) get(1).value(), Collections.emptyList());
+		default -> throw new RuntimeException("not implemented");
+		};
 	}
 }

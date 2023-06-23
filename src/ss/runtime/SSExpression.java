@@ -5,7 +5,17 @@ import java.util.List;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
-public class SSObject {
+public class SSExpression extends SSObject {
+
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	public SSExpression(final SSObject object, final String method, final List<SSObject> args) {
+
+		this.object = object;
+		this.method = method;
+		this.args = args;
+	}
 
 	/****************************************************************************
 	 * 
@@ -13,12 +23,8 @@ public class SSObject {
 	public SSObject invoke(final String method, final List<SSObject> args) {
 
 		return switch (method) {
-		case "value" -> this;
-		case "size" -> new SSLong(size());
-		case "asString" -> new SSString(toString());
-		case "hash" -> new SSLong(hashCode());
-		case "equals" -> this.equals(args.get(0)) ? SSTrue.instance() : SSFalse.instance();
-		default -> throw new IllegalArgumentException(method);
+		case "value" -> this.object.invoke(this.method, this.args);
+		default -> super.invoke(this.method, this.args);
 		};
 	}
 
@@ -28,16 +34,13 @@ public class SSObject {
 	@Override
 	public String toString() {
 
-		return "object";
+		return "expression";
 	}
+
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	protected int size() {
-		
-		return 1;
-	}
-	/****************************************************************************
-	 * 
-	****************************************************************************/
+	private final SSObject object;
+	private final String method;
+	private final List<SSObject> args;
 }

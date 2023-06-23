@@ -18,7 +18,7 @@ public final class SSChar extends SSObject {
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	private SSChar(final char value) {
+	public SSChar(final char value) {
 
 		this.value = value;
 	}

@@ -3,8 +3,8 @@ package ss.runtime;
 import java.util.List;
 
 /*******************************************************************************
- * @author lukasz.bownik@gmail.com
- ****** {************************************************************************/
+ * @author lukasz.bownik@gmail.com {
+ ************************************************************************/
 public final class SSChar extends SSObject {
 
 	/****************************************************************************
@@ -29,9 +29,30 @@ public final class SSChar extends SSObject {
 	public SSObject invoke(final String method, final List<SSObject> args) {
 
 		return switch (method) {
-		
+		case "==" -> toBool(this.value == evaluateFirst(args));
+		case "!=" -> toBool(this.value != evaluateFirst(args));
+		case ">" -> toBool(this.value > evaluateFirst(args));
+		case "<" -> toBool(this.value < evaluateFirst(args));
+		case ">=" -> toBool(this.value >= evaluateFirst(args));
+		case "<=" -> toBool(this.value <= evaluateFirst(args));
 		default -> super.invoke(method, args);
 		};
+	}
+
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	private static char evaluateFirst(final List<SSObject> args) {
+
+		return ((SSChar) args.get(0).evaluate()).value;
+	}
+
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	private static SSObject toBool(final boolean condition) {
+
+		return condition ? SSTrue.instance() : SSFalse.instance();
 	}
 
 	/****************************************************************************

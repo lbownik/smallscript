@@ -22,7 +22,7 @@ public final class SSString extends SSObject {
 
 		return switch (method) {
 		case "+" -> new SSString(this.value.concat(((SSString) args.get(0)).value));
-		case "size" -> new SSLong(size());
+		case "size" -> new SSLong(this.value.length());
 		case "at:" -> new SSChar(this.value.charAt(((SSLong)args.get(0)).value.intValue()));
 		default -> super.invoke(method, args);
 		};
@@ -57,14 +57,6 @@ public final class SSString extends SSObject {
 		} else {
 			return false;
 		}
-	}
-
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	protected int size() {
-
-		return this.value.length();
 	}
 
 	/****************************************************************************

@@ -3,8 +3,8 @@ package ss.runtime;
 import java.util.List;
 
 /*******************************************************************************
- * @author lukasz.bownik@gmail.com
- ****** {************************************************************************/
+ * @author lukasz.bownik@gmail.com {
+ ************************************************************************/
 public final class SSLong extends SSObject {
 
 	/****************************************************************************
@@ -14,6 +14,7 @@ public final class SSLong extends SSObject {
 
 		this.value = value;
 	}
+
 	/****************************************************************************
 	 * 
 	****************************************************************************/
@@ -28,12 +29,34 @@ public final class SSLong extends SSObject {
 	public SSObject invoke(final String method, final List<SSObject> args) {
 
 		return switch (method) {
-		case "+" -> new SSLong(this.value + ((SSLong) args.get(0)).value);
-		case "-" -> new SSLong(this.value - ((SSLong) args.get(0)).value);
-		case "*" -> new SSLong(this.value * ((SSLong) args.get(0)).value);
-		case "/" -> new SSLong(this.value / ((SSLong) args.get(0)).value);
+		case "+" -> new SSLong(this.value + evaluateFirst(args));
+		case "-" -> new SSLong(this.value - evaluateFirst(args));
+		case "*" -> new SSLong(this.value * evaluateFirst(args));
+		case "/" -> new SSLong(this.value / evaluateFirst(args));
+		case "==" -> toBool(this.value == evaluateFirst(args));
+		case "!=" -> toBool(this.value != evaluateFirst(args));
+		case ">" -> toBool(this.value > evaluateFirst(args));
+		case "<" -> toBool(this.value < evaluateFirst(args));
+		case ">=" -> toBool(this.value >= evaluateFirst(args));
+		case "<=" -> toBool(this.value <= evaluateFirst(args));
 		default -> super.invoke(method, args);
 		};
+	}
+
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	private static long evaluateFirst(final List<SSObject> args) {
+
+		return ((SSLong) args.get(0).evaluate()).value;
+	}
+
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	private static SSObject toBool(final boolean condition) {
+
+		return condition ? SSTrue.instance() : SSFalse.instance();
 	}
 
 	/****************************************************************************

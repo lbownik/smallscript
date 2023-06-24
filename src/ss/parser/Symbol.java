@@ -1,6 +1,5 @@
 package ss.parser;
 
-import ss.runtime.SSChar;
 import ss.runtime.SSNull;
 import ss.runtime.SSObject;
 
@@ -37,9 +36,30 @@ public final class Symbol implements Expression {
 	/****************************************************************************
 	 * 
 	****************************************************************************/
+	public boolean isVariable() {
+
+		return isVariableDeclaration() || isNoArgMethod();
+	}
+
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	public boolean isMethod() {
+
+		return !isVariableDeclaration();
+	}
+
+	/****************************************************************************
+	 * 
+	****************************************************************************/
 	public boolean isMethodWithArgs() {
 
-		return this.value.endsWith(":");
+		return this.value.endsWith(":") || this.value.equals("+")
+				|| this.value.equals("-") || this.value.equals("*")
+				|| this.value.equals("/") || this.value.equals("==")
+				|| this.value.equals("!=")|| this.value.equals("!=")
+				|| this.value.equals(">") || this.value.equals("<")
+				|| this.value.equals(">=")|| this.value.equals("<=");
 	}
 
 	/****************************************************************************
@@ -47,7 +67,7 @@ public final class Symbol implements Expression {
 	****************************************************************************/
 	public boolean isNoArgMethod() {
 
-		return !isMethodWithArgs();
+		return !isMethodWithArgs() && ! isAssignment();
 	}
 
 	/****************************************************************************
@@ -64,7 +84,7 @@ public final class Symbol implements Expression {
 	@Override
 	public String toString() {
 
-		return "Symbol: " + this.value;
+		return this.value;
 	}
 
 	/****************************************************************************

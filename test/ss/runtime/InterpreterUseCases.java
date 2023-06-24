@@ -33,30 +33,21 @@ public class InterpreterUseCases {
 	* 
 	****************************************************************************/
 	@Test
-	public void test1() throws Exception {
+	public void returnsSSLong_forProperExpression() throws Exception {
 
-		var program = parse("1;");
-
-		assertEquals(new SSLong(1), program.toSSObject().evaluate());
-
-		program = parse("1;2;3;");
-
-		assertEquals(new SSLong(3), program.toSSObject().evaluate());
-
-		program = parse("1 size;");
-
-		assertEquals(new SSLong(1), program.toSSObject().evaluate());
-		
-		program = parse("1 + 1;");
-		SSObject o = program.toSSObject();
-
-		assertEquals(new SSLong(2),o.evaluate());
-		
-		program = parse("1 + 1; 2 * 2;");
-		o = program.toSSObject();
-		
-		
-		assertEquals(new SSLong(4),o.evaluate());
+		assertResultEquals(new SSLong(1), "1;");
+		assertResultEquals(new SSLong(3), "1;2;3;");
+		assertResultEquals(new SSLong(1), "1 size;");
+		assertResultEquals(new SSLong(2), "1 + 1;");
+		assertResultEquals(new SSLong(4), "1 + 1; 2 * 2;");
+		assertResultEquals(new SSLong(4), "(2 * 1) + 2;");
+		assertResultEquals(new SSLong(6), "2 * (1 + 2);");
+		assertResultEquals(new SSLong(4), "{2 * 1;} + 2;");
+		assertResultEquals(new SSLong(6), "2 * {1 + 2;};");
+		assertResultEquals(new SSLong(2), "(2 > 1) ifTrue: 2;");
+		assertResultEquals(SSNull.instance(), "(2 > 1) ifFalse: 2;");
+		assertResultEquals(new SSLong(2), "(2 > 1) ifTrue: 2 ifFalse: 3;");
+		// assertResultEquals(new SSLong(4), "2 * 1 + 2;");
 	}
 
 	/****************************************************************************
@@ -65,5 +56,14 @@ public class InterpreterUseCases {
 	private Block parse(final String str) throws IOException {
 
 		return new Parser().parse(str);
+	}
+
+	/****************************************************************************
+	 * 
+	 ***************************************************************************/
+	private void assertResultEquals(final SSObject o, final String program)
+			throws IOException {
+
+		assertEquals(o, parse(program).toSSObject().evaluate());
 	}
 }

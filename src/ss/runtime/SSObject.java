@@ -15,7 +15,7 @@ public class SSObject {
 
 		return switch (method) {
 		case "value" -> this;
-		case "size" -> new SSLong(size());
+		case "size" -> new SSLong(1);
 		case "asString" -> new SSString(toString());
 		case "hash" -> new SSLong(hashCode());
 		case "equals" -> this.equals(args.get(0)) ? SSTrue.instance() : SSFalse.instance();
@@ -38,14 +38,6 @@ public class SSObject {
 	public String toString() {
 
 		return "object";
-	}
-
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	protected int size() {
-
-		return 1;
 	}
 	/****************************************************************************
 	 * 

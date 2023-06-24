@@ -3,8 +3,8 @@ package ss.runtime;
 import java.util.List;
 
 /*******************************************************************************
- * @author lukasz.bownik@gmail.com
- ****** {************************************************************************/
+ * @author lukasz.bownik@gmail.com {
+ ************************************************************************/
 public final class SSDouble extends SSObject {
 
 	/****************************************************************************
@@ -14,6 +14,7 @@ public final class SSDouble extends SSObject {
 
 		this.value = value;
 	}
+
 	/****************************************************************************
 	 * 
 	****************************************************************************/
@@ -28,12 +29,34 @@ public final class SSDouble extends SSObject {
 	public SSObject invoke(final String method, final List<SSObject> args) {
 
 		return switch (method) {
-		case "+" -> new SSDouble(this.value + ((SSDouble) args.get(0)).value);
-		case "-" -> new SSDouble(this.value - ((SSDouble) args.get(0)).value);
-		case "*" -> new SSDouble(this.value * ((SSDouble) args.get(0)).value);
-		case "/" -> new SSDouble(this.value / ((SSDouble) args.get(0)).value);
+		case "+" -> new SSDouble(this.value + evaluateFirst(args));
+		case "-" -> new SSDouble(this.value - evaluateFirst(args));
+		case "*" -> new SSDouble(this.value * evaluateFirst(args));
+		case "/" -> new SSDouble(this.value / evaluateFirst(args));
+		case "==" -> toBool(this.value == evaluateFirst(args));
+		case "!=" -> toBool(this.value != evaluateFirst(args));
+		case ">" -> toBool(this.value > evaluateFirst(args));
+		case "<" -> toBool(this.value < evaluateFirst(args));
+		case ">=" -> toBool(this.value >= evaluateFirst(args));
+		case "<=" -> toBool(this.value <= evaluateFirst(args));
 		default -> super.invoke(method, args);
 		};
+	}
+
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	private static double evaluateFirst(final List<SSObject> args) {
+
+		return ((SSDouble) args.get(0).evaluate()).value;
+	}
+
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	private static SSObject toBool(final boolean condition) {
+
+		return condition ? SSTrue.instance() : SSFalse.instance();
 	}
 
 	/****************************************************************************

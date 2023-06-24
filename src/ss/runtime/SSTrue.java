@@ -30,11 +30,11 @@ public final class SSTrue extends SSObject {
 
 		return switch (method) {
 		case "not" -> SSFalse.instance();
-		case "and:" -> args.get(0) == this ? this : SSFalse.instance();
+		case "and:" -> args.get(0).evaluate();
 		case "or:" -> this;
-		case "ifTrue:" -> args.get(0).invoke("value", emptyList());
+		case "ifTrue:" -> args.get(0).evaluate();
 		case "ifFalse:" -> SSNull.instance();
-		case "ifTrue:ifFalse:" -> args.get(0).invoke("value", emptyList());
+		case "ifTrue:ifFalse:" -> args.get(0).evaluate();
 		default -> super.invoke(method, args);
 		};
 	}

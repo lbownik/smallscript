@@ -23,7 +23,7 @@ public class SSExpression extends SSObject {
 	public SSObject invoke(final String method, final List<SSObject> args) {
 
 		return switch (method) {
-		case "value" -> this.object.invoke(this.method, this.args);
+		case "value" -> this.object.evaluate().invoke(this.method, this.args);
 		default -> super.invoke(this.method, this.args);
 		};
 	}

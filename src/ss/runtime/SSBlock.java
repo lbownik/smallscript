@@ -6,7 +6,15 @@ import java.util.List;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
-public class SSObject {
+public class SSBlock extends SSObject{
+
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	public SSBlock(final List<SSObject> statements) {
+
+		this.statements = statements;
+	}
 
 	/****************************************************************************
 	 * 
@@ -14,21 +22,23 @@ public class SSObject {
 	public SSObject invoke(final String method, final List<SSObject> args) {
 
 		return switch (method) {
-		case "value" -> this;
-		case "size" -> new SSLong(size());
-		case "asString" -> new SSString(toString());
-		case "hash" -> new SSLong(hashCode());
-		case "equals" -> this.equals(args.get(0)) ? SSTrue.instance() : SSFalse.instance();
-		default -> throw new IllegalArgumentException(method);
+		case "value" -> evaluateThis();
+		default -> super.invoke(method, args);
 		};
 	}
 
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	public final SSObject evaluate() {
-
-		return invoke("value", emptyList());
+	private SSObject evaluateThis() {
+		
+		SSObject result = SSNull.instance();
+		
+		for(final var statement : this.statements) {
+			result = statement.evaluate();
+		}
+		
+		return result;
 	}
 
 	/****************************************************************************
@@ -37,7 +47,7 @@ public class SSObject {
 	@Override
 	public String toString() {
 
-		return "object";
+		return "block";
 	}
 
 	/****************************************************************************
@@ -45,9 +55,10 @@ public class SSObject {
 	****************************************************************************/
 	protected int size() {
 
-		return 1;
+		return this.statements.size();
 	}
 	/****************************************************************************
 	 * 
 	****************************************************************************/
+	private final List<SSObject> statements;
 }

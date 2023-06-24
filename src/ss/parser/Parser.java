@@ -122,7 +122,7 @@ public final class Parser {
 	/****************************************************************************
 	* 
 	****************************************************************************/
-	private Sentence parseBlock() throws IOException {
+	private Block parseBlock() throws IOException {
 
 		final Block result = new Block();
 

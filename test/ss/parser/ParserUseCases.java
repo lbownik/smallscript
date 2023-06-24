@@ -312,7 +312,7 @@ public class ParserUseCases {
 	@Test
 	public void returnsSymbol_ForProperInput() throws Exception {
 
-		Sentence program;
+		Block program;
 		//------------------------------------------------------------------------
 		program = parse("bfnrt;");
 
@@ -358,7 +358,7 @@ public class ParserUseCases {
 	@Test
 	public void returnsSequence_ForExpressionInBrackets() throws Exception {
 
-		Sentence program;
+		Block program;
 		//------------------------------------------------------------------------
 		program = parse("();");
 
@@ -435,7 +435,7 @@ public class ParserUseCases {
 	@Test
 	public void returnsBlock_ForExpressionInBraces() throws Exception {
 
-		Sentence program;
+		Block program;
 		//------------------------------------------------------------------------
 		program = parse("{};");
 
@@ -527,7 +527,7 @@ public class ParserUseCases {
 	@Test
 	public void returnsParseTree_forProperProgram() throws Exception {
 
-		Sentence program = parse("""
+		Block program = parse("""
 				# comment
 				:MyClass = Object subClass: "MyClass";
 
@@ -624,7 +624,7 @@ public class ParserUseCases {
 	 ***************************************************************************/
 	private void assertLongEquals(final long expected, final String str) throws Exception {
 
-		Sentence program = parse(str);
+		Block program = parse(str);
 
 		assertEquals(1, program.size());
 
@@ -639,7 +639,7 @@ public class ParserUseCases {
 	 ***************************************************************************/
 	private void assertDoubleEquals(final double expected, final String str) throws Exception {
 
-		Sentence program = parse(str);
+		Block program = parse(str);
 
 		assertEquals(1, program.size());
 
@@ -654,7 +654,7 @@ public class ParserUseCases {
 	 ***************************************************************************/
 	private void assertStringEquals(final String expected, final String str) throws Exception {
 
-		Sentence program = parse(str);
+		Block program = parse(str);
 
 		assertEquals(1, program.size());
 
@@ -669,7 +669,7 @@ public class ParserUseCases {
 	 ***************************************************************************/
 	private void assertCharacterEquals(final Character expected, final String str) throws Exception {
 
-		Sentence program = parse(str);
+		Block program = parse(str);
 
 		assertEquals(1, program.size());
 
@@ -684,7 +684,7 @@ public class ParserUseCases {
 	 ***************************************************************************/
 	private void assertEmptySequence(final String str) throws Exception {
 
-		assertTrue(((Sentence) parse(str)).isEmpty());
+		assertTrue(((Block) parse(str)).isEmpty());
 	}
 
 	/****************************************************************************
@@ -703,7 +703,7 @@ public class ParserUseCases {
 	/****************************************************************************
 	 * 
 	 ***************************************************************************/
-	private Sentence parse(final String str) throws IOException {
+	private Block parse(final String str) throws IOException {
 
 		return new Parser().parse(str);
 	}

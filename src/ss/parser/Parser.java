@@ -100,23 +100,14 @@ public final class Parser {
 	private Expression parseValue(int currentChar) throws IOException {
 
 		return switch (currentChar) {
-		case '|' -> parseVariableBlockSeparator(currentChar);
-		case '{' -> parseBlock();
-		case '(' -> parseBrackets();
-		case '"' -> parseString();
-		case '\'' -> parseCharacter();
-		case '-', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' -> parseNumber(currentChar);
-		default -> parseSymbol(currentChar);
+			case '{' -> parseBlock();
+			case '(' -> parseBrackets();
+			case '"' -> parseString();
+			case '\'' -> parseCharacter();
+			case '-', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' ->
+				parseNumber(currentChar);
+			default -> parseSymbol(currentChar);
 		};
-	}
-
-	/****************************************************************************
-	* 
-	****************************************************************************/
-	private Expression parseVariableBlockSeparator(final int currentChar) throws IOException {
-
-		this.recentChar = read();
-		return VariableBlockSeparator.instance;
 	}
 
 	/****************************************************************************
@@ -129,7 +120,7 @@ public final class Parser {
 		int currentChar = consumeWhitespace(read());
 		while (currentChar != '}') {
 			result.add(parseExpression(currentChar));
-			
+
 			currentChar = consumeWhitespace(read());
 		}
 		this.recentChar = read();
@@ -220,9 +211,9 @@ public final class Parser {
 
 		while (currentChar != '"') {
 			append(switch (currentChar) {
-			case -1 -> throw new EOFException();
-			case '\\' -> parseEscapedCharacter();
-			default -> (char) currentChar;
+				case -1 -> throw new EOFException();
+				case '\\' -> parseEscapedCharacter();
+				default -> (char) currentChar;
 			});
 			currentChar = read();
 		}
@@ -291,17 +282,17 @@ public final class Parser {
 
 		int currentChar = read();
 		return switch (currentChar) {
-		case '\\' -> '\\';
-		case '"' -> '\"';
-		case '/' -> '/';
-		case 'b' -> '\b';
-		case 'f' -> '\f';
-		case 'n' -> '\n';
-		case 'r' -> '\r';
-		case 't' -> '\t';
-		case 'u' -> parseHexadecimalCharacter();
-		case -1 -> throw new EOFException();
-		default -> throwUnexpected((char) currentChar);
+			case '\\' -> '\\';
+			case '"' -> '\"';
+			case '/' -> '/';
+			case 'b' -> '\b';
+			case 'f' -> '\f';
+			case 'n' -> '\n';
+			case 'r' -> '\r';
+			case 't' -> '\t';
+			case 'u' -> parseHexadecimalCharacter();
+			case -1 -> throw new EOFException();
+			default -> throwUnexpected((char) currentChar);
 		};
 	}
 
@@ -323,11 +314,12 @@ public final class Parser {
 	private int decimalFromHEX(final int currentChar) throws IOException {
 
 		return switch (currentChar) {
-		case '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' -> currentChar - '0';
-		case 'A', 'B', 'C', 'D', 'E', 'F' -> currentChar - 'A' + 10;
-		case 'a', 'b', 'c', 'd', 'e', 'f' -> currentChar - 'a' + 10;
-		case -1 -> throw new EOFException();
-		default -> throwUnexpected(currentChar);
+			case '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' ->
+				currentChar - '0';
+			case 'A', 'B', 'C', 'D', 'E', 'F' -> currentChar - 'A' + 10;
+			case 'a', 'b', 'c', 'd', 'e', 'f' -> currentChar - 'a' + 10;
+			case -1 -> throw new EOFException();
+			default -> throwUnexpected(currentChar);
 		};
 	}
 
@@ -363,7 +355,8 @@ public final class Parser {
 	****************************************************************************/
 	private static boolean isWhitespace(final int chr) {
 
-		return chr == ' ' | chr == '\b' | chr == '\f' | chr == '\n' | chr == '\r' | chr == '\t';
+		return chr == ' ' | chr == '\b' | chr == '\f' | chr == '\n' | chr == '\r'
+				| chr == '\t';
 	}
 
 	/****************************************************************************
@@ -371,7 +364,8 @@ public final class Parser {
 	****************************************************************************/
 	private static boolean isEndOfValue(final int chr) {
 
-		return chr == ' ' | chr == '\t' | chr == '\n' | chr == '\r' | chr == '|' | chr == ')' | chr == '}' | chr == ';';
+		return chr == ' ' | chr == '\t' | chr == '\n' | chr == '\r' | chr == '|'
+				| chr == ')' | chr == '}' | chr == ';';
 	}
 
 	/****************************************************************************
@@ -425,7 +419,8 @@ public final class Parser {
 		 ************************************************************************/
 		UnexpectedCharacterException(final int position, final char character) {
 
-			super("Unexpected character '" + character + "' at position " + position + ".");
+			super("Unexpected character '" + character + "' at position "
+					+ position + ".");
 			this.position = position;
 			this.character = character;
 		}
@@ -464,7 +459,8 @@ public final class Parser {
 		/*************************************************************************
 		 * 
 		 ************************************************************************/
-		public int read(final char[] cbuf, int off, final int len) throws IOException {
+		public int read(final char[] cbuf, int off, final int len)
+				throws IOException {
 
 			return -1; // not implemented
 		}

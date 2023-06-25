@@ -26,25 +26,25 @@ public final class SSChar extends SSObject {
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	public SSObject invoke(final String method, final List<SSObject> args) {
+	public SSObject invoke(final String method, final List<SSObject> args,final Stack stack) {
 
 		return switch (method) {
-		case "==" -> toBool(this.value == evaluateFirst(args));
-		case "!=" -> toBool(this.value != evaluateFirst(args));
-		case ">" -> toBool(this.value > evaluateFirst(args));
-		case "<" -> toBool(this.value < evaluateFirst(args));
-		case ">=" -> toBool(this.value >= evaluateFirst(args));
-		case "<=" -> toBool(this.value <= evaluateFirst(args));
-		default -> super.invoke(method, args);
+			case "==" -> toBool(this.value == evaluateFirst(args, stack));
+			case "!=" -> toBool(this.value != evaluateFirst(args, stack));
+			case ">" -> toBool(this.value > evaluateFirst(args, stack));
+			case "<" -> toBool(this.value < evaluateFirst(args, stack));
+			case ">=" -> toBool(this.value >= evaluateFirst(args, stack));
+			case "<=" -> toBool(this.value <= evaluateFirst(args, stack));
+			default -> super.invoke(method, args, stack);
 		};
 	}
 
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	private static char evaluateFirst(final List<SSObject> args) {
+	private static char evaluateFirst(final List<SSObject> args,final Stack stack) {
 
-		return ((SSChar) args.get(0).evaluate()).value;
+		return ((SSChar) args.get(0).evaluate(stack.pushNewFrame())).value;
 	}
 
 	/****************************************************************************

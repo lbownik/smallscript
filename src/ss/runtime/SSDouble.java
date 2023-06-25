@@ -26,29 +26,31 @@ public final class SSDouble extends SSObject {
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	public SSObject invoke(final String method, final List<SSObject> args) {
+	public SSObject invoke(final String method, final List<SSObject> args,
+			final Stack stack) {
 
 		return switch (method) {
-		case "+" -> new SSDouble(this.value + evaluateFirst(args));
-		case "-" -> new SSDouble(this.value - evaluateFirst(args));
-		case "*" -> new SSDouble(this.value * evaluateFirst(args));
-		case "/" -> new SSDouble(this.value / evaluateFirst(args));
-		case "==" -> toBool(this.value == evaluateFirst(args));
-		case "!=" -> toBool(this.value != evaluateFirst(args));
-		case ">" -> toBool(this.value > evaluateFirst(args));
-		case "<" -> toBool(this.value < evaluateFirst(args));
-		case ">=" -> toBool(this.value >= evaluateFirst(args));
-		case "<=" -> toBool(this.value <= evaluateFirst(args));
-		default -> super.invoke(method, args);
+			case "+" -> new SSDouble(this.value + evaluateFirst(args, stack));
+			case "-" -> new SSDouble(this.value - evaluateFirst(args, stack));
+			case "*" -> new SSDouble(this.value * evaluateFirst(args, stack));
+			case "/" -> new SSDouble(this.value / evaluateFirst(args, stack));
+			case "==" -> toBool(this.value == evaluateFirst(args, stack));
+			case "!=" -> toBool(this.value != evaluateFirst(args, stack));
+			case ">" -> toBool(this.value > evaluateFirst(args, stack));
+			case "<" -> toBool(this.value < evaluateFirst(args, stack));
+			case ">=" -> toBool(this.value >= evaluateFirst(args, stack));
+			case "<=" -> toBool(this.value <= evaluateFirst(args, stack));
+			default -> super.invoke(method, args, stack);
 		};
 	}
 
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	private static double evaluateFirst(final List<SSObject> args) {
+	private static double evaluateFirst(final List<SSObject> args,
+			final Stack stack) {
 
-		return ((SSDouble) args.get(0).evaluate()).value;
+		return ((SSDouble) args.get(0).evaluate(stack.pushNewFrame())).value;
 	}
 
 	/****************************************************************************

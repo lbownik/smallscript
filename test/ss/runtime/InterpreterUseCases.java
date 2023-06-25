@@ -47,7 +47,11 @@ public class InterpreterUseCases {
 		assertResultEquals(new SSLong(2), "(2 > 1) ifTrue: 2;");
 		assertResultEquals(SSNull.instance(), "(2 > 1) ifFalse: 2;");
 		assertResultEquals(new SSLong(2), "(2 > 1) ifTrue: 2 ifFalse: 3;");
-		// assertResultEquals(new SSLong(4), "2 * 1 + 2;");
+		assertResultEquals(new SSLong(7), "((2 > 1) ifTrue: 2 ifFalse: 3) + 5;");
+		assertResultEquals(new SSLong(8), "(2 < 1) ifTrue: 2 ifFalse: (3 + 5);");
+		assertResultEquals(new SSLong(3), "(2 < 1) ifTrue: 2 ifFalse: 3 value;");
+		assertResultEquals(new SSLong(3), "(2 < 1) ifTrue: {2;} ifFalse: {3;} value;");
+		assertResultEquals(new SSLong(18), "((2 * 2) + 2) * 3;");
 	}
 
 	/****************************************************************************
@@ -64,6 +68,6 @@ public class InterpreterUseCases {
 	private void assertResultEquals(final SSObject o, final String program)
 			throws IOException {
 
-		assertEquals(o, parse(program).toSSObject().evaluate());
+		assertEquals(o, parse(program).toSSObject().evaluate(Stack.create()));
 	}
 }

@@ -5,7 +5,7 @@ import java.util.List;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
-public class SSBlock extends SSObject{
+public class SSBlock extends SSObject {
 
 	/****************************************************************************
 	 * 
@@ -18,25 +18,26 @@ public class SSBlock extends SSObject{
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	public SSObject invoke(final String method, final List<SSObject> args) {
+	public SSObject invoke(final String method, final List<SSObject> args,
+			final Stack stack) {
 
 		return switch (method) {
-		case "value" -> evaluateThis();
-		default -> super.invoke(method, args);
+			case "value" -> evaluateThis(stack);
+			default -> super.invoke(method, args, stack);
 		};
 	}
 
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	private SSObject evaluateThis() {
-		
+	private SSObject evaluateThis(final Stack stack) {
+
 		SSObject result = SSNull.instance();
-		
-		for(final var statement : this.statements) {
-			result = statement.evaluate();
+
+		for (final var statement : this.statements) {
+			result = statement.evaluate(stack.pushNewFrame());
 		}
-		
+
 		return result;
 	}
 
@@ -56,6 +57,7 @@ public class SSBlock extends SSObject{
 
 		return this.statements.size();
 	}
+
 	/****************************************************************************
 	 * 
 	****************************************************************************/

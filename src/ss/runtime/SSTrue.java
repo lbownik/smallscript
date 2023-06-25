@@ -1,11 +1,10 @@
 package ss.runtime;
 
 import java.util.List;
-import static java.util.Collections.emptyList;
 
 /*******************************************************************************
- * @author lukasz.bownik@gmail.com
- ****** {************************************************************************/
+ * @author lukasz.bownik@gmail.com {
+ ******************************************************************************/
 public final class SSTrue extends SSObject {
 
 	/****************************************************************************
@@ -26,16 +25,18 @@ public final class SSTrue extends SSObject {
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	public SSObject invoke(final String method, final List<SSObject> args) {
+	@Override
+	public SSObject invoke(final String method, final List<SSObject> args,
+			final Stack stack) {
 
 		return switch (method) {
-		case "not" -> SSFalse.instance();
-		case "and:" -> args.get(0).evaluate();
-		case "or:" -> this;
-		case "ifTrue:" -> args.get(0).evaluate();
-		case "ifFalse:" -> SSNull.instance();
-		case "ifTrue:ifFalse:" -> args.get(0).evaluate();
-		default -> super.invoke(method, args);
+			case "not" -> SSFalse.instance();
+			case "and:" -> args.get(0).evaluate(stack.pushNewFrame());
+			case "or:" -> this;
+			case "ifTrue:" -> args.get(0).evaluate(stack.pushNewFrame());
+			case "ifFalse:" -> SSNull.instance();
+			case "ifTrue:ifFalse:" -> args.get(0).evaluate(stack.pushNewFrame());
+			default -> super.invoke(method, args, stack);
 		};
 	}
 

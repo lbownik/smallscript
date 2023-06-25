@@ -25,16 +25,6 @@ import java.io.Reader;
 
 import org.junit.Test;
 
-import ss.parser.Block;
-import ss.parser.CharacterConstant;
-import ss.parser.DoubleConstant;
-import ss.parser.LongConstant;
-import ss.parser.Parser;
-import ss.parser.Sentence;
-import ss.parser.StringConstant;
-import ss.parser.Symbol;
-import ss.parser.VariableBlockSeparator;
-
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
@@ -488,7 +478,7 @@ public class ParserUseCases {
 
 					assertEquals(4, blkExpression.size());
 					assertEquals(":a", blkExpression.get(0).value());
-					assertEquals(VariableBlockSeparator.instance, blkExpression.get(1));
+					assertEquals("|", blkExpression.get(1).value());
 					assertEquals("a", blkExpression.get(2).value());
 					assertEquals("round", blkExpression.get(3).value());
 				}
@@ -576,7 +566,7 @@ public class ParserUseCases {
 					assertEquals(10, blkExpression.size());
 					assertEquals(":this", blkExpression.get(0).value());
 					assertEquals(":param1", blkExpression.get(1).value());
-					assertEquals(VariableBlockSeparator.instance, blkExpression.get(2).value());
+					assertEquals("|", blkExpression.get(2).value());
 					assertEquals("param1", blkExpression.get(3).value());
 					assertEquals(">", blkExpression.get(4).value());
 					assertEquals(Long.valueOf(0), blkExpression.get(5).value());

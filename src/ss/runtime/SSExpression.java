@@ -10,7 +10,8 @@ public class SSExpression extends SSObject {
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	public SSExpression(final SSObject object, final String method, final List<SSObject> args) {
+	public SSExpression(final SSObject object, final String method,
+			final List<SSObject> args) {
 
 		this.object = object;
 		this.method = method;
@@ -20,12 +21,22 @@ public class SSExpression extends SSObject {
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	public SSObject invoke(final String method, final List<SSObject> args) {
+	public SSObject invoke(final String method, final List<SSObject> args,
+			final Stack stack) {
 
 		return switch (method) {
-		case "value" -> this.object.evaluate().invoke(this.method, this.args);
-		default -> super.invoke(this.method, this.args);
+			case "value" -> evaluateThis(stack);
+			default -> super.invoke(this.method, this.args, stack);
 		};
+	}
+
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	private SSObject evaluateThis(final Stack stack) {
+
+		return this.object.evaluate(stack.pushNewFrame()).invoke(this.method,
+				this.args, stack);
 	}
 
 	/****************************************************************************

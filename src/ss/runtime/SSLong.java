@@ -26,29 +26,47 @@ public final class SSLong extends SSObject {
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	public SSObject invoke(final String method, final List<SSObject> args) {
+	public static SSLong zero() {
+
+		return zero;
+	}
+
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	public static SSLong one() {
+
+		return one;
+	}
+
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	public SSObject invoke(final String method, final List<SSObject> args,
+			final Stack stack) {
 
 		return switch (method) {
-		case "+" -> new SSLong(this.value + evaluateFirst(args));
-		case "-" -> new SSLong(this.value - evaluateFirst(args));
-		case "*" -> new SSLong(this.value * evaluateFirst(args));
-		case "/" -> new SSLong(this.value / evaluateFirst(args));
-		case "==" -> toBool(this.value == evaluateFirst(args));
-		case "!=" -> toBool(this.value != evaluateFirst(args));
-		case ">" -> toBool(this.value > evaluateFirst(args));
-		case "<" -> toBool(this.value < evaluateFirst(args));
-		case ">=" -> toBool(this.value >= evaluateFirst(args));
-		case "<=" -> toBool(this.value <= evaluateFirst(args));
-		default -> super.invoke(method, args);
+			case "+" -> new SSLong(this.value + evaluateFirst(args, stack));
+			case "-" -> new SSLong(this.value - evaluateFirst(args, stack));
+			case "*" -> new SSLong(this.value * evaluateFirst(args, stack));
+			case "/" -> new SSLong(this.value / evaluateFirst(args, stack));
+			case "==" -> toBool(this.value == evaluateFirst(args, stack));
+			case "!=" -> toBool(this.value != evaluateFirst(args, stack));
+			case ">" -> toBool(this.value > evaluateFirst(args, stack));
+			case "<" -> toBool(this.value < evaluateFirst(args, stack));
+			case ">=" -> toBool(this.value >= evaluateFirst(args, stack));
+			case "<=" -> toBool(this.value <= evaluateFirst(args, stack));
+			default -> super.invoke(method, args, stack);
 		};
 	}
 
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	private static long evaluateFirst(final List<SSObject> args) {
+	private static long evaluateFirst(final List<SSObject> args,
+			final Stack stack) {
 
-		return ((SSLong) args.get(0).evaluate()).value;
+		return ((SSLong) args.get(0).evaluate(stack.pushNewFrame())).value;
 	}
 
 	/****************************************************************************
@@ -94,4 +112,7 @@ public final class SSLong extends SSObject {
 	 * 
 	****************************************************************************/
 	public final Long value;
+
+	private final static SSLong zero = new SSLong(0);
+	private final static SSLong one = new SSLong(1);
 }

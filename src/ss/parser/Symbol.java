@@ -54,12 +54,18 @@ public final class Symbol implements Expression {
 	****************************************************************************/
 	public boolean isMethodWithArgs() {
 
-		return this.value.endsWith(":") || this.value.equals("+")
-				|| this.value.equals("-") || this.value.equals("*")
-				|| this.value.equals("/") || this.value.equals("==")
-				|| this.value.equals("!=")|| this.value.equals("!=")
-				|| this.value.equals(">") || this.value.equals("<")
-				|| this.value.equals(">=")|| this.value.equals("<=");
+		return this.value.endsWith(":") || isBuiltInBinaryMethod();
+	}
+
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	public boolean isBuiltInBinaryMethod() {
+
+		return switch (this.value) {
+			case "+", "-", "*", "/", "==", "!=", ">", "<", ">=", "<=" -> true;
+			default -> false;
+		};
 	}
 
 	/****************************************************************************
@@ -67,7 +73,7 @@ public final class Symbol implements Expression {
 	****************************************************************************/
 	public boolean isNoArgMethod() {
 
-		return !isMethodWithArgs() && ! isAssignment();
+		return !isMethodWithArgs() && !isAssignment();
 	}
 
 	/****************************************************************************
@@ -76,6 +82,14 @@ public final class Symbol implements Expression {
 	public boolean isAssignment() {
 
 		return this.value.equals("=");
+	}
+
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	public boolean isVariableBlockSaperator() {
+
+		return this.value.equals("|");
 	}
 
 	/****************************************************************************

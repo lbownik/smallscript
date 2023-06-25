@@ -3,8 +3,8 @@ package ss.runtime;
 import java.util.List;
 
 /*******************************************************************************
- * @author lukasz.bownik@gmail.com
- ****** {************************************************************************/
+ * @author lukasz.bownik@gmail.com {
+ ************************************************************************/
 public final class SSString extends SSObject {
 
 	/****************************************************************************
@@ -18,13 +18,16 @@ public final class SSString extends SSObject {
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	public SSObject invoke(final String method, final List<SSObject> args) {
+	public SSObject invoke(final String method, final List<SSObject> args,
+			final Stack stack) {
 
 		return switch (method) {
-		case "+" -> new SSString(this.value.concat(((SSString) args.get(0)).value));
-		case "size" -> new SSLong(this.value.length());
-		case "at:" -> new SSChar(this.value.charAt(((SSLong)args.get(0)).value.intValue()));
-		default -> super.invoke(method, args);
+			case "+" ->
+				new SSString(this.value.concat(((SSString) args.get(0)).value));
+			case "size" -> new SSLong(this.value.length());
+			case "at:" -> new SSChar(
+					this.value.charAt(((SSLong) args.get(0)).value.intValue()));
+			default -> super.invoke(method, args, stack);
 		};
 	}
 

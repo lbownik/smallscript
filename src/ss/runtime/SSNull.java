@@ -18,14 +18,17 @@ public final class SSNull extends SSObject {
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	public SSObject invoke(final String method, final List<SSObject> args) {
+	@Override
+	public SSObject invoke(final String method, final List<SSObject> args,
+			final Stack stack) {
 
 		return switch (method) {
-		case "size" -> new SSLong(0);
-		case "asString" -> new SSString(toString());
-		case "hash" -> new SSLong(hashCode());
-		case "equals" -> this.equals(args.get(0)) ? SSTrue.instance() : SSFalse.instance();
-		default -> this;
+			case "size" -> SSLong.zero();
+			case "asString" -> new SSString(toString());
+			case "hash" -> new SSLong(hashCode());
+			case "equals" ->
+				this.equals(args.get(0)) ? SSTrue.instance() : SSFalse.instance();
+			default -> this;
 		};
 	}
 

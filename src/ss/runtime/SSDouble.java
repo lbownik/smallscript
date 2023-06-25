@@ -26,6 +26,7 @@ public final class SSDouble extends SSObject {
 	/****************************************************************************
 	 * 
 	****************************************************************************/
+	@Override
 	public SSObject invoke(final String method, final List<SSObject> args,
 			final Stack stack) {
 

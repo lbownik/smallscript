@@ -52,6 +52,7 @@ public class InterpreterUseCases {
 		assertResultEquals(new SSLong(3), "(2 < 1) ifTrue: 2 ifFalse: 3 value;");
 		assertResultEquals(new SSLong(3), "(2 < 1) ifTrue: {2;} ifFalse: {3;} value;");
 		assertResultEquals(new SSLong(18), "((2 * 2) + 2) * 3;");
+		assertResultEquals(new SSLong(2), ":var = 2;");
 	}
 
 	/****************************************************************************

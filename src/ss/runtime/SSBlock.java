@@ -18,6 +18,7 @@ public class SSBlock extends SSObject {
 	/****************************************************************************
 	 * 
 	****************************************************************************/
+	@Override
 	public SSObject invoke(final String method, final List<SSObject> args,
 			final Stack stack) {
 
@@ -34,7 +35,7 @@ public class SSBlock extends SSObject {
 
 		SSObject result = SSNull.instance();
 
-		for (final var statement : this.statements) {
+		for (final SSObject statement : this.statements) {
 			result = statement.evaluate(stack.pushNewFrame());
 		}
 

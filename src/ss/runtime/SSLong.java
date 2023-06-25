@@ -42,6 +42,7 @@ public final class SSLong extends SSObject {
 	/****************************************************************************
 	 * 
 	****************************************************************************/
+	@Override
 	public SSObject invoke(final String method, final List<SSObject> args,
 			final Stack stack) {
 

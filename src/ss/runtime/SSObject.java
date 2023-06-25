@@ -28,7 +28,7 @@ public class SSObject {
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	public final SSObject evaluate(final Stack stack) {
+	public SSObject evaluate(final Stack stack) {
 
 		return invoke("value", emptyList(), stack);
 	}

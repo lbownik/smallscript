@@ -12,8 +12,9 @@ public class Stack {
 	 * 
 	****************************************************************************/
 	private Stack() {
-		
+
 	}
+
 	/****************************************************************************
 	 * 
 	****************************************************************************/
@@ -26,7 +27,7 @@ public class Stack {
 	 * 
 	****************************************************************************/
 	public SSObject getVariable(final String name) {
-		
+
 		return null;
 	}
 
@@ -64,7 +65,10 @@ public class Stack {
 		*************************************************************************/
 		public void addVariable(final String name, final SSObject value) {
 
-			this.variables.put(name, value);
+			if (this.variables.put(name, value) != null) {
+				throw new RuntimeException(
+						"Variable " + name + " already exists in this scope");
+			}
 		}
 
 		/*************************************************************************

@@ -1,58 +1,38 @@
 package ss.runtime;
 
-import java.util.List;
-
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
-public class SSExpression extends SSObject {
+public class SSAssignment extends SSObject {
 
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	public SSExpression(final SSObject object, final String method,
-			final List<SSObject> args) {
+	public SSAssignment(final String variableName, final SSObject arg) {
 
-		this.object = object;
-		this.method = method;
-		this.args = args;
+		this.variableName = variableName;
+		this.arg = arg;
 	}
-
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	@Override
-	public SSObject invoke(final String method, final List<SSObject> args,
-			final Stack stack) {
+	public SSObject evaluate(final Stack stack) {
 
-		return switch (method) {
-			case "value" -> evaluateThis(stack);
-			default -> super.invoke(this.method, this.args, stack);
-		};
+		stack.addVariable(variableName, this.arg);
+		return this.arg;
 	}
-
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	private SSObject evaluateThis(final Stack stack) {
-
-		return this.object.evaluate(stack.pushNewFrame()).invoke(this.method,
-				this.args, stack);
-	}
-
 	/****************************************************************************
 	 * 
 	****************************************************************************/
 	@Override
 	public String toString() {
 
-		return "expression";
+		return "assignment";
 	}
 
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	private final SSObject object;
-	private final String method;
-	private final List<SSObject> args;
+	private final String variableName;
+	private final SSObject arg;
 }

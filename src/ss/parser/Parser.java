@@ -20,6 +20,8 @@ import static java.util.Arrays.copyOf;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
@@ -75,7 +77,7 @@ public final class Parser {
 	****************************************************************************/
 	private Sentence parseExpression(int currentChar) throws IOException {
 
-		final Sentence result = new Sentence();
+		final List<Expression> result = new ArrayList<>();
 
 		do {
 			if (isWhitespace(currentChar)) {
@@ -91,7 +93,7 @@ public final class Parser {
 			}
 		} while (currentChar != ';');
 
-		return result;
+		return new Sentence(result);
 	}
 
 	/****************************************************************************
@@ -133,7 +135,7 @@ public final class Parser {
 	****************************************************************************/
 	private Sentence parseBrackets() throws IOException {
 
-		final Sentence result = new Sentence();
+		final List<Expression> result = new ArrayList<>();
 
 		int currentChar = consumeWhitespace(read());
 		while (currentChar != ')') {
@@ -142,7 +144,7 @@ public final class Parser {
 		}
 		this.recentChar = read();
 
-		return result;
+		return new Sentence(result);
 	}
 
 	/****************************************************************************

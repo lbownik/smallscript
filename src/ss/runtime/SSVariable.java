@@ -5,16 +5,15 @@ import java.util.List;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
-public class SSBlock extends SSObject {
+public class SSVariable extends SSObject {
 
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	public SSBlock(final List<SSObject> statements) {
-
-		this.statements = statements;
+	public SSVariable(final String variableName) {
+		
+		this.variableName = variableName;
 	}
-
 	/****************************************************************************
 	 * 
 	****************************************************************************/
@@ -22,25 +21,7 @@ public class SSBlock extends SSObject {
 	public SSObject invoke(final String method, final List<SSObject> args,
 			final Stack stack) {
 
-		return switch (method) {
-			case "value" -> evaluateThis(stack);
-			default -> super.invoke(method, args, stack);
-		};
-	}
-
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	private SSObject evaluateThis(Stack stack) {
-
-		stack = stack.pushNewFrame();
-		SSObject result = SSNull.instance();
-
-		for (final SSObject statement : this.statements) {
-			result = statement.evaluate(stack);
-		}
-
-		return result;
+		return stack.getVariable(this.variableName).invoke(method, args, stack);
 	}
 
 	/****************************************************************************
@@ -49,19 +30,10 @@ public class SSBlock extends SSObject {
 	@Override
 	public String toString() {
 
-		return "block";
+		return "variable";
 	}
-
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	protected int size() {
-
-		return this.statements.size();
-	}
-
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	private final List<SSObject> statements;
+	private final String variableName;
 }

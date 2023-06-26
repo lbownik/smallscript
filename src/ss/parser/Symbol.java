@@ -2,6 +2,7 @@ package ss.parser;
 
 import ss.runtime.SSNull;
 import ss.runtime.SSObject;
+import ss.runtime.SSVariable;
 
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
@@ -128,7 +129,7 @@ public final class Symbol implements Expression {
 	****************************************************************************/
 	public SSObject toSSObject() {
 
-		return SSNull.instance();
+		return new SSVariable(this.value);
 	}
 
 	/****************************************************************************

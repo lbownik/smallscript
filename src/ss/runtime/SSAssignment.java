@@ -13,14 +13,20 @@ public class SSAssignment extends SSObject {
 		this.variableName = variableName;
 		this.arg = arg;
 	}
+
 	/****************************************************************************
 	 * 
 	****************************************************************************/
 	public SSObject evaluate(final Stack stack) {
 
-		stack.addVariable(variableName, this.arg);
+		if (this.variableName.startsWith(":")) {
+			stack.addVariable(variableName.substring(1), this.arg);
+		} else {
+			stack.setVariable(variableName, arg);
+		}
 		return this.arg;
 	}
+
 	/****************************************************************************
 	 * 
 	****************************************************************************/

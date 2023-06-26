@@ -21,14 +21,12 @@ import java.io.IOException;
 
 import org.junit.Test;
 
-import ss.parser.Block;
-import ss.parser.Parser;
-
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
 public class InterpreterUseCases {
 
+	
 	/****************************************************************************
 	* 
 	****************************************************************************/
@@ -53,14 +51,8 @@ public class InterpreterUseCases {
 		assertResultEquals(new SSLong(3), "(2 < 1) ifTrue: {2;} ifFalse: {3;} value;");
 		assertResultEquals(new SSLong(18), "((2 * 2) + 2) * 3;");
 		assertResultEquals(new SSLong(2), ":var = 2;");
-	}
-
-	/****************************************************************************
-	 * 
-	 ***************************************************************************/
-	private Block parse(final String str) throws IOException {
-
-		return new Parser().parse(str);
+		assertResultEquals(new SSLong(2), "true ifTrue: 2;");
+		assertResultEquals(new SSLong(3), ":var = 2; var = 3; var;");
 	}
 
 	/****************************************************************************
@@ -69,6 +61,6 @@ public class InterpreterUseCases {
 	private void assertResultEquals(final SSObject o, final String program)
 			throws IOException {
 
-		assertEquals(o, parse(program).toSSObject().evaluate(Stack.create()));
+		assertEquals(o, new Interpreter().exacute(program));
 	}
 }

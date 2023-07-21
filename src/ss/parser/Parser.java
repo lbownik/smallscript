@@ -20,8 +20,6 @@ import static java.util.Arrays.copyOf;
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.ArrayList;
-import java.util.List;
 
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
@@ -53,7 +51,7 @@ public final class Parser {
 		this.reader = reader;
 		try {
 			this.position = -1;
-			final Block result = new Block();
+			final Program result = new Program();
 
 			do {
 				final int currentChar = consumeWhitespace(read());
@@ -77,7 +75,7 @@ public final class Parser {
 	****************************************************************************/
 	private Sentence parseExpression(int currentChar) throws IOException {
 
-		final List<Expression> result = new ArrayList<>();
+		final Sentence result = new Sentence();
 
 		do {
 			if (isWhitespace(currentChar)) {
@@ -93,7 +91,7 @@ public final class Parser {
 			}
 		} while (currentChar != ';');
 
-		return new Sentence(result);
+		return result;
 	}
 
 	/****************************************************************************
@@ -102,13 +100,13 @@ public final class Parser {
 	private Expression parseValue(int currentChar) throws IOException {
 
 		return switch (currentChar) {
-			case '{' -> parseBlock();
-			case '(' -> parseBrackets();
-			case '"' -> parseString();
-			case '\'' -> parseCharacter();
-			case '-', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' ->
-				parseNumber(currentChar);
-			default -> parseSymbol(currentChar);
+		case '{' -> parseBlock();
+		case '(' -> parseBrackets();
+		case '"' -> parseString();
+		case '\'' -> parseCharacter();
+		case '-', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' -> parseNumber(
+				currentChar);
+		default -> parseSymbol(currentChar);
 		};
 	}
 
@@ -135,7 +133,7 @@ public final class Parser {
 	****************************************************************************/
 	private Sentence parseBrackets() throws IOException {
 
-		final List<Expression> result = new ArrayList<>();
+		final Sentence result = new Sentence();
 
 		int currentChar = consumeWhitespace(read());
 		while (currentChar != ')') {
@@ -144,7 +142,7 @@ public final class Parser {
 		}
 		this.recentChar = read();
 
-		return new Sentence(result);
+		return result;
 	}
 
 	/****************************************************************************
@@ -213,9 +211,9 @@ public final class Parser {
 
 		while (currentChar != '"') {
 			append(switch (currentChar) {
-				case -1 -> throw new EOFException();
-				case '\\' -> parseEscapedCharacter();
-				default -> (char) currentChar;
+			case -1 -> throw new EOFException();
+			case '\\' -> parseEscapedCharacter();
+			default -> (char) currentChar;
 			});
 			currentChar = read();
 		}
@@ -284,17 +282,17 @@ public final class Parser {
 
 		int currentChar = read();
 		return switch (currentChar) {
-			case '\\' -> '\\';
-			case '"' -> '\"';
-			case '/' -> '/';
-			case 'b' -> '\b';
-			case 'f' -> '\f';
-			case 'n' -> '\n';
-			case 'r' -> '\r';
-			case 't' -> '\t';
-			case 'u' -> parseHexadecimalCharacter();
-			case -1 -> throw new EOFException();
-			default -> throwUnexpected((char) currentChar);
+		case '\\' -> '\\';
+		case '"' -> '\"';
+		case '/' -> '/';
+		case 'b' -> '\b';
+		case 'f' -> '\f';
+		case 'n' -> '\n';
+		case 'r' -> '\r';
+		case 't' -> '\t';
+		case 'u' -> parseHexadecimalCharacter();
+		case -1 -> throw new EOFException();
+		default -> throwUnexpected((char) currentChar);
 		};
 	}
 
@@ -316,12 +314,11 @@ public final class Parser {
 	private int decimalFromHEX(final int currentChar) throws IOException {
 
 		return switch (currentChar) {
-			case '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' ->
-				currentChar - '0';
-			case 'A', 'B', 'C', 'D', 'E', 'F' -> currentChar - 'A' + 10;
-			case 'a', 'b', 'c', 'd', 'e', 'f' -> currentChar - 'a' + 10;
-			case -1 -> throw new EOFException();
-			default -> throwUnexpected(currentChar);
+		case '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' -> currentChar - '0';
+		case 'A', 'B', 'C', 'D', 'E', 'F' -> currentChar - 'A' + 10;
+		case 'a', 'b', 'c', 'd', 'e', 'f' -> currentChar - 'a' + 10;
+		case -1 -> throw new EOFException();
+		default -> throwUnexpected(currentChar);
 		};
 	}
 
@@ -421,8 +418,8 @@ public final class Parser {
 		 ************************************************************************/
 		UnexpectedCharacterException(final int position, final char character) {
 
-			super("Unexpected character '" + character + "' at position "
-					+ position + ".");
+			super("Unexpected character '" + character + "' at position " + position
+					+ ".");
 			this.position = position;
 			this.character = character;
 		}
@@ -461,8 +458,7 @@ public final class Parser {
 		/*************************************************************************
 		 * 
 		 ************************************************************************/
-		public int read(final char[] cbuf, int off, final int len)
-				throws IOException {
+		public int read(final char[] cbuf, int off, final int len) throws IOException {
 
 			return -1; // not implemented
 		}

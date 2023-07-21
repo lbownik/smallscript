@@ -4,116 +4,120 @@ import java.util.List;
 
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
- ************************************************************************/
-public final class SSLong extends SSObject {
+ ******************************************************************************/
+public final class SSLong extends SSDynamicObject {
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	public SSLong(final Long value) {
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    public SSLong(final long value) {
 
-		this.value = value;
-	}
+        this.value = value;
+    }
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	public SSLong(final int value) {
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    public SSLong(final int value) {
 
-		this.value = Long.valueOf(value);
-	}
+        this.value = Long.valueOf(value);
+    }
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	public static SSLong zero() {
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    public static SSLong zero() {
 
-		return zero;
-	}
+        return zero;
+    }
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	public static SSLong one() {
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    public static SSLong one() {
 
-		return one;
-	}
+        return one;
+    }
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	@Override
-	public SSObject invoke(final String method, final List<SSObject> args,
-			final Stack stack) {
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    @Override
+    public SSObject invoke(final String method, final List<SSObject> args,
+            final Stack stack) {
 
-		return switch (method) {
-			case "+" -> new SSLong(this.value + evaluateFirst(args, stack));
-			case "-" -> new SSLong(this.value - evaluateFirst(args, stack));
-			case "*" -> new SSLong(this.value * evaluateFirst(args, stack));
-			case "/" -> new SSLong(this.value / evaluateFirst(args, stack));
-			case "==" -> toBool(this.value == evaluateFirst(args, stack));
-			case "!=" -> toBool(this.value != evaluateFirst(args, stack));
-			case ">" -> toBool(this.value > evaluateFirst(args, stack));
-			case "<" -> toBool(this.value < evaluateFirst(args, stack));
-			case ">=" -> toBool(this.value >= evaluateFirst(args, stack));
-			case "<=" -> toBool(this.value <= evaluateFirst(args, stack));
-			default -> super.invoke(method, args, stack);
-		};
-	}
+        return switch (method) {
+        case "+" -> new SSLong(this.value + evaluateFirst(args, stack));
+        case "-" -> new SSLong(this.value - evaluateFirst(args, stack));
+        case "*" -> new SSLong(this.value * evaluateFirst(args, stack));
+        case "/" -> new SSLong(this.value / evaluateFirst(args, stack));
+        case "==" -> toBool(this.value == evaluateFirst(args, stack), stack);
+        case "!=" -> toBool(this.value != evaluateFirst(args, stack), stack);
+        case ">" -> toBool(this.value > evaluateFirst(args, stack), stack);
+        case "<" -> toBool(this.value < evaluateFirst(args, stack), stack);
+        case ">=" -> toBool(this.value >= evaluateFirst(args, stack), stack);
+        case "<=" -> toBool(this.value <= evaluateFirst(args, stack), stack);
+        default -> super.invoke(method, args, stack);
+        };
+    }
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	private static long evaluateFirst(final List<SSObject> args,
-			final Stack stack) {
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    private static long evaluateFirst(final List<SSObject> args, final Stack stack) {
 
-		return ((SSLong) args.get(0).evaluate(stack.pushNewFrame())).value;
-	}
+        return ((SSLong) args.get(0).evaluate(stack.pushNewFrame())).value;
+    }
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	private static SSObject toBool(final boolean condition) {
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    private static SSObject toBool(final boolean condition, final Stack stack) {
 
-		return condition ? SSTrue.instance() : SSFalse.instance();
-	}
+        return condition ? stack.getTrue() : stack.getFalse();
+    }
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	@Override
-	public String toString() {
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    @Override
+    public String toString() {
 
-		return this.value.toString();
-	}
+        return Long.toString(this.value);
+    }
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	@Override
-	public int hashCode() {
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    @Override
+    public int hashCode() {
 
-		return this.value.hashCode();
-	}
+        return Long.hashCode(this.value);
+    }
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	@Override
-	public boolean equals(final Object o) {
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    public int intValue() {
 
-		if (getClass() == o.getClass()) {
-			return this.value.equals(((SSLong) o).value);
-		} else {
-			return false;
-		}
-	}
+        return (int) this.value;
+    }
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	public final Long value;
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    @Override
+    public boolean equals(final Object o) {
 
-	private final static SSLong zero = new SSLong(0);
-	private final static SSLong one = new SSLong(1);
+        return o != null && getClass() == o.getClass()
+                && this.value == ((SSLong) o).value;
+    }
+
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    public final long value;
+
+    private final static SSLong zero = new SSLong(0);
+    private final static SSLong one = new SSLong(1);
 }

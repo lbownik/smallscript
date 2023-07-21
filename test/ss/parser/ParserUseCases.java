@@ -314,7 +314,7 @@ public class ParserUseCases {
 			assertEquals("bfnrt", ((Symbol) expresson.get(0)).value());
 		}
 		//------------------------------------------------------------------------
-		program = parse("abcśżą123!@#$%&*+=;<>?/:::;");
+		program = parse("abcśżą123!@#$%&*+=;<>?/:;");
 
 		assertEquals(2, program.size());
 		{
@@ -327,18 +327,18 @@ public class ParserUseCases {
 			Sentence expression = (Sentence) program.get(1);
 
 			assertEquals(1, expression.size());
-			assertEquals("<>?/:::", ((Symbol) expression.get(0)).value());
+			assertEquals("<>?/:", ((Symbol) expression.get(0)).value());
 		}
 		//------------------------------------------------------------------------
-		program = parse("abcśżą123!@#$%&*+= <>?/:::;");
+		program = parse(":abcśżą123!@#$%&*+= <>?/:;");
 
 		assertEquals(1, program.size());
 		{
 			Sentence expression = (Sentence) program.get(0);
 
 			assertEquals(2, expression.size());
-			assertEquals("abcśżą123!@#$%&*+=", ((Symbol) expression.get(0)).value());
-			assertEquals("<>?/:::", ((Symbol) expression.get(1)).value());
+			assertEquals(":abcśżą123!@#$%&*+=", ((Symbol) expression.get(0)).value());
+			assertEquals("<>?/:", ((Symbol) expression.get(1)).value());
 		}
 	}
 

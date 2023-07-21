@@ -33,7 +33,7 @@ public class SSAssignment extends SSObject {
 	@Override
 	public String toString() {
 
-		return "assignment";
+		return this.variableName + " = " + this.arg;
 	}
 
 	/****************************************************************************

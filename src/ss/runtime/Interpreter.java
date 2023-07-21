@@ -9,16 +9,14 @@ import ss.parser.Parser;
  ******************************************************************************/
 public class Interpreter {
 
-	public SSObject exacute(final String program) throws IOException {
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    public SSObject exacute(final String program, final Stack stack) throws IOException {
 
-		final var stack = Stack.create();
-		stack.addVariable("null", SSNull.instance());
-		stack.addVariable("true", SSTrue.instance());
-		stack.addVariable("false", SSFalse.instance());
-		
-		return new Parser().parse(program).toSSObject().evaluate(stack);
-	}
-	/****************************************************************************
-	 * 
-	****************************************************************************/
+        return new Parser().parse(program).toSSObject().evaluate(stack);
+    }
+    /****************************************************************************
+     * 
+    ****************************************************************************/
 }

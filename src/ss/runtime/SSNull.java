@@ -5,51 +5,51 @@ import java.util.List;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
  ************************************************************************/
-public final class SSNull extends SSObject {
+public final class SSNull extends SSDynamicObject {
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	public static SSNull instance() {
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    public static SSNull instance() {
 
-		return instance;
-	}
+        return instance;
+    }
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	@Override
-	public SSObject invoke(final String method, final List<SSObject> args,
-			final Stack stack) {
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    @Override
+    public SSObject invoke(final String method, final List<SSObject> args,
+            final Stack stack) {
 
-		return switch (method) {
-			case "size" -> SSLong.zero();
-			case "asString" -> new SSString(toString());
-			case "hash" -> new SSLong(hashCode());
-			case "equals" ->
-				this.equals(args.get(0)) ? SSTrue.instance() : SSFalse.instance();
-			default -> this;
-		};
-	}
+        return switch (method) {
+        case "asString" -> new SSString(toString());
+        case "hash" -> SSLong.zero();
+        case "equals:" ->
+            this.equals(args.get(0).evaluate(stack)) ? stack.getTrue() : stack.getFalse();
+        default -> this;
+        };
+    }
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	private SSNull() {
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    private SSNull() {
 
-	}
+    }
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	@Override
-	public String toString() {
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    @Override
+    public String toString() {
 
-		return "null";
-	}
+        return name;
+    }
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	private final static SSNull instance = new SSNull();
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    private final static SSNull instance = new SSNull();
+    public final static String name = "null";
 }

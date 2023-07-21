@@ -4,8 +4,8 @@ import java.util.List;
 
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
- ************************************************************************/
-public final class SSFalse extends SSObject {
+ ******************************************************************************/
+public final class SSFalse extends SSDynamicObject {
 
 	/****************************************************************************
 	 * 
@@ -30,10 +30,10 @@ public final class SSFalse extends SSObject {
 			final Stack stack) {
 
 		return switch (method) {
-			case "not" -> SSTrue.instance();
+			case "not" -> stack.getTrue();
 			case "and:" -> this;
 			case "or:", "xor:" -> args.get(0).evaluate(stack.pushNewFrame());
-			case "ifTrue:" -> SSNull.instance();
+			case "ifTrue:" -> stack.getNull();
 			case "ifFalse:" -> args.get(0).evaluate(stack.pushNewFrame());
 			case "ifTrue:ifFalse:" -> args.get(1).evaluate(stack.pushNewFrame());
 			default -> super.invoke(method, args, stack);
@@ -46,11 +46,12 @@ public final class SSFalse extends SSObject {
 	@Override
 	public String toString() {
 
-		return "false";
+		return name;
 	}
 
 	/****************************************************************************
 	 * 
 	****************************************************************************/
 	private final static SSFalse instance = new SSFalse();
+	public final static String name = "false";
 }

@@ -30,7 +30,7 @@ public class SSVariable extends SSObject {
 	@Override
 	public String toString() {
 
-		return "variable";
+		return this.variableName;
 	}
 	/****************************************************************************
 	 * 

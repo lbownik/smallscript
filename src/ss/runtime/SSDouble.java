@@ -4,97 +4,86 @@ import java.util.List;
 
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
- ************************************************************************/
-public final class SSDouble extends SSObject {
+ ******************************************************************************/
+public final class SSDouble extends SSDynamicObject {
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	public SSDouble(final Double value) {
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    public SSDouble(final double value) {
 
-		this.value = value;
-	}
+        this.value = Double.valueOf(value);
+    }
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	public SSDouble(final double value) {
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    @Override
+    public SSObject invoke(final String method, final List<SSObject> args,
+            final Stack stack) {
 
-		this.value = Double.valueOf(value);
-	}
+        return switch (method) {
+        case "+" -> new SSDouble(this.value + evaluateFirst(args, stack));
+        case "-" -> new SSDouble(this.value - evaluateFirst(args, stack));
+        case "*" -> new SSDouble(this.value * evaluateFirst(args, stack));
+        case "/" -> new SSDouble(this.value / evaluateFirst(args, stack));
+        case "==" -> toBool(this.value == evaluateFirst(args, stack), stack);
+        case "!=" -> toBool(this.value != evaluateFirst(args, stack), stack);
+        case ">" -> toBool(this.value > evaluateFirst(args, stack), stack);
+        case "<" -> toBool(this.value < evaluateFirst(args, stack), stack);
+        case ">=" -> toBool(this.value >= evaluateFirst(args, stack), stack);
+        case "<=" -> toBool(this.value <= evaluateFirst(args, stack), stack);
+        default -> super.invoke(method, args, stack);
+        };
+    }
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	@Override
-	public SSObject invoke(final String method, final List<SSObject> args,
-			final Stack stack) {
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    private static double evaluateFirst(final List<SSObject> args, final Stack stack) {
 
-		return switch (method) {
-			case "+" -> new SSDouble(this.value + evaluateFirst(args, stack));
-			case "-" -> new SSDouble(this.value - evaluateFirst(args, stack));
-			case "*" -> new SSDouble(this.value * evaluateFirst(args, stack));
-			case "/" -> new SSDouble(this.value / evaluateFirst(args, stack));
-			case "==" -> toBool(this.value == evaluateFirst(args, stack));
-			case "!=" -> toBool(this.value != evaluateFirst(args, stack));
-			case ">" -> toBool(this.value > evaluateFirst(args, stack));
-			case "<" -> toBool(this.value < evaluateFirst(args, stack));
-			case ">=" -> toBool(this.value >= evaluateFirst(args, stack));
-			case "<=" -> toBool(this.value <= evaluateFirst(args, stack));
-			default -> super.invoke(method, args, stack);
-		};
-	}
+        return ((SSDouble) args.get(0).evaluate(stack.pushNewFrame())).value;
+    }
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	private static double evaluateFirst(final List<SSObject> args,
-			final Stack stack) {
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    private static SSObject toBool(final boolean condition, final Stack stack) {
 
-		return ((SSDouble) args.get(0).evaluate(stack.pushNewFrame())).value;
-	}
+        return condition ? stack.getTrue() : stack.getFalse();
+    }
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	private static SSObject toBool(final boolean condition) {
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    @Override
+    public String toString() {
 
-		return condition ? SSTrue.instance() : SSFalse.instance();
-	}
+        return Double.toString(this.value);
+    }
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	@Override
-	public String toString() {
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    @Override
+    public int hashCode() {
 
-		return this.value.toString();
-	}
+        return Double.hashCode(this.value);
+    }
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	@Override
-	public int hashCode() {
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    @Override
+    public boolean equals(final Object o) {
 
-		return this.value.hashCode();
-	}
+        return o != null && getClass() == o.getClass()
+                && Double.compare(this.value, ((SSDouble) o).value) == 0;
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	@Override
-	public boolean equals(final Object o) {
+    }
 
-		if (getClass() == o.getClass()) {
-			return this.value.equals(((SSDouble) o).value);
-		} else {
-			return false;
-		}
-	}
-
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	public final Double value;
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    public final double value;
 }

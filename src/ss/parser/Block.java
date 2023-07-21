@@ -1,6 +1,7 @@
 package ss.parser;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import ss.runtime.SSBlock;
 import ss.runtime.SSNull;
@@ -9,16 +10,7 @@ import ss.runtime.SSObject;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
-public final class Block extends ArrayList<Sentence> implements Expression {
-
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	@Override
-	public String toString() {
-
-		return "Block";
-	}
+public class Block extends ArrayList<Sentence> implements Expression {
 
 	/****************************************************************************
 	 * 
@@ -37,7 +29,17 @@ public final class Block extends ArrayList<Sentence> implements Expression {
 		if (isEmpty()) {
 			return SSNull.instance();
 		} else {
-			return new SSBlock(stream().map(Expression::toSSObject).toList());
+			final Sentence firstSentence = get(0);
+			final List<String> variableNames = firstSentence.getVariableDeclarations();
+			if (variableNames.isEmpty()) {
+				return new SSBlock(stream().map(Expression::toSSObject).toList(),
+						variableNames);
+			} else {
+				firstSentence.removeVariableDeclarations();
+				return new SSBlock(stream().map(Expression::toSSObject).toList(),
+						variableNames);
+			}
 		}
 	}
+
 }

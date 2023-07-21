@@ -7,52 +7,60 @@ import java.util.List;
  ******************************************************************************/
 public class SSExpression extends SSObject {
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	public SSExpression(final SSObject object, final String method,
-			final List<SSObject> args) {
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    public SSExpression(final SSObject object, final String method,
+            final List<SSObject> args) {
 
-		this.object = object;
-		this.method = method;
-		this.args = args;
-	}
+        this.object = object;
+        this.method = method;
+        this.args = args;
+    }
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	@Override
-	public SSObject invoke(final String method, final List<SSObject> args,
-			final Stack stack) {
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    @Override
+    public SSObject invoke(final String method, final List<SSObject> args,
+            final Stack stack) {
 
-		return switch (method) {
-			case "value" -> evaluateThis(stack);
-			default -> super.invoke(this.method, this.args, stack);
-		};
-	}
+        return switch (method) {
+        case "evaluate" -> evaluateThis(stack);
+        default -> super.invoke(this.method, this.args, stack);
+        };
+    }
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	private SSObject evaluateThis(final Stack stack) {
+    /****************************************************************************
+    * 
+    ****************************************************************************/
+    public SSObject evaluate(final Stack stack) {
 
-		return this.object.evaluate(stack.pushNewFrame()).invoke(this.method,
-				this.args, stack);
-	}
+        return invoke("evaluate", this.args, stack);
+    }
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	@Override
-	public String toString() {
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    private SSObject evaluateThis(final Stack stack) {
 
-		return "expression";
-	}
+        return this.object.evaluate(stack.pushNewFrame()).invoke(this.method, this.args,
+                stack);
+    }
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	private final SSObject object;
-	private final String method;
-	private final List<SSObject> args;
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    @Override
+    public String toString() {
+
+        return this.object + " " + this.method + " " + this.args;
+    }
+
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    private final SSObject object;
+    private final String method;
+    private final List<SSObject> args;
 }

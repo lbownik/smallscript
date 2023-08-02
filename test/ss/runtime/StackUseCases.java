@@ -42,6 +42,7 @@ public class StackUseCases {
         stack = topFrame.setVariable("a", SSNull.instance());
 
         assertSame(SSNull.instance(), stack.getVariable("a"));
+        assertEquals("{}", topFrame.toString());
     }
 
     /****************************************************************************

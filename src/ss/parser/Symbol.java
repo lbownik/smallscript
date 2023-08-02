@@ -79,7 +79,7 @@ public final class Symbol implements Expression {
     public boolean isBuiltInBinaryMethod() {
 
         return switch (this.value) {
-        case "+", "-", "*", "/", "==", "!=", ">", "<", ">=", "<=" -> true;
+        case "+", "-", "*", "/", "==", "<>", ">", "<", ">=", "<=" -> true;
         default -> false;
         };
     }

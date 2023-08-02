@@ -1,27 +1,25 @@
 package ss.runtime;
 
-import java.util.List;
-
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
-public class SSVariable extends SSObject {
+public class SSVariable implements SSObject {
 
 	/****************************************************************************
 	 * 
 	****************************************************************************/
 	public SSVariable(final String variableName) {
-		
+
 		this.variableName = variableName;
 	}
+
 	/****************************************************************************
 	 * 
 	****************************************************************************/
 	@Override
-	public SSObject invoke(final String method, final List<SSObject> args,
-			final Stack stack) {
+	public SSObject evaluate(final Stack stack) {
 
-		return stack.getVariable(this.variableName).invoke(method, args, stack);
+		return stack.getVariable(this.variableName);
 	}
 
 	/****************************************************************************
@@ -32,6 +30,7 @@ public class SSVariable extends SSObject {
 
 		return this.variableName;
 	}
+
 	/****************************************************************************
 	 * 
 	****************************************************************************/

@@ -26,8 +26,7 @@ public final class SSFalse extends SSDynamicObject {
 	 * 
 	****************************************************************************/
 	@Override
-	public SSObject invoke(final String method, final List<SSObject> args,
-			final Stack stack) {
+	public SSObject invoke(final Stack stack, final String method, final List<SSObject> args) {
 
 		return switch (method) {
 			case "not" -> stack.getTrue();
@@ -36,7 +35,7 @@ public final class SSFalse extends SSDynamicObject {
 			case "ifTrue:" -> stack.getNull();
 			case "ifFalse:" -> args.get(0).evaluate(stack.pushNewFrame());
 			case "ifTrue:ifFalse:" -> args.get(1).evaluate(stack.pushNewFrame());
-			default -> super.invoke(method, args, stack);
+			default -> super.invoke(stack, method, args);
 		};
 	}
 

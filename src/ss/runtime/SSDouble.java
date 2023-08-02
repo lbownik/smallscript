@@ -19,21 +19,21 @@ public final class SSDouble extends SSDynamicObject {
      * 
     ****************************************************************************/
     @Override
-    public SSObject invoke(final String method, final List<SSObject> args,
-            final Stack stack) {
+    public SSObject invoke(final Stack stack, final String method,
+            final List<SSObject> args) {
 
         return switch (method) {
         case "+" -> new SSDouble(this.value + evaluateFirst(args, stack));
         case "-" -> new SSDouble(this.value - evaluateFirst(args, stack));
         case "*" -> new SSDouble(this.value * evaluateFirst(args, stack));
         case "/" -> new SSDouble(this.value / evaluateFirst(args, stack));
-        case "==" -> toBool(this.value == evaluateFirst(args, stack), stack);
-        case "!=" -> toBool(this.value != evaluateFirst(args, stack), stack);
-        case ">" -> toBool(this.value > evaluateFirst(args, stack), stack);
-        case "<" -> toBool(this.value < evaluateFirst(args, stack), stack);
-        case ">=" -> toBool(this.value >= evaluateFirst(args, stack), stack);
-        case "<=" -> toBool(this.value <= evaluateFirst(args, stack), stack);
-        default -> super.invoke(method, args, stack);
+        case "==" -> stack.get(this.value == evaluateFirst(args, stack));
+        case "<>" -> stack.get(this.value != evaluateFirst(args, stack));
+        case ">" -> stack.get(this.value > evaluateFirst(args, stack));
+        case "<" -> stack.get(this.value < evaluateFirst(args, stack));
+        case ">=" -> stack.get(this.value >= evaluateFirst(args, stack));
+        case "<=" -> stack.get(this.value <= evaluateFirst(args, stack));
+        default -> super.invoke(stack, method, args);
         };
     }
 
@@ -42,15 +42,16 @@ public final class SSDouble extends SSDynamicObject {
     ****************************************************************************/
     private static double evaluateFirst(final List<SSObject> args, final Stack stack) {
 
-        return ((SSDouble) args.get(0).evaluate(stack.pushNewFrame())).value;
-    }
+        var first = args.get(0).evaluate(stack.pushNewFrame());
 
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    private static SSObject toBool(final boolean condition, final Stack stack) {
-
-        return condition ? stack.getTrue() : stack.getFalse();
+        if (first instanceof SSDouble d) {
+            return d.value;
+        } else if (first instanceof SSLong l) {
+            return l.value;
+        } else {
+            throw new RuntimeException(
+                    "Cannot cast " + first.getClass() + " to SSDouble.");
+        }
     }
 
     /****************************************************************************
@@ -77,7 +78,7 @@ public final class SSDouble extends SSDynamicObject {
     @Override
     public boolean equals(final Object o) {
 
-        return o != null && getClass() == o.getClass()
+        return getClass() == o.getClass()
                 && Double.compare(this.value, ((SSDouble) o).value) == 0;
 
     }

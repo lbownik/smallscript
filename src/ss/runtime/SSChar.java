@@ -19,17 +19,17 @@ public final class SSChar extends SSDynamicObject {
      * 
     ****************************************************************************/
     @Override
-    public SSObject invoke(final String method, final List<SSObject> args,
-            final Stack stack) {
+    public SSObject invoke(final Stack stack, final String method,
+            final List<SSObject> args) {
 
         return switch (method) {
-        case "==" -> toBool(this.value == evaluateFirst(args, stack), stack);
-        case "!=" -> toBool(this.value != evaluateFirst(args, stack), stack);
-        case ">" -> toBool(this.value > evaluateFirst(args, stack), stack);
-        case "<" -> toBool(this.value < evaluateFirst(args, stack), stack);
-        case ">=" -> toBool(this.value >= evaluateFirst(args, stack), stack);
-        case "<=" -> toBool(this.value <= evaluateFirst(args, stack), stack);
-        default -> super.invoke(method, args, stack);
+        case "==" -> stack.get(this.value == evaluateFirst(args, stack));
+        case "<>" -> stack.get(this.value != evaluateFirst(args, stack));
+        case ">" -> stack.get(this.value > evaluateFirst(args, stack));
+        case "<" -> stack.get(this.value < evaluateFirst(args, stack));
+        case ">=" -> stack.get(this.value >= evaluateFirst(args, stack));
+        case "<=" -> stack.get(this.value <= evaluateFirst(args, stack));
+        default -> super.invoke(stack, method, args);
         };
     }
 
@@ -39,14 +39,6 @@ public final class SSChar extends SSDynamicObject {
     private static char evaluateFirst(final List<SSObject> args, final Stack stack) {
 
         return ((SSChar) args.get(0).evaluate(stack.pushNewFrame())).value;
-    }
-
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    private static SSObject toBool(final boolean condition, final Stack stack) {
-
-        return condition ? stack.getTrue() : stack.getFalse();
     }
 
     /****************************************************************************
@@ -73,8 +65,7 @@ public final class SSChar extends SSDynamicObject {
     @Override
     public boolean equals(final Object o) {
 
-        return o != null && getClass() == o.getClass()
-                && this.value == ((SSChar) o).value;
+        return getClass() == o.getClass() && this.value == ((SSChar) o).value;
 
     }
 

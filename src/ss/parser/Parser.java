@@ -51,7 +51,7 @@ public final class Parser {
 		this.reader = reader;
 		try {
 			this.position = -1;
-			final Program result = new Program();
+			final Block result = new Block();
 
 			do {
 				final int currentChar = consumeWhitespace(read());
@@ -162,7 +162,8 @@ public final class Parser {
 				throwUnexpected(currentChar);
 			}
 			if (isEndOfValue(currentChar)) {
-				throwUnexpected(currentChar);
+				//throwUnexpected(currentChar);
+			    return parseSymbol(currentChar);
 			}
 		}
 		while (isDigit(currentChar)) {

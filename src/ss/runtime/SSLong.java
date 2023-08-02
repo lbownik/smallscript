@@ -26,39 +26,91 @@ public final class SSLong extends SSDynamicObject {
     /****************************************************************************
      * 
     ****************************************************************************/
-    public static SSLong zero() {
-
-        return zero;
-    }
-
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    public static SSLong one() {
-
-        return one;
-    }
-
-    /****************************************************************************
-     * 
-    ****************************************************************************/
     @Override
-    public SSObject invoke(final String method, final List<SSObject> args,
-            final Stack stack) {
+    public SSObject invoke(final Stack stack, final String method,
+            final List<SSObject> args) {
 
         return switch (method) {
-        case "+" -> new SSLong(this.value + evaluateFirst(args, stack));
-        case "-" -> new SSLong(this.value - evaluateFirst(args, stack));
-        case "*" -> new SSLong(this.value * evaluateFirst(args, stack));
-        case "/" -> new SSLong(this.value / evaluateFirst(args, stack));
-        case "==" -> toBool(this.value == evaluateFirst(args, stack), stack);
-        case "!=" -> toBool(this.value != evaluateFirst(args, stack), stack);
-        case ">" -> toBool(this.value > evaluateFirst(args, stack), stack);
-        case "<" -> toBool(this.value < evaluateFirst(args, stack), stack);
-        case ">=" -> toBool(this.value >= evaluateFirst(args, stack), stack);
-        case "<=" -> toBool(this.value <= evaluateFirst(args, stack), stack);
-        default -> super.invoke(method, args, stack);
+        case "+" -> add(stack, args);
+        case "-" -> substract(stack, args);
+        case "*" -> multiply(stack, args);
+        case "/" -> divide(stack, args);
+        case "==" -> stack.get(value == evaluateFirst(args, stack));
+        case "<>" -> stack.get(this.value != evaluateFirst(args, stack));
+        case ">" -> stack.get(this.value > evaluateFirst(args, stack));
+        case "<" -> stack.get(this.value < evaluateFirst(args, stack));
+        case ">=" -> stack.get(this.value >= evaluateFirst(args, stack));
+        case "<=" -> stack.get(this.value <= evaluateFirst(args, stack));
+        default -> super.invoke(stack, method, args);
         };
+    }
+
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    private SSObject add(final Stack stack, final List<SSObject> args) {
+
+        final var arg = args.get(0).evaluate(stack.pushNewFrame());
+
+        if (arg instanceof SSLong l) {
+            return new SSLong(this.value + l.value);
+        } else if (arg instanceof SSDouble d) {
+            return new SSDouble(this.value + d.value);
+        } else {
+            throw new RuntimeException(
+                    "Cannot cast " + arg.getClass() + " to SSLong or SSDouble");
+        }
+    }
+
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    private SSObject substract(final Stack stack, final List<SSObject> args) {
+
+        final var arg = args.get(0).evaluate(stack.pushNewFrame());
+
+        if (arg instanceof SSLong l) {
+            return new SSLong(this.value - l.value);
+        } else if (arg instanceof SSDouble d) {
+            return new SSDouble(this.value - d.value);
+        } else {
+            throw new RuntimeException(
+                    "Cannot cast " + arg.getClass() + " to SSLong or SSDouble");
+        }
+    }
+
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    private SSObject multiply(final Stack stack, final List<SSObject> args) {
+
+        final var arg = args.get(0).evaluate(stack.pushNewFrame());
+
+        if (arg instanceof SSLong l) {
+            return new SSLong(this.value * l.value);
+        } else if (arg instanceof SSDouble d) {
+            return new SSDouble(this.value * d.value);
+        } else {
+            throw new RuntimeException(
+                    "Cannot cast " + arg.getClass() + " to SSLong or SSDouble");
+        }
+    }
+
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    private SSObject divide(final Stack stack, final List<SSObject> args) {
+
+        final var arg = args.get(0).evaluate(stack.pushNewFrame());
+
+        if (arg instanceof SSLong l) {
+            return new SSLong(this.value / l.value);
+        } else if (arg instanceof SSDouble d) {
+            return new SSDouble(this.value / d.value);
+        } else {
+            throw new RuntimeException(
+                    "Cannot cast " + arg.getClass() + " to SSLong or SSDouble");
+        }
     }
 
     /****************************************************************************
@@ -67,14 +119,6 @@ public final class SSLong extends SSDynamicObject {
     private static long evaluateFirst(final List<SSObject> args, final Stack stack) {
 
         return ((SSLong) args.get(0).evaluate(stack.pushNewFrame())).value;
-    }
-
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    private static SSObject toBool(final boolean condition, final Stack stack) {
-
-        return condition ? stack.getTrue() : stack.getFalse();
     }
 
     /****************************************************************************
@@ -109,15 +153,11 @@ public final class SSLong extends SSDynamicObject {
     @Override
     public boolean equals(final Object o) {
 
-        return o != null && getClass() == o.getClass()
-                && this.value == ((SSLong) o).value;
+        return getClass() == o.getClass() && this.value == ((SSLong) o).value;
     }
 
     /****************************************************************************
      * 
     ****************************************************************************/
     public final long value;
-
-    private final static SSLong zero = new SSLong(0);
-    private final static SSLong one = new SSLong(1);
 }

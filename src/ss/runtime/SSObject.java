@@ -1,44 +1,45 @@
 package ss.runtime;
 
-import static java.util.Collections.emptyList;
 import java.util.List;
+import static java.util.Collections.emptyList;
 
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
-public class SSObject {
+public interface SSObject {
 
     /****************************************************************************
-     * 
-    ****************************************************************************/
-    public SSObject invoke(final String method, final List<SSObject> args,
-            final Stack stack) {
+     * Calls method of the encompassed object performing necessary computations
+     * if needed.
+     * @param stack a clean stack frame
+     ****************************************************************************/
+    default public SSObject invoke(final Stack stack, final String method,
+            final List<SSObject> args) {
 
-        return switch (method) {
-        case "evaluate" -> this;
-        case "asString" -> new SSString(toString());
-        case "hash" -> new SSLong(hashCode());
-        case "equals:" ->
-            this.equals(args.get(0).evaluate(stack)) ? stack.getTrue() : stack.getFalse();
-        default -> throw new RuntimeException("Method '" + method + "' is not defined.");
-        };
+        return evaluate(stack.pushNewFrame()).invoke(stack.pushNewFrame(), method, args);
     }
 
     /****************************************************************************
-     * 
+    * Calls method of the encompassed object performing necessary computations
+    * if needed.
+    * @param stack a clean stack frame
     ****************************************************************************/
-    public SSObject evaluate(final Stack stack) {
+    default public SSObject invoke(final Stack stack, final String method) {
 
-        return invoke("evaluate", emptyList(), stack);
+        return evaluate(stack.pushNewFrame()).invoke(stack.pushNewFrame(), method,
+                emptyList());
     }
 
     /****************************************************************************
-     * 
-    ****************************************************************************/
-    public SSObject evaluate(Stack stack, final List<SSObject> args) {
+     * Returns an object which can accept method calls performing necessary
+     * computations if needed.
+     * @param stack a clean stack frame
+     ****************************************************************************/
+    default public SSObject evaluate(final Stack stack) {
 
-        return invoke("evaluate", emptyList(), stack);
+        return this;
     }
+
     /****************************************************************************
      * 
     ****************************************************************************/

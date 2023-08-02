@@ -7,127 +7,136 @@ import java.util.HashMap;
  ******************************************************************************/
 public interface Stack {
 
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    default public Stack addVariable(final String name, final SSObject value) {
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	default public Stack addVariable(final String name, final SSObject value) {
 
-        throw new RuntimeException("Stack not initialized.");
-    }
+		throw new RuntimeException("Stack not initialized.");
+	}
 
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    default public Stack setVariable(final String name, final SSObject value) {
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	default public Stack setVariable(final String name, final SSObject value) {
 
-        throw new RuntimeException("Variable '" + name + "' does not exist.");
-    }
+		throw new RuntimeException("Variable '" + name + "' does not exist.");
+	}
 
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    default public SSObject getVariable(final String name) {
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	default public SSObject getVariable(final String name) {
 
-        throw new RuntimeException("Variable '" + name + "' does not exist.");
-    }
+		throw new RuntimeException("Variable '" + name + "' does not exist.");
+	}
 
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    default public SSObject getTrue() {
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	default public SSObject getTrue() {
 
-        return getVariable(SSTrue.name);
-    }
+		return getVariable(SSTrue.name);
+	}
 
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    default public SSObject getFalse() {
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	default public SSObject getFalse() {
 
-        return getVariable(SSFalse.name);
-    }
+		return getVariable(SSFalse.name);
+	}
 
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    default public SSObject getNull() {
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	default public SSObject get(final boolean bool) {
 
-        return getVariable(SSNull.name);
-    }
+		return bool ? getVariable(SSTrue.name) : getVariable(SSFalse.name);
+	}
 
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    default public Stack pushNewFrame() {
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	default public SSObject getNull() {
 
-        return new Frame(this);
-    }
+		return getVariable(SSNull.name);
+	}
 
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    public static Stack create() {
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	default public Stack pushNewFrame() {
 
-        final var stack = new Stack() {
-        }.pushNewFrame();
-        stack.addVariable("null", SSNull.instance());
-        stack.addVariable("true", SSTrue.instance());
-        stack.addVariable("false", SSFalse.instance());
-        stack.addVariable("object", new SSDynamicObject());
-        return stack;
-    }
+		return new Frame(this);
+	}
 
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    public static class Frame extends HashMap<String, SSObject> implements Stack {
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	public static Stack create() {
 
-        /*************************************************************************
-         * 
-        *************************************************************************/
-        private Frame(final Stack previousFrame) {
+		final var stack = new Stack() {
+		}.pushNewFrame();
+		stack.addVariable("null", SSNull.instance());
+		stack.addVariable("true", SSTrue.instance());
+		stack.addVariable("false", SSFalse.instance());
+		stack.addVariable("object", new SSDynamicObject());
+		return stack;
+	}
 
-            this.previousFrame = previousFrame;
-        }
+	/****************************************************************************
+	 * 
+	****************************************************************************/
+	public static class Frame extends HashMap<String, SSObject>
+			implements Stack {
 
-        /*************************************************************************
-         * 
-        *************************************************************************/
-        @Override
-        public Stack addVariable(final String name, final SSObject value) {
+		/*************************************************************************
+		 * 
+		*************************************************************************/
+		private Frame(final Stack previousFrame) {
 
-            if (put(name, value) == null) {
-                return this;
-            } else {
-                throw new RuntimeException(
-                        "Variable '" + name + "' already exists in this scope.");
-            }
-        }
+			this.previousFrame = previousFrame;
+		}
 
-        /*************************************************************************
-         * 
-        *************************************************************************/
-        @Override
-        public Stack setVariable(final String name, final SSObject value) {
+		/*************************************************************************
+		 * 
+		*************************************************************************/
+		@Override
+		public Stack addVariable(final String name, final SSObject value) {
 
-            final var previousValue = replace(name, value);
-            return previousValue != null ? this
-                    : this.previousFrame.setVariable(name, value);
-        }
+			if (put(name, value) == null) {
+				return this;
+			} else {
+				throw new RuntimeException(
+						"Variable '" + name + "' already exists in this scope.");
+			}
+		}
 
-        /*************************************************************************
-         * 
-        *************************************************************************/
-        @Override
-        public SSObject getVariable(final String name) {
+		/*************************************************************************
+		 * 
+		*************************************************************************/
+		@Override
+		public Stack setVariable(final String name, final SSObject value) {
 
-            final var value = get(name);
-            return value != null ? value : this.previousFrame.getVariable(name);
-        }
+			final var previousValue = replace(name, value);
+			return previousValue != null ? this
+					: this.previousFrame.setVariable(name, value);
+		}
 
-        /*************************************************************************
-         * 
-        *************************************************************************/
-        private final Stack previousFrame;
-    }
+		/*************************************************************************
+		 * 
+		*************************************************************************/
+		@Override
+		public SSObject getVariable(final String name) {
+
+			final var value = get(name);
+			return value != null ? value : this.previousFrame.getVariable(name);
+		}
+
+		/*************************************************************************
+		 * 
+		*************************************************************************/
+		private final Stack previousFrame;
+	}
 }

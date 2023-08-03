@@ -162,8 +162,7 @@ public final class Parser {
 				throwUnexpected(currentChar);
 			}
 			if (isEndOfValue(currentChar)) {
-				//throwUnexpected(currentChar);
-			    return parseSymbol(currentChar);
+				throwUnexpected(currentChar);
 			}
 		}
 		while (isDigit(currentChar)) {

@@ -3,12 +3,12 @@ package ss.runtime;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
-public class SSVariable implements SSObject {
+public class SSVariableReference implements SSObject {
 
 	/****************************************************************************
 	 * 
 	****************************************************************************/
-	public SSVariable(final String variableName) {
+	public SSVariableReference(final String variableName) {
 
 		this.variableName = variableName;
 	}

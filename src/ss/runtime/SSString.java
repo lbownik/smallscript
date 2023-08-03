@@ -23,7 +23,7 @@ public final class SSString extends SSDynamicObject {
             final List<SSObject> args) {
 
         return switch (method) {
-        case "+" -> new SSString(this.value.concat(((SSString) args.get(0)).value));
+        case "concatenate:" -> new SSString(this.value.concat(((SSString) args.get(0)).value));
         case "size" -> new SSLong(this.value.length());
         case "at:" -> new SSChar(this.value.charAt(((SSLong) args.get(0)).intValue()));
         default -> super.invoke(stack, method, args);

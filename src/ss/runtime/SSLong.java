@@ -31,16 +31,14 @@ public final class SSLong extends SSDynamicObject {
             final List<SSObject> args) {
 
         return switch (method) {
-        case "+" -> add(stack, args);
-        case "-" -> substract(stack, args);
-        case "*" -> multiply(stack, args);
-        case "/" -> divide(stack, args);
-        case "==" -> stack.get(value == evaluateFirst(args, stack));
-        case "<>" -> stack.get(this.value != evaluateFirst(args, stack));
-        case ">" -> stack.get(this.value > evaluateFirst(args, stack));
-        case "<" -> stack.get(this.value < evaluateFirst(args, stack));
-        case ">=" -> stack.get(this.value >= evaluateFirst(args, stack));
-        case "<=" -> stack.get(this.value <= evaluateFirst(args, stack));
+        case "plus:" -> add(stack, args);
+        case "minus:" -> substract(stack, args);
+        case "multipliedBy:" -> multiply(stack, args);
+        case "dividedBy:" -> divide(stack, args);
+        case "isGreaterThan:" -> stack.get(this.value > evaluateFirst(args, stack));
+        case "isLessThan:" -> stack.get(this.value < evaluateFirst(args, stack));
+        case "isGreaterOrEqualTo:" -> stack.get(this.value >= evaluateFirst(args, stack));
+        case "isLessOrEqualTo:" -> stack.get(this.value <= evaluateFirst(args, stack));
         default -> super.invoke(stack, method, args);
         };
     }

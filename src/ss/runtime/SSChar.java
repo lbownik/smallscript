@@ -23,12 +23,10 @@ public final class SSChar extends SSDynamicObject {
             final List<SSObject> args) {
 
         return switch (method) {
-        case "==" -> stack.get(this.value == evaluateFirst(args, stack));
-        case "<>" -> stack.get(this.value != evaluateFirst(args, stack));
-        case ">" -> stack.get(this.value > evaluateFirst(args, stack));
-        case "<" -> stack.get(this.value < evaluateFirst(args, stack));
-        case ">=" -> stack.get(this.value >= evaluateFirst(args, stack));
-        case "<=" -> stack.get(this.value <= evaluateFirst(args, stack));
+        case "isGreaterThan:" -> stack.get(this.value > evaluateFirst(args, stack));
+        case "isLessThan:" -> stack.get(this.value < evaluateFirst(args, stack));
+        case "isGreaterOrEqualTo:" -> stack.get(this.value >= evaluateFirst(args, stack));
+        case "isLessOrEqualTo:" -> stack.get(this.value <= evaluateFirst(args, stack));
         default -> super.invoke(stack, method, args);
         };
     }

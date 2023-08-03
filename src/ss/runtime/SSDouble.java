@@ -23,16 +23,14 @@ public final class SSDouble extends SSDynamicObject {
             final List<SSObject> args) {
 
         return switch (method) {
-        case "+" -> new SSDouble(this.value + evaluateFirst(args, stack));
-        case "-" -> new SSDouble(this.value - evaluateFirst(args, stack));
-        case "*" -> new SSDouble(this.value * evaluateFirst(args, stack));
-        case "/" -> new SSDouble(this.value / evaluateFirst(args, stack));
-        case "==" -> stack.get(this.value == evaluateFirst(args, stack));
-        case "<>" -> stack.get(this.value != evaluateFirst(args, stack));
-        case ">" -> stack.get(this.value > evaluateFirst(args, stack));
-        case "<" -> stack.get(this.value < evaluateFirst(args, stack));
-        case ">=" -> stack.get(this.value >= evaluateFirst(args, stack));
-        case "<=" -> stack.get(this.value <= evaluateFirst(args, stack));
+        case "plus:" -> new SSDouble(this.value + evaluateFirst(args, stack));
+        case "minus:" -> new SSDouble(this.value - evaluateFirst(args, stack));
+        case "multipliedBy:" -> new SSDouble(this.value * evaluateFirst(args, stack));
+        case "dividedBy:" -> new SSDouble(this.value / evaluateFirst(args, stack));
+        case "isGreaterThan:" -> stack.get(this.value > evaluateFirst(args, stack));
+        case "isLessThan:" -> stack.get(this.value < evaluateFirst(args, stack));
+        case "isGreaterOrEqualTo:" -> stack.get(this.value >= evaluateFirst(args, stack));
+        case "isLessOrEqualTo:" -> stack.get(this.value <= evaluateFirst(args, stack));
         default -> super.invoke(stack, method, args);
         };
     }

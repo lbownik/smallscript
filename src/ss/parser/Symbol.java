@@ -1,7 +1,7 @@
 package ss.parser;
 
 import ss.runtime.SSObject;
-import ss.runtime.SSVariable;
+import ss.runtime.SSVariableReference;
 
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
@@ -70,18 +70,7 @@ public final class Symbol implements Expression {
     ****************************************************************************/
     public boolean isMethodWithArgs() {
 
-        return this.value.endsWith(":") || isBuiltInBinaryMethod();
-    }
-
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    public boolean isBuiltInBinaryMethod() {
-
-        return switch (this.value) {
-        case "+", "-", "*", "/", "==", "<>", ">", "<", ">=", "<=" -> true;
-        default -> false;
-        };
+        return this.value.endsWith(":");
     }
 
     /****************************************************************************
@@ -132,8 +121,7 @@ public final class Symbol implements Expression {
     @Override
     public boolean equals(final Object o) {
 
-        return o != null && getClass() == o.getClass()
-                && this.value.equals(((Symbol) o).value);
+        return getClass() == o.getClass() && this.value.equals(((Symbol) o).value);
     }
 
     /****************************************************************************
@@ -141,7 +129,7 @@ public final class Symbol implements Expression {
     ****************************************************************************/
     public SSObject toSSObject() {
 
-        return new SSVariable(this.value);
+        return new SSVariableReference(this.value);
     }
 
     /****************************************************************************

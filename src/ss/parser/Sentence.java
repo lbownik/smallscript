@@ -105,10 +105,21 @@ public class Sentence extends ArrayList<Expression> implements Expression {
     private SSObject createNAryExpressionOrAssignment() {
 
         if (firstExpressionIsVariable() && secondExpressionIsAssignment()) {
-            return new SSAssignment(get(0).value().toString(), get(2).toSSObject());
+            return new SSAssignment(get(0).value().toString(), createAssignment());
         } else {
             return createNAryExpression();
         }
+    }
+
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    private SSObject createAssignment() {
+
+        final var sentence = new Sentence();
+        stream().skip(2).forEach(sentence::add);
+        
+        return new SSAssignment(get(0).value().toString(), sentence.toSSObject());
     }
 
     /****************************************************************************

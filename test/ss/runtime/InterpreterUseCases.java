@@ -113,7 +113,7 @@ public class InterpreterUseCases {
         assertResultEquals(SSFalse.instance(), "\"abc\" equals: null;");
         assertResultEquals(new SSLong(3), "\"abc\" size;");
         assertResultEquals(new SSChar('a'), "\"abc\" at: 0;");
-        assertResultEquals(new SSString("abcd"), "\"abc\" + \"d\";");
+        assertResultEquals(new SSString("abcd"), "\"abc\" concatenate: \"d\";");
     }
 
     /****************************************************************************
@@ -124,49 +124,46 @@ public class InterpreterUseCases {
 
         assertResultEquals(new SSLong(1), "1;");
         assertResultEquals(new SSLong(3), "1;2;3;");
-        assertResultEquals(new SSLong(2), "1 + 1;");
-        assertResultEquals(new SSLong(1), "1 - 1;");
-        assertResultEquals(new SSLong(4), "1 + 1; 2 * 2;");
-        assertResultEquals(new SSLong(3), "6 / 2;");
-        assertResultEquals(new SSLong(4), "(2 * 1) + 2;");
-        assertResultEquals(new SSLong(6), "2 * (1 + 2);");
+        assertResultEquals(new SSLong(2), "1 plus: 1;");
+        assertResultEquals(new SSLong(0), "1 minus: 1;");
+        assertResultEquals(new SSLong(4), "1 plus: 1; 2 multipliedBy: 2;");
+        assertResultEquals(new SSLong(3), "6 dividedBy: 2;");
+        assertResultEquals(new SSLong(4), "(2 multipliedBy: 1) plus: 2;");
+        assertResultEquals(new SSLong(6), "2 multipliedBy: (1 plus: 2);");
         assertResultEquals(new SSLong(1), "1 hash;");
-        assertResultEquals(new SSLong(4), "({2 * 1;} execute)+ 2;");
-        assertResultEquals(new SSLong(6), "2 * ({1 + 2;} execute);");
-        assertResultEquals(new SSLong(2), "(2 > 1) ifTrue: 2;");
-        assertResultEquals(SSNull.instance(), "(2 > 1) ifFalse: 2;");
-        assertResultEquals(new SSLong(2), "(2 > 1) ifTrue: 2 ifFalse: 3;");
-        assertResultEquals(new SSLong(7), "((2 > 1) ifTrue: 2 ifFalse: 3) + 5;");
-        assertResultEquals(new SSLong(8), "(2 < 1) ifTrue: 2 ifFalse: (3 + 5);");
-        assertResultEquals(new SSLong(3), "(2 < 1) ifTrue: 2 ifFalse: 3 execute;");
+        assertResultEquals(new SSLong(4), "({2 multipliedBy: 1;} execute) plus: 2;");
+        assertResultEquals(new SSLong(6), "2 multipliedBy: ({1 plus: 2;} execute);");
+        assertResultEquals(new SSLong(2), "(2 isGreaterThan: 1) ifTrue: 2;");
+        assertResultEquals(SSNull.instance(), "(2 isGreaterThan: 1) ifFalse: 2;");
+        assertResultEquals(new SSLong(2), "(2 isGreaterThan: 1) ifTrue: 2 ifFalse: 3;");
+        assertResultEquals(new SSLong(7), "((2 isGreaterThan: 1) ifTrue: 2 ifFalse: 3) plus: 5;");
+        assertResultEquals(new SSLong(8), "(2 isLessThan: 1) ifTrue: 2 ifFalse: (3 plus: 5);");
+        assertResultEquals(new SSLong(3), "(2 isLessThan: 1) ifTrue: 2 ifFalse: 3 execute;");
         assertResultEquals(new SSLong(3),
-                "((2 < 1) ifTrue: {2;} ifFalse: {3;}) execute;");
-        assertResultEquals(new SSLong(18), "((2 * 2) + 2) * 3;");
+                "((2 isLessThan: 1) ifTrue: {2;} ifFalse: {3;}) execute;");
+        assertResultEquals(new SSLong(18), "((2 multipliedBy: 2) plus: 2) multipliedBy: 3;");
         assertResultEquals(new SSLong(2), ":var = 2;");
         assertResultEquals(new SSLong(2), "true ifTrue: 2;");
         assertResultEquals(new SSLong(3), ":var = 2; var = 3; var;");
         
-        assertResultEquals(SSTrue.instance(), "1 == 1;");
-        assertResultEquals(SSFalse.instance(), "1 == 2;");
-        assertResultEquals(SSFalse.instance(), "1 <> 1;");
-        assertResultEquals(SSTrue.instance(), "1 <> 2;");
-        assertResultEquals(SSTrue.instance(), "1 <= 1;");
-        assertResultEquals(SSTrue.instance(), "1 <= 2;");
-        assertResultEquals(SSFalse.instance(), "1 <= 0;");
-        assertResultEquals(SSTrue.instance(), "2 >= 1;");
-        assertResultEquals(SSTrue.instance(), "2 >= 2;");
-        assertResultEquals(SSFalse.instance(), "0 >= 2;");
-        assertResultEquals(SSTrue.instance(), "1 > 0;");
-        assertResultEquals(SSFalse.instance(), "1 > 1;");
-        assertResultEquals(SSTrue.instance(), "0 < 1;");
-        assertResultEquals(SSFalse.instance(), "1 < 1;");
-        
-        assertResultEquals(new SSString("1"), "1 asString;");
-        
-        
         assertResultEquals(SSTrue.instance(), "1 equals: 1;");
         assertResultEquals(SSFalse.instance(), "1 equals: 2;");
         assertResultEquals(SSFalse.instance(), "1 equals: null;");
+        assertResultEquals(SSFalse.instance(), "1 isNotEqualTo: 1;");
+        assertResultEquals(SSTrue.instance(), "1 isNotEqualTo: 2;");
+        assertResultEquals(SSTrue.instance(), "1 isNotEqualTo: null;");
+        assertResultEquals(SSTrue.instance(), "1 isLessOrEqualTo: 1;");
+        assertResultEquals(SSTrue.instance(), "1 isLessOrEqualTo: 2;");
+        assertResultEquals(SSFalse.instance(), "1 isLessOrEqualTo: 0;");
+        assertResultEquals(SSTrue.instance(), "2 isGreaterOrEqualTo: 1;");
+        assertResultEquals(SSTrue.instance(), "2 isGreaterOrEqualTo: 2;");
+        assertResultEquals(SSFalse.instance(), "0 isGreaterOrEqualTo: 2;");
+        assertResultEquals(SSTrue.instance(), "1 isGreaterThan: 0;");
+        assertResultEquals(SSFalse.instance(), "1 isGreaterThan: 1;");
+        assertResultEquals(SSTrue.instance(), "0 isLessThan: 1;");
+        assertResultEquals(SSFalse.instance(), "1 isLessThan: 1;");
+        
+        assertResultEquals(new SSString("1"), "1 asString;");
     }
     
     /****************************************************************************
@@ -177,50 +174,48 @@ public class InterpreterUseCases {
 
         assertResultEquals(new SSDouble(1.0), "1.0;");
         assertResultEquals(new SSDouble(3.0), "1.0;2.0;3.0;");
-        assertResultEquals(new SSDouble(2.1), "1.0 + 1.1;");
-       // assertResultEquals(new SSLong(1), "1 - 1;");
-        assertResultEquals(new SSDouble(4.0), "1.0 + 1.0; 2.0 * 2.0;");
-        assertResultEquals(new SSDouble(3.0), "6.0 / 2;");
-        assertResultEquals(new SSDouble(3.0), "6 / 2.0;");
-        assertResultEquals(new SSDouble(4.0), "(2.0 * 1.0) + 2.0;");
-        assertResultEquals(new SSDouble(6.0), "2.0 * (1.0 + 2.0);");
+        assertResultEquals(new SSDouble(2.1), "1.0 plus: 1.1;");
+        assertResultEquals(new SSLong(0), "1 minus: 1;");
+        assertResultEquals(new SSDouble(4.0), "1.0 plus: 1.0; 2.0 multipliedBy: 2.0;");
+        assertResultEquals(new SSDouble(3.0), "6.0 dividedBy: 2;");
+        assertResultEquals(new SSDouble(3.0), "6 dividedBy: 2.0;");
+        assertResultEquals(new SSDouble(4.0), "(2.0 multipliedBy: 1.0) plus: 2.0;");
+        assertResultEquals(new SSDouble(6.0), "2.0 multipliedBy: (1.0 plus: 2.0);");
         assertResultEquals(new SSLong(1072693248), "1.0 hash;");
-        assertResultEquals(new SSDouble(4.0), "({2.0 * 1.0;} execute)+ 2.0;");
-        assertResultEquals(new SSDouble(6.0), "2.0 * ({1.0 + 2.0;} execute);");
-        assertResultEquals(new SSLong(2), "(2.0 > 1.0) ifTrue: 2;");
-        assertResultEquals(SSNull.instance(), "(2.0 > 1.0) ifFalse: 2;");
-        assertResultEquals(new SSLong(2), "(2.0 > 1.0) ifTrue: 2 ifFalse: 3;");
-        assertResultEquals(new SSLong(7), "((2.0 > 1.0) ifTrue: 2 ifFalse: 3) + 5;");
-        assertResultEquals(new SSLong(8), "(2.0 < 1.0) ifTrue: 2 ifFalse: (3 + 5);");
-        assertResultEquals(new SSLong(3), "(2.0 < 1.0) ifTrue: 2 ifFalse: 3 execute;");
+        assertResultEquals(new SSDouble(4.0), "({2.0 multipliedBy: 1.0;} execute) plus: 2.0;");
+        assertResultEquals(new SSDouble(6.0), "2.0 multipliedBy: ({1.0 plus: 2.0;} execute);");
+        assertResultEquals(new SSLong(2), "(2.0 isGreaterThan: 1.0) ifTrue: 2;");
+        assertResultEquals(SSNull.instance(), "(2.0 isGreaterThan: 1.0) ifFalse: 2;");
+        assertResultEquals(new SSLong(2), "(2.0 isGreaterThan: 1.0) ifTrue: 2 ifFalse: 3;");
+        assertResultEquals(new SSLong(7), "((2.0 isGreaterThan: 1.0) ifTrue: 2 ifFalse: 3) plus: 5;");
+        assertResultEquals(new SSLong(8), "(2.0 isLessThan: 1.0) ifTrue: 2 ifFalse: (3 plus: 5);");
+        assertResultEquals(new SSLong(3), "(2.0 isLessThan: 1.0) ifTrue: 2 ifFalse: 3 execute;");
         assertResultEquals(new SSLong(3),
-                "((2.0 < 1.0) ifTrue: {2;} ifFalse: {3;}) execute;");
-        assertResultEquals(new SSLong(18), "((2 * 2) + 2) * 3;");
+                "((2.0 isLessThan: 1.0) ifTrue: {2;} ifFalse: {3;}) execute;");
+        assertResultEquals(new SSLong(18), "((2 multipliedBy: 2) plus: 2) multipliedBy: 3;");
         assertResultEquals(new SSLong(2), ":var = 2;");
         assertResultEquals(new SSLong(2), "true ifTrue: 2;");
         assertResultEquals(new SSLong(3), ":var = 2; var = 3; var;");
         
-        assertResultEquals(SSTrue.instance(), "1.0 == 1.0;");
-        assertResultEquals(SSFalse.instance(), "1.0 == 2.0;");
-        assertResultEquals(SSFalse.instance(), "1.0 <> 1.0;");
-        assertResultEquals(SSTrue.instance(), "1.0 <> 2.0;");
-        assertResultEquals(SSTrue.instance(), "1.0 <= 1.0;");
-        assertResultEquals(SSTrue.instance(), "1.0 <= 2.0;");
-        assertResultEquals(SSFalse.instance(), "1.0 <= 0.0;");
-        assertResultEquals(SSTrue.instance(), "2.0 >= 1.0;");
-        assertResultEquals(SSTrue.instance(), "2.0 >= 2.0;");
-        assertResultEquals(SSFalse.instance(), "0.0 >= 2.0;");
-        assertResultEquals(SSTrue.instance(), "1.0 > 0.0;");
-        assertResultEquals(SSFalse.instance(), "1.0 > 1.0;");
-        assertResultEquals(SSTrue.instance(), "0.0 < 1.0;");
-        assertResultEquals(SSFalse.instance(), "1.0 < 1.0;");
+        assertResultEquals(SSTrue.instance(), "1.0 equals: 1.0;");
+        assertResultEquals(SSFalse.instance(), "1.0 equals: 2.0;");
+        assertResultEquals(SSFalse.instance(), "1.0 equals: null;");
+        assertResultEquals(SSFalse.instance(), "1.0 isNotEqualTo: 1.0;");
+        assertResultEquals(SSTrue.instance(), "1.0 isNotEqualTo: 2.0;");
+        assertResultEquals(SSTrue.instance(), "1.0 isLessOrEqualTo: 1.0;");
+        assertResultEquals(SSTrue.instance(), "1.0 isLessOrEqualTo: 2.0;");
+        assertResultEquals(SSFalse.instance(), "1.0 isLessOrEqualTo: 0.0;");
+        assertResultEquals(SSTrue.instance(), "2.0 isGreaterOrEqualTo: 1.0;");
+        assertResultEquals(SSTrue.instance(), "2.0 isGreaterOrEqualTo: 2.0;");
+        assertResultEquals(SSFalse.instance(), "0.0 isGreaterOrEqualTo: 2.0;");
+        assertResultEquals(SSTrue.instance(), "1.0 isGreaterThan: 0.0;");
+        assertResultEquals(SSFalse.instance(), "1.0 isGreaterThan: 1.0;");
+        assertResultEquals(SSTrue.instance(), "0.0 isLessThan: 1.0;");
+        assertResultEquals(SSFalse.instance(), "1.0 isLessThan: 1.0;");
         
         assertResultEquals(new SSString("1.0"), "1.0 asString;");
         
         
-        assertResultEquals(SSTrue.instance(), "1.0 equals: 1.0;");
-        assertResultEquals(SSFalse.instance(), "1.0 equals: 2.0;");
-        assertResultEquals(SSFalse.instance(), "1.0 equals: null;");
     }
     
     /****************************************************************************
@@ -230,29 +225,28 @@ public class InterpreterUseCases {
     public void charSSLong_forProperExpression() throws Exception {
 
         assertResultEquals(new SSChar('a'), "'a';");
-        assertResultEquals(new SSLong(2), "1 + 1;");
-        
-        assertResultEquals(SSTrue.instance(), "'a' == 'a';");
-        assertResultEquals(SSFalse.instance(), "'a' == 'b';");
-        assertResultEquals(SSFalse.instance(), "'a' <> 'a';");
-        assertResultEquals(SSTrue.instance(), "'a' <> 'b';");
-        assertResultEquals(SSTrue.instance(), "'a' <= 'a';");
-        assertResultEquals(SSTrue.instance(), "'a' <= 'b';");
-        assertResultEquals(SSFalse.instance(), "'b' <= 'a';");
-        assertResultEquals(SSTrue.instance(), "'b' >= 'a';");
-        assertResultEquals(SSTrue.instance(), "'b' >= 'b';");
-        assertResultEquals(SSFalse.instance(), "'a' >= 'b';");
-        assertResultEquals(SSTrue.instance(), "'b' > 'a';");
-        assertResultEquals(SSFalse.instance(), "'a' > 'a';");
-        assertResultEquals(SSTrue.instance(), "'a' < 'b';");
-        assertResultEquals(SSFalse.instance(), "'a' < 'a';");
-        
-        assertResultEquals(new SSString("a"), "'a' asString;");
-        
+        assertResultEquals(new SSLong(2), "1 plus: 1;");
         
         assertResultEquals(SSTrue.instance(), "'a' equals: 'a';");
         assertResultEquals(SSFalse.instance(), "'a' equals: 'b';");
         assertResultEquals(SSFalse.instance(), "'a' equals: null;");
+        assertResultEquals(SSFalse.instance(), "'a' isNotEqualTo: 'a';");
+        assertResultEquals(SSTrue.instance(), "'a' isNotEqualTo: 'b';");
+        assertResultEquals(SSTrue.instance(), "'a' isLessOrEqualTo: 'a';");
+        assertResultEquals(SSTrue.instance(), "'a' isLessOrEqualTo: 'b';");
+        assertResultEquals(SSFalse.instance(), "'b' isLessOrEqualTo: 'a';");
+        assertResultEquals(SSTrue.instance(), "'b' isGreaterOrEqualTo: 'a';");
+        assertResultEquals(SSTrue.instance(), "'b' isGreaterOrEqualTo: 'b';");
+        assertResultEquals(SSFalse.instance(), "'a' isGreaterOrEqualTo: 'b';");
+        assertResultEquals(SSTrue.instance(), "'b' isGreaterThan: 'a';");
+        assertResultEquals(SSFalse.instance(), "'a' isGreaterThan: 'a';");
+        assertResultEquals(SSTrue.instance(), "'a' isLessThan: 'b';");
+        assertResultEquals(SSFalse.instance(), "'a' isLessThan: 'a';");
+        
+        assertResultEquals(new SSString("a"), "'a' asString;");
+        
+        
+
         
         assertResultEquals(new SSLong(97), "'a' hash;");
     }
@@ -263,24 +257,24 @@ public class InterpreterUseCases {
     @Test
     public void test_block() throws Exception {
 
-        assertResultEquals(new SSLong(2), ":y = 1; {:x | x + 1;} executeWith: y;");
+        assertResultEquals(new SSLong(2), ":y = 1; {:x | x plus: 1;} executeWith: y;");
         assertResultEquals(new SSLong(3), """
                 :a = 1;
                 :b = 2;
-                {:x1 :x2 | x1 + x2;} executeWith: a and: b;
+                {:x1 :x2 | x1 plus: x2;} executeWith: a and: b;
                 """);
         assertResultEquals(new SSLong(6), """
                 :a = 1;
                 :b = 2;
                 :c = 3;
-                {:x1 :x2 :x3 | (x1 + x2) + x3;} executeWith: a and: b and: c;
+                {:x1 :x2 :x3 | (x1 plus: x2) plus: x3;} executeWith: a and: b and: c;
                 """);
         assertResultEquals(new SSLong(10), """
                 :a = 1;
                 :b = 2;
                 :c = 3;
                 :d = 4;
-                {:x1 :x2 :x3 :x4| (x1 + x2) + (x3 + x4);}
+                {:x1 :x2 :x3 :x4| (x1 plus: x2) plus: (x3 plus: x4);}
                     executeWith: a and: b and: c and: d;
                 """);
         assertResultEquals(new SSLong(15), """
@@ -289,7 +283,7 @@ public class InterpreterUseCases {
                 :c = 3;
                 :d = 4;
                 :e = 5;
-                {:x1 :x2 :x3 :x4 :x5 | ((x1 + x2) + (x3 + x4)) + x5;}
+                {:x1 :x2 :x3 :x4 :x5 | ((x1 plus: x2) plus: (x3 plus: x4)) plus: x5;}
                      executeWith: a and: b and: c and: d and: e;
                 """);
         assertResultEquals(new SSLong(21), """
@@ -299,7 +293,7 @@ public class InterpreterUseCases {
                 :d = 4;
                 :e = 5;
                 :f = 6;
-                {:x1 :x2 :x3 :x4 :x5 :x6| ((x1 + x2) + (x3 + x4)) + (x5 + x6);}
+                {:x1 :x2 :x3 :x4 :x5 :x6| ((x1 plus: x2) plus: (x3 plus: x4)) plus: (x5 plus: x6);}
                    executeWith: a and: b and: c and: d and: e and: f;
                 """);
 
@@ -350,8 +344,8 @@ public class InterpreterUseCases {
 
         assertResultEquals(new SSLong(10), """
                 :counter = 0;
-                {counter < 10;} whileTrue: {
-                    counter = (counter + 1);
+                {counter isLessThan: 10;} whileTrue: {
+                    counter = (counter plus: 1);
                 };
                 """);
     }

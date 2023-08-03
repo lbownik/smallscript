@@ -24,9 +24,7 @@ public final class Symbol implements Expression {
 
         final var index = value.indexOf(':');
         if (index == -1 | index == 0 | index == (value.length() - 1)) {
-            if (value.indexOf(':', index + 1) > -1) {
-                throw new RuntimeException("Invalid symbol '" + value + "'.");
-            }
+            return;
         } else {
             throw new RuntimeException("Invalid symbol '" + value + "'.");
         }

@@ -70,7 +70,7 @@ public class InterpreterUseCases {
 
         assertResultEquals(new SSLong(0), "true ifTrue: 0;");
         assertResultEquals(SSNull.instance(), "true ifFalse: 0;");
-        assertResultEquals(new SSLong(0), "true ifTrue: 0 ifFalse: 1;");
+        assertResultEquals(new SSLong(0), "true ifTrue: 0 :ifFalse: 1;");
     }
     
     /****************************************************************************
@@ -98,7 +98,7 @@ public class InterpreterUseCases {
 
         assertResultEquals(SSNull.instance(), "false ifTrue: 0;");
         assertResultEquals(new SSLong(0), "false ifFalse: 0;");
-        assertResultEquals(new SSLong(1), "false ifTrue: 0 ifFalse: 1;");
+        assertResultEquals(new SSLong(1), "false ifTrue: 0 :ifFalse: 1;");
     }
     /****************************************************************************
      * 
@@ -135,12 +135,12 @@ public class InterpreterUseCases {
         assertResultEquals(new SSLong(6), "2 multipliedBy: ({1 plus: 2;} execute);");
         assertResultEquals(new SSLong(2), "(2 isGreaterThan: 1) ifTrue: 2;");
         assertResultEquals(SSNull.instance(), "(2 isGreaterThan: 1) ifFalse: 2;");
-        assertResultEquals(new SSLong(2), "(2 isGreaterThan: 1) ifTrue: 2 ifFalse: 3;");
-        assertResultEquals(new SSLong(7), "((2 isGreaterThan: 1) ifTrue: 2 ifFalse: 3) plus: 5;");
-        assertResultEquals(new SSLong(8), "(2 isLessThan: 1) ifTrue: 2 ifFalse: (3 plus: 5);");
-        assertResultEquals(new SSLong(3), "(2 isLessThan: 1) ifTrue: 2 ifFalse: 3 execute;");
+        assertResultEquals(new SSLong(2), "(2 isGreaterThan: 1) ifTrue: 2 :ifFalse: 3;");
+        assertResultEquals(new SSLong(7), "((2 isGreaterThan: 1) ifTrue: 2 :ifFalse: 3) plus: 5;");
+        assertResultEquals(new SSLong(8), "(2 isLessThan: 1) ifTrue: 2 :ifFalse: (3 plus: 5);");
+        assertResultEquals(new SSLong(3), "(2 isLessThan: 1) ifTrue: 2 :ifFalse: 3 execute;");
         assertResultEquals(new SSLong(3),
-                "((2 isLessThan: 1) ifTrue: {2;} ifFalse: {3;}) execute;");
+                "((2 isLessThan: 1) ifTrue: {2;} :ifFalse: {3;}) execute;");
         assertResultEquals(new SSLong(18), "((2 multipliedBy: 2) plus: 2) multipliedBy: 3;");
         assertResultEquals(new SSLong(2), ":var = 2;");
         assertResultEquals(new SSLong(2), "true ifTrue: 2;");
@@ -186,12 +186,12 @@ public class InterpreterUseCases {
         assertResultEquals(new SSDouble(6.0), "2.0 multipliedBy: ({1.0 plus: 2.0;} execute);");
         assertResultEquals(new SSLong(2), "(2.0 isGreaterThan: 1.0) ifTrue: 2;");
         assertResultEquals(SSNull.instance(), "(2.0 isGreaterThan: 1.0) ifFalse: 2;");
-        assertResultEquals(new SSLong(2), "(2.0 isGreaterThan: 1.0) ifTrue: 2 ifFalse: 3;");
-        assertResultEquals(new SSLong(7), "((2.0 isGreaterThan: 1.0) ifTrue: 2 ifFalse: 3) plus: 5;");
-        assertResultEquals(new SSLong(8), "(2.0 isLessThan: 1.0) ifTrue: 2 ifFalse: (3 plus: 5);");
-        assertResultEquals(new SSLong(3), "(2.0 isLessThan: 1.0) ifTrue: 2 ifFalse: 3 execute;");
+        assertResultEquals(new SSLong(2), "(2.0 isGreaterThan: 1.0) ifTrue: 2 :ifFalse: 3;");
+        assertResultEquals(new SSLong(7), "((2.0 isGreaterThan: 1.0) ifTrue: 2 :ifFalse: 3) plus: 5;");
+        assertResultEquals(new SSLong(8), "(2.0 isLessThan: 1.0) ifTrue: 2 :ifFalse: (3 plus: 5);");
+        assertResultEquals(new SSLong(3), "(2.0 isLessThan: 1.0) ifTrue: 2 :ifFalse: 3 execute;");
         assertResultEquals(new SSLong(3),
-                "((2.0 isLessThan: 1.0) ifTrue: {2;} ifFalse: {3;}) execute;");
+                "((2.0 isLessThan: 1.0) ifTrue: {2;} :ifFalse: {3;}) execute;");
         assertResultEquals(new SSLong(18), "((2 multipliedBy: 2) plus: 2) multipliedBy: 3;");
         assertResultEquals(new SSLong(2), ":var = 2;");
         assertResultEquals(new SSLong(2), "true ifTrue: 2;");
@@ -306,7 +306,7 @@ public class InterpreterUseCases {
     public void test_object_addMethod() throws Exception {
 
         assertResultEquals(new SSLong(1), """
-                object addMethod: 'a' using: { 1;};
+                object addMethod: 'a' :using: { 1;};
                 object a;
                 """);
     }

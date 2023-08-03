@@ -52,7 +52,7 @@ public class SSDynamicObject implements SSObject {
                 return setField(method.substring(0, method.length() - 1), args.get(0));
             } else {
                 return switch (method) {
-                case "addMethod:using:" ->
+                case "addMethod::using:" ->
                     addMethod(args.get(0).toString(), (SSBlock) args.get(1));
                 case "addField:" -> addField(args.get(0).toString(), stack);
                 case "copy" -> copy();

@@ -34,7 +34,7 @@ public final class SSFalse extends SSDynamicObject {
 			case "or:", "xor:" -> args.get(0).evaluate(stack.pushNewFrame());
 			case "ifTrue:" -> stack.getNull();
 			case "ifFalse:" -> args.get(0).evaluate(stack.pushNewFrame());
-			case "ifTrue:ifFalse:" -> args.get(1).evaluate(stack.pushNewFrame());
+			case "ifTrue::ifFalse:" -> args.get(1).evaluate(stack.pushNewFrame());
 			default -> super.invoke(stack, method, args);
 		};
 	}

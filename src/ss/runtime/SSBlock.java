@@ -85,7 +85,7 @@ public class SSBlock extends SSDynamicObject {
 
         var result = new StringBuilder('\n').append(this.argumentNames).append("|\n");
 
-        this.statements.forEach(result::append);
+        this.statements.forEach(s -> result.append(s).append("\n"));
 
         return result.toString();
     }

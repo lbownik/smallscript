@@ -1,45 +1,54 @@
 package ss.runtime;
 
 import java.util.List;
+import static java.util.Collections.emptyList;
 
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
 public class SSExpression implements SSObject {
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	public SSExpression(final SSObject object, final String method,
-			final List<SSObject> args) {
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    public SSExpression(final SSObject object, final String method,
+            final List<SSObject> args) {
 
-		this.object = object;
-		this.method = method;
-		this.args = args;
-	}
+        this.object = object;
+        this.method = method;
+        this.args = args;
+    }
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	@Override
-	public SSObject evaluate(final Stack stack) {
+    /****************************************************************************
+    * 
+    ****************************************************************************/
+    public SSExpression(final SSObject object, final String method) {
 
-		return this.object.invoke(stack, this.method, this.args);
-	}
+        this(object, method, emptyList());
+    }
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	@Override
-	public String toString() {
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    @Override
+    public SSObject evaluate(final Stack stack) {
 
-		return this.object + " " + this.method + " " + this.args;
-	}
+        return this.object.invoke(stack, this.method, this.args);
+    }
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	private final SSObject object;
-	private final String method;
-	private final List<SSObject> args;
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    @Override
+    public String toString() {
+
+        return this.object + " " + this.method + " " + this.args + "\n";
+    }
+
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    private final SSObject object;
+    private final String method;
+    private final List<SSObject> args;
 }

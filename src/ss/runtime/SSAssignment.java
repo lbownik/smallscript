@@ -43,7 +43,7 @@ public class SSAssignment implements SSObject {
     @Override
     public String toString() {
 
-        return this.variableName + " = " + this.arg;
+        return this.variableName + " = " + this.arg + "\n";
     }
 
     /****************************************************************************

@@ -67,87 +67,90 @@ public class Sentence extends ArrayList<Expression> implements Expression {
     ****************************************************************************/
     public SSObject toSSObject() {
 
-        return switch (size()) {
-        case 1 -> get(0).toSSObject();
-        case 2 -> createUnaryExpression();
-        default -> createNAryExpressionOrAssignment();
-        };
-    }
-
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    private SSExpression createUnaryExpression() {
-
-        return new SSExpression(get(0).toSSObject(), (String) get(1).value(),
-                emptyList());
-    }
-
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    private boolean firstExpressionIsVariable() {
-
-        return get(0) instanceof Symbol s0 && s0.isVariable();
-    }
-
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    private boolean secondExpressionIsAssignment() {
-
-        return get(1) instanceof Symbol s1 && s1.isAssignment();
-    }
-
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    private SSObject createNAryExpressionOrAssignment() {
-
-        if (firstExpressionIsVariable() && secondExpressionIsAssignment()) {
-            return new SSAssignment(get(0).value().toString(), createAssignment());
-        } else {
-            return createNAryExpression();
-        }
-    }
-
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    private SSObject createAssignment() {
-
-        final var sentence = new Sentence();
-        stream().skip(2).forEach(sentence::add);
-        
-        return new SSAssignment(get(0).value().toString(), sentence.toSSObject());
-    }
-
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    private SSExpression createNAryExpression() {
-
-        final SSObject subject = get(0).toSSObject();
-        final StringBuilder methodName = new StringBuilder();
-        final ArrayList<SSObject> arguments = new ArrayList<>();
-
-        for (int index = 1; index < size(); index += 2) {
-            final Expression method = get(index);
-            if (method instanceof Symbol s) {
-                if (s.isMethodWithArgs()) {
-                    methodName.append(method);
-                    arguments.add(get(index + 1).toSSObject());
-                } else if (s.isNoArgMethod()) {
-                    return new SSExpression(subject, methodName.toString(), arguments);
-                } else {
-                    new RuntimeException("Syntax error: " + subject + "[" + method + "]");
-                }
+        switch (size()) {
+        case 1:
+            return get(0).toSSObject();
+        case 2:
+            if (isAssignment()) {
+                throw new RuntimeException("Syntax error. Missing assignment value.");
             } else {
-                throw new RuntimeException(
-                        "Syntax error: " + subject + "[" + method + "]");
+                return new SSExpression(get(0).toSSObject(), (String) get(1).value());
+            }
+        default:
+            if (isAssignment()) {
+                return new SSAssignment(get(0).value().toString(),
+                        subSentence(2).toSSObject());
+            } else {
+                return createExpression(get(0).toSSObject(), 1);
             }
         }
-        return new SSExpression(subject, methodName.toString(), arguments);
+    }
+
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    private boolean isAssignment() {
+
+        return get(0) instanceof Symbol s0 && s0.isVariable()
+                && get(1) instanceof Symbol s1 && s1.isAssignment();
+    }
+
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    private Sentence subSentence(final int from) {
+
+        final var sentence = new Sentence();
+        stream().skip(from).forEach(sentence::add);
+
+        return sentence;
+    }
+
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    private SSObject createExpression(final SSObject subject, int index) {
+
+        if (index == size()) {
+            return subject;
+        } else if (get(index) instanceof Symbol s) {
+            if (s.isMethodWithNoArgs()) {
+                return createExpression(new SSExpression(subject, s.toString()),
+                        index + 1);
+            } else if (s.isMethodWithArgs()) {
+                final StringBuilder methodName = new StringBuilder(s.value());
+                final ArrayList<SSObject> args = new ArrayList<>();
+                args.add(get(++index).toSSObject());
+                while (++index < size()) {
+                    if (get(index) instanceof Symbol ns) {
+                        if (ns.isMethodContinuation()) {
+                            methodName.append(ns.value());
+                            if (ns.isMethodWithArgs()) {
+                                if (++index < size()) {
+                                    args.add(get(index).toSSObject());
+                                } else {
+                                    throw new RuntimeException(
+                                            "Syntax error: unfinished expression.");
+                                }
+                            }
+                        } else {
+                            break;
+                        }
+                    } else {
+                        throw new RuntimeException(
+                                "Syntax error: " + subject + "[" + get(index) + "]");
+                    }
+                }
+                return createExpression(
+                        new SSExpression(subject, methodName.toString(), args), index);
+
+            } else {
+                return null;
+            }
+        } else {
+            throw new RuntimeException(
+                    "Syntax error: " + subject + "[" + get(index) + "]");
+        }
     }
 
     /****************************************************************************

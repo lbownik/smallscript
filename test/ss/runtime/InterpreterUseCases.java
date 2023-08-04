@@ -32,6 +32,23 @@ public class InterpreterUseCases {
      * 
      ****************************************************************************/
     @Test
+    public void __test() throws Exception {
+        
+        assertResultEquals(new SSString("true"), "true asString;");
+        assertResultEquals(new SSLong(3569038), "true asString hash;");
+        assertResultEquals(new SSString("3569038"), "true asString hash asString;");
+        assertResultEquals(new SSString("3569038"), "1 equals: 1 asString hash asString;");
+        assertResultEquals(new SSString("3569038"), "1 asString equals: \"1\" asString hash asString;");
+        assertResultEquals(new SSString("true"), "1 asString equals: \"1\" equals: true asString;");
+        assertResultEquals(new SSString("true"), "1 asString equals: \"1\" ifTrue: true :ifFalse: false asString;");
+        assertResultEquals(new SSString("true"), "!x = 1 asString equals: \"1\" ifTrue: (1 equals: 1) :ifFalse: {!x = 1; false;} asString; x;");
+        assertResultEquals(new SSLong(1), "true addMethod: \"a::b\" :using: {!this !param | param;}; true a: 1 :b;");
+        assertResultEquals(new SSString("1"), "true addMethod: \"a::b\" :using: {!this !param | param;}; true a: 1 :b asString;");
+    }
+    /****************************************************************************
+     * 
+     ****************************************************************************/
+    @Test
     public void nullProperValue_forAllOperations() throws Exception {
 
         assertResultEquals(SSNull.instance(), "null;");
@@ -191,7 +208,7 @@ public class InterpreterUseCases {
         assertResultEquals(new SSLong(8), "(2.0 isLessThan: 1.0) ifTrue: 2 :ifFalse: (3 plus: 5);");
         assertResultEquals(new SSLong(3), "(2.0 isLessThan: 1.0) ifTrue: 2 :ifFalse: 3 execute;");
         assertResultEquals(new SSLong(3),
-                "((2.0 isLessThan: 1.0) ifTrue: {2;} :ifFalse: {3;}) execute;");
+                "2.0 isLessThan: 1.0 ifTrue: {2;} :ifFalse: {3;} execute;");
         assertResultEquals(new SSLong(18), "((2 multipliedBy: 2) plus: 2) multipliedBy: 3;");
         assertResultEquals(new SSLong(2), "!var = 2;");
         assertResultEquals(new SSLong(2), "true ifTrue: 2;");
@@ -261,13 +278,13 @@ public class InterpreterUseCases {
         assertResultEquals(new SSLong(3), """
                 !a = 1;
                 !b = 2;
-                {!x1 !x2 | x1 plus: x2;} executeWith: a and: b;
+                {!x1 !x2 | x1 plus: x2;} executeWith: a :and: b;
                 """);
         assertResultEquals(new SSLong(6), """
                 !a = 1;
                 !b = 2;
                 !c = 3;
-                {!x1 !x2 !x3 | (x1 plus: x2) plus: x3;} executeWith: a and: b and: c;
+                {!x1 !x2 !x3 | (x1 plus: x2) plus: x3;} executeWith: a :and: b :and: c;
                 """);
         assertResultEquals(new SSLong(10), """
                 !a = 1;
@@ -275,7 +292,7 @@ public class InterpreterUseCases {
                 !c = 3;
                 !d = 4;
                 {!x1 !x2 !x3 !x4| (x1 plus: x2) plus: (x3 plus: x4);}
-                    executeWith: a and: b and: c and: d;
+                    executeWith: a :and: b :and: c :and: d;
                 """);
         assertResultEquals(new SSLong(15), """
                 !a = 1;
@@ -284,7 +301,7 @@ public class InterpreterUseCases {
                 !d = 4;
                 !e = 5;
                 {!x1 !x2 !x3 !x4 !x5 | ((x1 plus: x2) plus: (x3 plus: x4)) plus: x5;}
-                     executeWith: a and: b and: c and: d and: e;
+                     executeWith: a :and: b :and: c :and: d :and: e;
                 """);
         assertResultEquals(new SSLong(21), """
                 !a = 1;
@@ -294,7 +311,7 @@ public class InterpreterUseCases {
                 !e = 5;
                 !f = 6;
                 {!x1 !x2 !x3 !x4 !x5 !x6| ((x1 plus: x2) plus: (x3 plus: x4)) plus: (x5 plus: x6);}
-                   executeWith: a and: b and: c and: d and: e and: f;
+                   executeWith: a :and: b :and: c :and: d :and: e :and: f;
                 """);
 
     }

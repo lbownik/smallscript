@@ -7,7 +7,7 @@ import ss.runtime.SSVariableReference;
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
 public final class Symbol implements Expression {
-
+    
     /****************************************************************************
      * 
     ****************************************************************************/
@@ -44,23 +44,38 @@ public final class Symbol implements Expression {
     ****************************************************************************/
     public boolean isVariableDeclaration() {
 
-        return this.value.startsWith(":");
+        return this.value.startsWith("!") && !this.value.contains(":");
     }
 
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    public boolean isVariableReference() {
+
+        return !this.value.startsWith("!") && !this.value.contains(":");
+    }
     /****************************************************************************
      * 
     ****************************************************************************/
     public boolean isVariable() {
 
-        return isVariableDeclaration() || isNoArgMethod();
+        return isVariableDeclaration() || isVariableReference();
     }
 
     /****************************************************************************
      * 
     ****************************************************************************/
-    public boolean isMethod() {
+    public boolean isMethodWithNoArgs() {
 
-        return !isVariableDeclaration();
+        return !this.value.startsWith("!") && !this.value.contains(":");
+    }
+
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    public boolean isMethodContinuation() {
+
+        return this.value.startsWith(":");
     }
 
     /****************************************************************************
@@ -68,15 +83,7 @@ public final class Symbol implements Expression {
     ****************************************************************************/
     public boolean isMethodWithArgs() {
 
-        return this.value.endsWith(":");
-    }
-
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    public boolean isNoArgMethod() {
-
-        return !isMethodWithArgs() && !isAssignment();
+        return !this.value.startsWith("!") && this.value.endsWith(":");
     }
 
     /****************************************************************************

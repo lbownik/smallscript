@@ -1,5 +1,6 @@
 package ss.runtime;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -43,7 +44,10 @@ public class SSDynamicObject implements SSObject {
 
         final var block = this.methods.get(method);
         if (block != null) {
-            return block.invoke(stack, "execute", args);
+            final ArrayList<SSObject> nArgs = new ArrayList<>();
+            nArgs.add(this);
+            nArgs.addAll(args);
+            return block.invoke(stack, "execute", nArgs);
         } else {
             if (this.fields.containsKey(method)) {
                 return this.fields.get(method);

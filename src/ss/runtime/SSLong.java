@@ -1,6 +1,7 @@
 package ss.runtime;
 
 import java.util.List;
+import java.util.Map;
 
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
@@ -20,7 +21,25 @@ public final class SSLong extends SSDynamicObject {
     ****************************************************************************/
     public SSLong(final int value) {
 
-        this.value = Long.valueOf(value);
+        this.value = value;
+    }
+
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    private SSLong(final Map<String, SSBlock> methods, final Map<String, SSObject> fields,
+            final long value) {
+
+        super(methods, fields);
+        this.value = value;
+    }
+
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    protected SSObject doClone() {
+
+        return new SSLong(this.methods, this.fields, this.value);
     }
 
     /****************************************************************************

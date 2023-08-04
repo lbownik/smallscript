@@ -1,26 +1,16 @@
 package ss.runtime;
 
-import java.util.function.BiConsumer;
-
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
-public class SSAssignment implements SSObject {
+public class SSNewVariableAssignment implements SSObject {
 
     /****************************************************************************
      * 
     ****************************************************************************/
-    public SSAssignment(final String variableName, final SSObject arg) {
+    public SSNewVariableAssignment(final String variableName, final SSObject arg) {
 
-        if (variableName.startsWith("!")) {
-            this.variableName = variableName.substring(1);
-            this.setVariable = (stack, value) -> stack.addVariable(this.variableName,
-                    value);
-        } else {
-            this.variableName = variableName;
-            this.setVariable = (stack, value) -> stack.setVariable(this.variableName,
-                    value);
-        }
+        this.variableName = variableName;
         this.arg = arg;
     }
 
@@ -32,7 +22,7 @@ public class SSAssignment implements SSObject {
 
         var value = this.arg.evaluate(stack.pushNewFrame());
 
-        this.setVariable.accept(stack, value);
+        stack.addVariable(this.variableName, value);
 
         return value;
     }
@@ -43,7 +33,7 @@ public class SSAssignment implements SSObject {
     @Override
     public String toString() {
 
-        return this.variableName + " = " + this.arg + "\n";
+        return "!" + this.variableName + " = " + this.arg + "\n";
     }
 
     /****************************************************************************
@@ -51,5 +41,4 @@ public class SSAssignment implements SSObject {
     ****************************************************************************/
     private final String variableName;
     private final SSObject arg;
-    private final BiConsumer<Stack, SSObject> setVariable;
 }

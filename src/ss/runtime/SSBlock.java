@@ -1,7 +1,10 @@
 package ss.runtime;
 
 import static java.util.Collections.emptyList;
+
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
@@ -15,6 +18,27 @@ public class SSBlock extends SSDynamicObject {
 
         this.statements = statements;
         this.argumentNames = argumentNames;
+    }
+
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    private SSBlock(final Map<String, SSBlock> methods,
+            final Map<String, SSObject> fields, final List<SSObject> statements,
+            final List<String> argumentNames) {
+
+        super(methods, fields);
+        this.statements = statements;
+        this.argumentNames = argumentNames;
+    }
+
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    protected SSObject doClone() {
+
+        return new SSBlock(this.methods, this.fields, this.statements,
+                this.argumentNames);
     }
 
     /****************************************************************************
@@ -57,7 +81,8 @@ public class SSBlock extends SSDynamicObject {
     private void initiateLocalVariables(final Stack stack, final List<SSObject> args) {
 
         for (int index = 0; index < this.argumentNames.size(); ++index) {
-            stack.addVariable(this.argumentNames.get(index), args.get(index).evaluate(stack));
+            stack.addVariable(this.argumentNames.get(index),
+                    args.get(index).evaluate(stack));
         }
     }
 

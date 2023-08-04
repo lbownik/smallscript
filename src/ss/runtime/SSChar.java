@@ -1,6 +1,7 @@
 package ss.runtime;
 
 import java.util.List;
+import java.util.Map;
 
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
@@ -13,6 +14,24 @@ public final class SSChar extends SSDynamicObject {
     public SSChar(final char value) {
 
         this.value = value;
+    }
+
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    private SSChar(final Map<String, SSBlock> methods, final Map<String, SSObject> fields,
+            final char value) {
+
+        super(methods, fields);
+        this.value = value;
+    }
+
+    /****************************************************************************
+     * 
+    ****************************************************************************/
+    protected SSObject doClone() {
+
+        return new SSChar(this.methods, this.fields, this.value);
     }
 
     /****************************************************************************

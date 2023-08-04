@@ -5,8 +5,9 @@ import static java.util.Collections.emptyList;
 import java.util.ArrayList;
 import java.util.List;
 
-import ss.runtime.SSAssignment;
+import ss.runtime.SSExistingVariableAssignment;
 import ss.runtime.SSExpression;
+import ss.runtime.SSNewVariableAssignment;
 import ss.runtime.SSObject;
 
 /*******************************************************************************
@@ -78,8 +79,15 @@ public class Sentence extends ArrayList<Expression> implements Expression {
             }
         default:
             if (isAssignment()) {
-                return new SSAssignment(get(0).value().toString(),
-                        subSentence(2).toSSObject());
+                if (((Symbol) get(0)).isVariableDeclaration()) {
+                    return new SSNewVariableAssignment(
+                            get(0).value().toString().substring(1),
+                            subSentence(2).toSSObject());
+                } else {
+                    return new SSExistingVariableAssignment(get(0).value().toString(),
+                            subSentence(2).toSSObject());
+                }
+
             } else {
                 return createExpression(get(0).toSSObject(), 1);
             }

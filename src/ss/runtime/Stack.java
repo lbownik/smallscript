@@ -79,9 +79,9 @@ public interface Stack {
 		final var stack = new Stack() {
 		}.pushNewFrame();
 		stack.addVariable("null", SSNull.instance());
-		stack.addVariable("true", SSTrue.instance());
-		stack.addVariable("false", SSFalse.instance());
-		stack.addVariable("object", new SSDynamicObject());
+		stack.addVariable("true", new SSTrue());
+		stack.addVariable("false", new SSFalse());
+		stack.addVariable("Object", new SSDynamicObjectFactory());
 		return stack;
 	}
 

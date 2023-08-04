@@ -54,8 +54,8 @@ public class InterpreterUseCases {
         assertResultEquals(SSNull.instance(), "null;");
         assertResultEquals(SSNull.instance(), "null evaluate;");
         assertResultEquals(new SSLong(0), "null hash;");
-        assertResultEquals(SSTrue.instance(), "null equals: null;");
-        assertResultEquals(SSFalse.instance(), "null equals: true;");
+        assertResultEquals(new SSTrue(), "null equals: null;");
+        assertResultEquals(new SSFalse(), "null equals: true;");
         assertResultEquals(new SSString("null"), "null asString;");
 
         assertResultEquals(SSNull.instance(), "null not;");
@@ -68,22 +68,22 @@ public class InterpreterUseCases {
     @Test
     public void trueReturnsProperValue_forAllOperations() throws Exception {
 
-        assertResultEquals(SSTrue.instance(), "true;");
-        assertResultEquals(SSTrue.instance(), "true execute;");
-        assertResultEquals(SSFalse.instance(), "true not;");
-        assertResultEquals(SSTrue.instance(), "true equals: true;");
-        assertResultEquals(SSFalse.instance(), "true equals: false;");
+        assertResultEquals(new SSTrue(), "true;");
+        assertResultEquals(new SSTrue(), "true execute;");
+        assertResultEquals(new SSFalse(), "true not;");
+        assertResultEquals(new SSTrue(), "true equals: true;");
+        assertResultEquals(new SSFalse(), "true equals: false;");
         assertResultEquals(new SSString("true"), "true asString;");
 
-        assertResultEquals(SSTrue.instance(), "true and: true;");
-        assertResultEquals(SSFalse.instance(), "true and: false;");
+        assertResultEquals(new SSTrue(), "true and: true;");
+        assertResultEquals(new SSFalse(), "true and: false;");
         assertResultEquals(SSNull.instance(), "true and: null;");
         assertResultEquals(new SSLong(1), "true and: 1;");
 
-        assertResultEquals(SSTrue.instance(), "true or: true;");
-        assertResultEquals(SSTrue.instance(), "true or: false;");
-        assertResultEquals(SSTrue.instance(), "true or: null;");
-        assertResultEquals(SSTrue.instance(), "true or: 1;");
+        assertResultEquals(new SSTrue(), "true or: true;");
+        assertResultEquals(new SSTrue(), "true or: false;");
+        assertResultEquals(new SSTrue(), "true or: null;");
+        assertResultEquals(new SSTrue(), "true or: 1;");
 
         assertResultEquals(new SSLong(0), "true ifTrue: 0;");
         assertResultEquals(SSNull.instance(), "true ifFalse: 0;");
@@ -96,20 +96,20 @@ public class InterpreterUseCases {
     @Test
     public void falseReturnsProperValue_forAllOperations() throws Exception {
 
-        assertResultEquals(SSFalse.instance(), "false;");
-        assertResultEquals(SSFalse.instance(), "false execute;");
-        assertResultEquals(SSTrue.instance(), "false not;");
-        assertResultEquals(SSTrue.instance(), "false equals: false;");
-        assertResultEquals(SSFalse.instance(), "false equals: true;");
+        assertResultEquals(new SSFalse(), "false;");
+        assertResultEquals(new SSFalse(), "false execute;");
+        assertResultEquals(new SSTrue(), "false not;");
+        assertResultEquals(new SSTrue(), "false equals: false;");
+        assertResultEquals(new SSFalse(), "false equals: true;");
         assertResultEquals(new SSString("false"), "false asString;");
 
-        assertResultEquals(SSFalse.instance(), "false and: false;");
-        assertResultEquals(SSFalse.instance(), "false and: true;");
-        assertResultEquals(SSFalse.instance(), "false and: null;");
-        assertResultEquals(SSFalse.instance(), "false and: 1;");
+        assertResultEquals(new SSFalse(), "false and: false;");
+        assertResultEquals(new SSFalse(), "false and: true;");
+        assertResultEquals(new SSFalse(), "false and: null;");
+        assertResultEquals(new SSFalse(), "false and: 1;");
 
-        assertResultEquals(SSTrue.instance(), "false or: true;");
-        assertResultEquals(SSFalse.instance(), "false or: false;");
+        assertResultEquals(new SSTrue(), "false or: true;");
+        assertResultEquals(new SSFalse(), "false or: false;");
         assertResultEquals(SSNull.instance(), "false or: null;");
         assertResultEquals(new SSLong(1), "false or: 1;");
 
@@ -125,9 +125,9 @@ public class InterpreterUseCases {
 
         assertResultEquals(new SSString("abc"), "\"abc\";");
         assertResultEquals(new SSLong(96354), "\"abc\" hash;");
-        assertResultEquals(SSTrue.instance(), "\"abc\" equals: \"abc\";");
-        assertResultEquals(SSFalse.instance(), "\"abc\" equals: \"a\";");
-        assertResultEquals(SSFalse.instance(), "\"abc\" equals: null;");
+        assertResultEquals(new SSTrue(), "\"abc\" equals: \"abc\";");
+        assertResultEquals(new SSFalse(), "\"abc\" equals: \"a\";");
+        assertResultEquals(new SSFalse(), "\"abc\" equals: null;");
         assertResultEquals(new SSLong(3), "\"abc\" size;");
         assertResultEquals(new SSChar('a'), "\"abc\" at: 0;");
         assertResultEquals(new SSString("abcd"), "\"abc\" concatenate: \"d\";");
@@ -163,22 +163,22 @@ public class InterpreterUseCases {
         assertResultEquals(new SSLong(2), "true ifTrue: 2;");
         assertResultEquals(new SSLong(3), "!var = 2; var = 3; var;");
         
-        assertResultEquals(SSTrue.instance(), "1 equals: 1;");
-        assertResultEquals(SSFalse.instance(), "1 equals: 2;");
-        assertResultEquals(SSFalse.instance(), "1 equals: null;");
-        assertResultEquals(SSFalse.instance(), "1 isNotEqualTo: 1;");
-        assertResultEquals(SSTrue.instance(), "1 isNotEqualTo: 2;");
-        assertResultEquals(SSTrue.instance(), "1 isNotEqualTo: null;");
-        assertResultEquals(SSTrue.instance(), "1 isLessOrEqualTo: 1;");
-        assertResultEquals(SSTrue.instance(), "1 isLessOrEqualTo: 2;");
-        assertResultEquals(SSFalse.instance(), "1 isLessOrEqualTo: 0;");
-        assertResultEquals(SSTrue.instance(), "2 isGreaterOrEqualTo: 1;");
-        assertResultEquals(SSTrue.instance(), "2 isGreaterOrEqualTo: 2;");
-        assertResultEquals(SSFalse.instance(), "0 isGreaterOrEqualTo: 2;");
-        assertResultEquals(SSTrue.instance(), "1 isGreaterThan: 0;");
-        assertResultEquals(SSFalse.instance(), "1 isGreaterThan: 1;");
-        assertResultEquals(SSTrue.instance(), "0 isLessThan: 1;");
-        assertResultEquals(SSFalse.instance(), "1 isLessThan: 1;");
+        assertResultEquals(new SSTrue(), "1 equals: 1;");
+        assertResultEquals(new SSFalse(), "1 equals: 2;");
+        assertResultEquals(new SSFalse(), "1 equals: null;");
+        assertResultEquals(new SSFalse(), "1 isNotEqualTo: 1;");
+        assertResultEquals(new SSTrue(), "1 isNotEqualTo: 2;");
+        assertResultEquals(new SSTrue(), "1 isNotEqualTo: null;");
+        assertResultEquals(new SSTrue(), "1 isLessOrEqualTo: 1;");
+        assertResultEquals(new SSTrue(), "1 isLessOrEqualTo: 2;");
+        assertResultEquals(new SSFalse(), "1 isLessOrEqualTo: 0;");
+        assertResultEquals(new SSTrue(), "2 isGreaterOrEqualTo: 1;");
+        assertResultEquals(new SSTrue(), "2 isGreaterOrEqualTo: 2;");
+        assertResultEquals(new SSFalse(), "0 isGreaterOrEqualTo: 2;");
+        assertResultEquals(new SSTrue(), "1 isGreaterThan: 0;");
+        assertResultEquals(new SSFalse(), "1 isGreaterThan: 1;");
+        assertResultEquals(new SSTrue(), "0 isLessThan: 1;");
+        assertResultEquals(new SSFalse(), "1 isLessThan: 1;");
         
         assertResultEquals(new SSString("1"), "1 asString;");
     }
@@ -214,21 +214,21 @@ public class InterpreterUseCases {
         assertResultEquals(new SSLong(2), "true ifTrue: 2;");
         assertResultEquals(new SSLong(3), "!var = 2; var = 3; var;");
         
-        assertResultEquals(SSTrue.instance(), "1.0 equals: 1.0;");
-        assertResultEquals(SSFalse.instance(), "1.0 equals: 2.0;");
-        assertResultEquals(SSFalse.instance(), "1.0 equals: null;");
-        assertResultEquals(SSFalse.instance(), "1.0 isNotEqualTo: 1.0;");
-        assertResultEquals(SSTrue.instance(), "1.0 isNotEqualTo: 2.0;");
-        assertResultEquals(SSTrue.instance(), "1.0 isLessOrEqualTo: 1.0;");
-        assertResultEquals(SSTrue.instance(), "1.0 isLessOrEqualTo: 2.0;");
-        assertResultEquals(SSFalse.instance(), "1.0 isLessOrEqualTo: 0.0;");
-        assertResultEquals(SSTrue.instance(), "2.0 isGreaterOrEqualTo: 1.0;");
-        assertResultEquals(SSTrue.instance(), "2.0 isGreaterOrEqualTo: 2.0;");
-        assertResultEquals(SSFalse.instance(), "0.0 isGreaterOrEqualTo: 2.0;");
-        assertResultEquals(SSTrue.instance(), "1.0 isGreaterThan: 0.0;");
-        assertResultEquals(SSFalse.instance(), "1.0 isGreaterThan: 1.0;");
-        assertResultEquals(SSTrue.instance(), "0.0 isLessThan: 1.0;");
-        assertResultEquals(SSFalse.instance(), "1.0 isLessThan: 1.0;");
+        assertResultEquals(new SSTrue(), "1.0 equals: 1.0;");
+        assertResultEquals(new SSFalse(), "1.0 equals: 2.0;");
+        assertResultEquals(new SSFalse(), "1.0 equals: null;");
+        assertResultEquals(new SSFalse(), "1.0 isNotEqualTo: 1.0;");
+        assertResultEquals(new SSTrue(), "1.0 isNotEqualTo: 2.0;");
+        assertResultEquals(new SSTrue(), "1.0 isLessOrEqualTo: 1.0;");
+        assertResultEquals(new SSTrue(), "1.0 isLessOrEqualTo: 2.0;");
+        assertResultEquals(new SSFalse(), "1.0 isLessOrEqualTo: 0.0;");
+        assertResultEquals(new SSTrue(), "2.0 isGreaterOrEqualTo: 1.0;");
+        assertResultEquals(new SSTrue(), "2.0 isGreaterOrEqualTo: 2.0;");
+        assertResultEquals(new SSFalse(), "0.0 isGreaterOrEqualTo: 2.0;");
+        assertResultEquals(new SSTrue(), "1.0 isGreaterThan: 0.0;");
+        assertResultEquals(new SSFalse(), "1.0 isGreaterThan: 1.0;");
+        assertResultEquals(new SSTrue(), "0.0 isLessThan: 1.0;");
+        assertResultEquals(new SSFalse(), "1.0 isLessThan: 1.0;");
         
         assertResultEquals(new SSString("1.0"), "1.0 asString;");
         
@@ -244,21 +244,21 @@ public class InterpreterUseCases {
         assertResultEquals(new SSChar('a'), "'a';");
         assertResultEquals(new SSLong(2), "1 plus: 1;");
         
-        assertResultEquals(SSTrue.instance(), "'a' equals: 'a';");
-        assertResultEquals(SSFalse.instance(), "'a' equals: 'b';");
-        assertResultEquals(SSFalse.instance(), "'a' equals: null;");
-        assertResultEquals(SSFalse.instance(), "'a' isNotEqualTo: 'a';");
-        assertResultEquals(SSTrue.instance(), "'a' isNotEqualTo: 'b';");
-        assertResultEquals(SSTrue.instance(), "'a' isLessOrEqualTo: 'a';");
-        assertResultEquals(SSTrue.instance(), "'a' isLessOrEqualTo: 'b';");
-        assertResultEquals(SSFalse.instance(), "'b' isLessOrEqualTo: 'a';");
-        assertResultEquals(SSTrue.instance(), "'b' isGreaterOrEqualTo: 'a';");
-        assertResultEquals(SSTrue.instance(), "'b' isGreaterOrEqualTo: 'b';");
-        assertResultEquals(SSFalse.instance(), "'a' isGreaterOrEqualTo: 'b';");
-        assertResultEquals(SSTrue.instance(), "'b' isGreaterThan: 'a';");
-        assertResultEquals(SSFalse.instance(), "'a' isGreaterThan: 'a';");
-        assertResultEquals(SSTrue.instance(), "'a' isLessThan: 'b';");
-        assertResultEquals(SSFalse.instance(), "'a' isLessThan: 'a';");
+        assertResultEquals(new SSTrue(), "'a' equals: 'a';");
+        assertResultEquals(new SSFalse(), "'a' equals: 'b';");
+        assertResultEquals(new SSFalse(), "'a' equals: null;");
+        assertResultEquals(new SSFalse(), "'a' isNotEqualTo: 'a';");
+        assertResultEquals(new SSTrue(), "'a' isNotEqualTo: 'b';");
+        assertResultEquals(new SSTrue(), "'a' isLessOrEqualTo: 'a';");
+        assertResultEquals(new SSTrue(), "'a' isLessOrEqualTo: 'b';");
+        assertResultEquals(new SSFalse(), "'b' isLessOrEqualTo: 'a';");
+        assertResultEquals(new SSTrue(), "'b' isGreaterOrEqualTo: 'a';");
+        assertResultEquals(new SSTrue(), "'b' isGreaterOrEqualTo: 'b';");
+        assertResultEquals(new SSFalse(), "'a' isGreaterOrEqualTo: 'b';");
+        assertResultEquals(new SSTrue(), "'b' isGreaterThan: 'a';");
+        assertResultEquals(new SSFalse(), "'a' isGreaterThan: 'a';");
+        assertResultEquals(new SSTrue(), "'a' isLessThan: 'b';");
+        assertResultEquals(new SSFalse(), "'a' isLessThan: 'a';");
         
         assertResultEquals(new SSString("a"), "'a' asString;");
         
@@ -323,6 +323,7 @@ public class InterpreterUseCases {
     public void test_object_addMethod() throws Exception {
 
         assertResultEquals(new SSLong(1), """
+                !object = Object new;
                 object addMethod: 'a' :using: { 1;};
                 object a;
                 """);
@@ -335,6 +336,7 @@ public class InterpreterUseCases {
     public void test_object_addField() throws Exception {
 
         assertResultEquals(new SSLong(10), """
+                !object = Object new;
                 object addField: 'a';
                 object a: 10;
                 object a;
@@ -345,11 +347,12 @@ public class InterpreterUseCases {
     * 
     ****************************************************************************/
     @Test
-    public void test_object_copying() throws Exception {
+    public void test_object_cloning() throws Exception {
 
-        assertResultEquals(SSFalse.instance(), """
-                !new = (object copy);
-                new equals: object;
+        assertResultEquals(new SSFalse(), """
+                !o = Object new;
+                !new = (o clone);
+                new equals: o;
                 """);
     }
     

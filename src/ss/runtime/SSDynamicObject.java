@@ -15,13 +15,13 @@ public class SSDynamicObject implements SSObject {
     ****************************************************************************/
     public SSDynamicObject() {
 
-        this(new HashMap<>(), new HashMap<>());
+        this(new HashMap<>(0), new HashMap<>(0));
     }
 
     /****************************************************************************
      * 
     ****************************************************************************/
-    private SSDynamicObject(final Map<String, SSBlock> methods,
+    protected SSDynamicObject(final Map<String, SSBlock> methods,
             final Map<String, SSObject> fields) {
 
         this.methods = new HashMap<>(methods);
@@ -31,8 +31,8 @@ public class SSDynamicObject implements SSObject {
     /****************************************************************************
      * 
     ****************************************************************************/
-    private SSDynamicObject copy() {
-
+    protected SSObject doClone() {
+        
         return new SSDynamicObject(this.methods, this.fields);
     }
 
@@ -59,7 +59,7 @@ public class SSDynamicObject implements SSObject {
                 case "addMethod::using:" ->
                     addMethod(args.get(0).toString(), (SSBlock) args.get(1));
                 case "addField:" -> addField(args.get(0).toString(), stack);
-                case "copy" -> copy();
+                case "clone" -> doClone();
                 case "execute" -> evaluate(stack);
                 case "asString" -> new SSString(toString());
                 case "hash" -> new SSLong(hashCode());
@@ -102,6 +102,6 @@ public class SSDynamicObject implements SSObject {
     /****************************************************************************
      * 
     ****************************************************************************/
-    private final Map<String, SSBlock> methods;
-    private final Map<String, SSObject> fields;
+    protected final Map<String, SSBlock> methods;
+    protected final Map<String, SSObject> fields;
 }

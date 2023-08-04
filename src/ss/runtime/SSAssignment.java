@@ -12,7 +12,7 @@ public class SSAssignment implements SSObject {
     ****************************************************************************/
     public SSAssignment(final String variableName, final SSObject arg) {
 
-        if (variableName.startsWith(":")) {
+        if (variableName.startsWith("!")) {
             this.variableName = variableName.substring(1);
             this.setVariable = (stack, value) -> stack.addVariable(this.variableName,
                     value);

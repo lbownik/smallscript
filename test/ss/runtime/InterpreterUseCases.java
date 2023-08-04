@@ -142,9 +142,9 @@ public class InterpreterUseCases {
         assertResultEquals(new SSLong(3),
                 "((2 isLessThan: 1) ifTrue: {2;} :ifFalse: {3;}) execute;");
         assertResultEquals(new SSLong(18), "((2 multipliedBy: 2) plus: 2) multipliedBy: 3;");
-        assertResultEquals(new SSLong(2), ":var = 2;");
+        assertResultEquals(new SSLong(2), "!var = 2;");
         assertResultEquals(new SSLong(2), "true ifTrue: 2;");
-        assertResultEquals(new SSLong(3), ":var = 2; var = 3; var;");
+        assertResultEquals(new SSLong(3), "!var = 2; var = 3; var;");
         
         assertResultEquals(SSTrue.instance(), "1 equals: 1;");
         assertResultEquals(SSFalse.instance(), "1 equals: 2;");
@@ -193,9 +193,9 @@ public class InterpreterUseCases {
         assertResultEquals(new SSLong(3),
                 "((2.0 isLessThan: 1.0) ifTrue: {2;} :ifFalse: {3;}) execute;");
         assertResultEquals(new SSLong(18), "((2 multipliedBy: 2) plus: 2) multipliedBy: 3;");
-        assertResultEquals(new SSLong(2), ":var = 2;");
+        assertResultEquals(new SSLong(2), "!var = 2;");
         assertResultEquals(new SSLong(2), "true ifTrue: 2;");
-        assertResultEquals(new SSLong(3), ":var = 2; var = 3; var;");
+        assertResultEquals(new SSLong(3), "!var = 2; var = 3; var;");
         
         assertResultEquals(SSTrue.instance(), "1.0 equals: 1.0;");
         assertResultEquals(SSFalse.instance(), "1.0 equals: 2.0;");
@@ -257,43 +257,43 @@ public class InterpreterUseCases {
     @Test
     public void test_block() throws Exception {
 
-        assertResultEquals(new SSLong(2), ":y = 1; {:x | x plus: 1;} executeWith: y;");
+        assertResultEquals(new SSLong(2), "!y = 1; {!x | x plus: 1;} executeWith: y;");
         assertResultEquals(new SSLong(3), """
-                :a = 1;
-                :b = 2;
-                {:x1 :x2 | x1 plus: x2;} executeWith: a and: b;
+                !a = 1;
+                !b = 2;
+                {!x1 !x2 | x1 plus: x2;} executeWith: a and: b;
                 """);
         assertResultEquals(new SSLong(6), """
-                :a = 1;
-                :b = 2;
-                :c = 3;
-                {:x1 :x2 :x3 | (x1 plus: x2) plus: x3;} executeWith: a and: b and: c;
+                !a = 1;
+                !b = 2;
+                !c = 3;
+                {!x1 !x2 !x3 | (x1 plus: x2) plus: x3;} executeWith: a and: b and: c;
                 """);
         assertResultEquals(new SSLong(10), """
-                :a = 1;
-                :b = 2;
-                :c = 3;
-                :d = 4;
-                {:x1 :x2 :x3 :x4| (x1 plus: x2) plus: (x3 plus: x4);}
+                !a = 1;
+                !b = 2;
+                !c = 3;
+                !d = 4;
+                {!x1 !x2 !x3 !x4| (x1 plus: x2) plus: (x3 plus: x4);}
                     executeWith: a and: b and: c and: d;
                 """);
         assertResultEquals(new SSLong(15), """
-                :a = 1;
-                :b = 2;
-                :c = 3;
-                :d = 4;
-                :e = 5;
-                {:x1 :x2 :x3 :x4 :x5 | ((x1 plus: x2) plus: (x3 plus: x4)) plus: x5;}
+                !a = 1;
+                !b = 2;
+                !c = 3;
+                !d = 4;
+                !e = 5;
+                {!x1 !x2 !x3 !x4 !x5 | ((x1 plus: x2) plus: (x3 plus: x4)) plus: x5;}
                      executeWith: a and: b and: c and: d and: e;
                 """);
         assertResultEquals(new SSLong(21), """
-                :a = 1;
-                :b = 2;
-                :c = 3;
-                :d = 4;
-                :e = 5;
-                :f = 6;
-                {:x1 :x2 :x3 :x4 :x5 :x6| ((x1 plus: x2) plus: (x3 plus: x4)) plus: (x5 plus: x6);}
+                !a = 1;
+                !b = 2;
+                !c = 3;
+                !d = 4;
+                !e = 5;
+                !f = 6;
+                {!x1 !x2 !x3 !x4 !x5 !x6| ((x1 plus: x2) plus: (x3 plus: x4)) plus: (x5 plus: x6);}
                    executeWith: a and: b and: c and: d and: e and: f;
                 """);
 
@@ -331,7 +331,7 @@ public class InterpreterUseCases {
     public void test_object_copying() throws Exception {
 
         assertResultEquals(SSFalse.instance(), """
-                :new = (object copy);
+                !new = (object copy);
                 new equals: object;
                 """);
     }
@@ -343,7 +343,7 @@ public class InterpreterUseCases {
     public void test_iteration() throws Exception {
 
         assertResultEquals(new SSLong(10), """
-                :counter = 0;
+                !counter = 0;
                 {counter isLessThan: 10;} whileTrue: {
                     counter = (counter plus: 1);
                 };

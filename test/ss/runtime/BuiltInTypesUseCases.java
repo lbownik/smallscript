@@ -18,6 +18,7 @@ package ss.runtime;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
+import static java.util.Collections.emptyList;
 
 import java.io.IOException;
 
@@ -296,6 +297,15 @@ public class BuiltInTypesUseCases {
             !new = (o clone);
             new equals: o;
             """);
+   }
+   /****************************************************************************
+    * 
+    ****************************************************************************/
+   @Test
+   public void emptyBlock_evaluatesToNull() throws Exception {
+
+      assertEquals(SSNull.instance(),
+            new Interpreter().exacute("{};", this.stack).invoke(stack, "execute"));
    }
    /****************************************************************************
    * 

@@ -17,7 +17,7 @@ package ss.parser;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import static java.util.Collections.emptyList;
 import ss.runtime.SSBlock;
 import ss.runtime.SSObject;
 /*******************************************************************************
@@ -37,8 +37,13 @@ public class Block extends ArrayList<Sentence> implements Expression {
    @Override
    public SSObject toSSObject() {
 
-      final List<String> argNames = get(0).trimArgumentsDeclarations();
-      return new SSBlock(stream().map(Expression::toSSObject).toList(), argNames);
+      if (isEmpty()) {
+         return new SSBlock(stream().map(Expression::toSSObject).toList(),
+               emptyList());
+      } else {
+         final List<String> argNames = get(0).trimArgumentsDeclarations();
+         return new SSBlock(stream().map(Expression::toSSObject).toList(), argNames);
+      }
    }
    /****************************************************************************
     * 

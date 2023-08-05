@@ -72,6 +72,8 @@ public class InterpreterUseCases {
       assertResultEquals(new SSLong(2), "!var = 2;");
       assertResultEquals(new SSLong(2), "true ifTrue: 2;");
       assertResultEquals(new SSLong(3), "!var = 2; var = 3; var;");
+      
+      assertResultEquals(new SSLong(10),"!c = 1; {c < 10;} whileTrue: {c = c + 1;}; c;");
    }
    /****************************************************************************
     * 

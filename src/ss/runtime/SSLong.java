@@ -65,6 +65,8 @@ public final class SSLong extends SSDynamicObject {
          case "minus:" -> calc(stack, args, (x, y) -> x - y, (x, y) -> x - y);
          case "multipliedBy:" -> calc(stack, args, (x, y) -> x * y, (x, y) -> x * y);
          case "dividedBy:" -> calc(stack, args, (x, y) -> x / y, (x, y) -> x / y);
+         case "asDouble" -> new SSDouble(this.value);
+         case "asLong" -> this;
          case "isGreaterThan:" -> stack.get(this.value > evaluateFirst(args, stack));
          case "isLessThan:" -> stack.get(this.value < evaluateFirst(args, stack));
          case "isGreaterOrEqualTo:" ->

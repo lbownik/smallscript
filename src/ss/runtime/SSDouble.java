@@ -57,6 +57,8 @@ public final class SSDouble extends SSDynamicObject {
          case "multipliedBy:" ->
             new SSDouble(this.value * evaluateFirst(args, stack));
          case "dividedBy:" -> new SSDouble(this.value / evaluateFirst(args, stack));
+         case "asLong" -> new SSLong((long)this.value);
+         case "asDouble" -> this;
          case "isGreaterThan:" -> stack.get(this.value > evaluateFirst(args, stack));
          case "isLessThan:" -> stack.get(this.value < evaluateFirst(args, stack));
          case "isGreaterOrEqualTo:" ->

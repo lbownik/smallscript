@@ -110,4 +110,37 @@ public class SSDynamicObject implements SSObject {
    ****************************************************************************/
    protected final Map<String, SSBlock> methods;
    protected final Map<String, SSObject> fields;
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   public final static class Factory extends SSDynamicObject {
+      /*************************************************************************
+       * 
+      *************************************************************************/
+      protected SSObject doClone() {
+
+         return new SSDynamicObject.Factory();
+      }
+      /*************************************************************************
+       * 
+      *************************************************************************/
+      @Override
+      public SSObject invoke(final Stack stack, final String method,
+            final List<SSObject> args) {
+
+         return method.equals("new") ? new SSDynamicObject()
+               : super.invoke(stack, method, args);
+      }
+      /*************************************************************************
+       * 
+      *************************************************************************/
+      @Override
+      public String toString() {
+
+         return "Object";
+      }
+      /*************************************************************************
+       * 
+      *************************************************************************/
+   }
 }

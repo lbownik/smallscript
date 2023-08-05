@@ -86,7 +86,7 @@ public interface Stack {
 		stack.addVariable("null", SSNull.instance());
 		stack.addVariable("true", new SSTrue());
 		stack.addVariable("false", new SSFalse());
-		stack.addVariable("Object", new SSDynamicObjectFactory());
+		stack.addVariable("Object", new SSDynamicObject.Factory());
 		return stack;
 	}
 	/****************************************************************************

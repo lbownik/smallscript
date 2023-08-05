@@ -38,6 +38,8 @@ public final class SSNull extends SSDynamicObject {
          case "asString" -> new SSString(toString());
          case "hash" -> new SSLong(hashCode());
          case "equals:" -> stack.get(this.equals(args.get(0).evaluate(stack)));
+         case "isNotEqualTo:" ->
+            stack.get(!this.equals(args.get(0).evaluate(stack)));
          default -> this;
       };
    }

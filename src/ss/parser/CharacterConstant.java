@@ -1,3 +1,18 @@
+//------------------------------------------------------------------------------
+//Copyright 2023 Lukasz Bownik
+//
+//Licensed under the Apache License, Version 2.0 (the "License");
+//you may not use this file except in compliance with the License.
+//You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+//Unless required by applicable law or agreed to in writing, software
+//distributed under the License is distributed on an "AS IS" BASIS,
+//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//See the License for the specific language governing permissions and
+//limitations under the License.
+//-----------------------------------------------------------------------------
 package ss.parser;
 
 import ss.runtime.SSChar;
@@ -7,62 +22,54 @@ import ss.runtime.SSObject;
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
 public final class CharacterConstant implements Expression {
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   public CharacterConstant(final Character value) {
 
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    public CharacterConstant(final Character value) {
+      this.value = value;
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   @Override
+   public Character value() {
 
-        this.value = value;
-    }
+      return this.value;
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   @Override
+   public String toString() {
 
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    @Override
-    public Character value() {
+      return this.value.toString();
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   @Override
+   public int hashCode() {
 
-        return this.value;
-    }
+      return this.value.hashCode();
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   @Override
+   public boolean equals(final Object o) {
 
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    @Override
-    public String toString() {
+      return o instanceof CharacterConstant c && this.value.equals(c.value);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   public SSObject toSSObject() {
 
-        return this.value.toString();
-    }
-
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    @Override
-    public int hashCode() {
-
-        return this.value.hashCode();
-    }
-
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    @Override
-    public boolean equals(final Object o) {
-
-        return o != null && getClass() == o.getClass()
-                && this.value.equals(((CharacterConstant) o).value);
-    }
-
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    public SSObject toSSObject() {
-
-        return new SSChar(this.value);
-    }
-
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    private final Character value;
+      return new SSChar(this.value);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private final Character value;
 }

@@ -1,45 +1,46 @@
+//------------------------------------------------------------------------------
+//Copyright 2023 Lukasz Bownik
+//
+//Licensed under the Apache License, Version 2.0 (the "License");
+//you may not use this file except in compliance with the License.
+//You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+//Unless required by applicable law or agreed to in writing, software
+//distributed under the License is distributed on an "AS IS" BASIS,
+//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//See the License for the specific language governing permissions and
+//limitations under the License.
+//-----------------------------------------------------------------------------
 package ss.parser;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import ss.runtime.SSBlock;
-import ss.runtime.SSNull;
 import ss.runtime.SSObject;
-
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
 public class Block extends ArrayList<Sentence> implements Expression {
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   public Object value() {
 
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	public Object value() {
+      return isEmpty() ? "{}" : get(size() - 1).value();
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   @Override
+   public SSObject toSSObject() {
 
-		return isEmpty() ? "null" : get(size() - 1).value();
-	}
-
-	/****************************************************************************
-	 * 
-	****************************************************************************/
-	@Override
-	public SSObject toSSObject() {
-
-		if (isEmpty()) {
-			return SSNull.instance();
-		} else {
-			final Sentence firstSentence = get(0);
-			final List<String> variableNames = firstSentence.getVariableDeclarations();
-			if (variableNames.isEmpty()) {
-				return new SSBlock(stream().map(Expression::toSSObject).toList(),
-						variableNames);
-			} else {
-				firstSentence.removeVariableDeclarations();
-				return new SSBlock(stream().map(Expression::toSSObject).toList(),
-						variableNames);
-			}
-		}
-	}
-
+      final List<String> argNames = get(0).trimArgumentsDeclarations();
+      return new SSBlock(stream().map(Expression::toSSObject).toList(), argNames);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
 }

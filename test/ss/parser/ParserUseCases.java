@@ -23,6 +23,7 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.Reader;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 /*******************************************************************************
@@ -289,7 +290,7 @@ public class ParserUseCases {
    public void returnsSymbol_ForProperInput() throws Exception {
 
       Block program;
-      // ------------------------------------------------------------------------
+      // -----------------------------------------------------------------------
       program = parse("bfnrt;");
 
       assertEquals(1, program.size());
@@ -298,6 +299,16 @@ public class ParserUseCases {
 
          assertEquals(1, expresson.size());
          assertEquals("bfnrt", ((Symbol) expresson.get(0)).value());
+      }
+      // -----------------------------------------------------------------------
+      program = parse("!bfnrt;");
+
+      assertEquals(1, program.size());
+      {
+         Sentence expresson = (Sentence) program.get(0);
+
+         assertEquals(1, expresson.size());
+         assertEquals("!bfnrt", ((Symbol) expresson.get(0)).value());
       }
       // -----------------------------------------------------------------------
       program = parse("abcśżą123!@#$%&*+=;<>?/:;");
@@ -326,6 +337,17 @@ public class ParserUseCases {
          assertEquals(":abcśżą123!@#$%&*+=", ((Symbol) expression.get(0)).value());
          assertEquals("<>?/:", ((Symbol) expression.get(1)).value());
       }
+   }
+   /****************************************************************************
+   * 
+   ****************************************************************************/
+   @Ignore
+   @Test
+   public void throwsRuntimeException_forMalformedSymbol() throws Exception {
+
+      assertSyntaxException("!!;", "!!");
+      assertSyntaxException("!1;", "!1");
+      assertSyntaxException("1a;", "1a");
    }
    /****************************************************************************
    * 
@@ -421,6 +443,65 @@ public class ParserUseCases {
          assertEquals(0, ((Block) expression.get(0)).size());
       }
       // -----------------------------------------------------------------------
+      program = parse("{true ;};");
+
+      assertEquals(1, program.size());
+      {
+         Sentence expression = (Sentence) program.get(0);
+
+         assertEquals(1, expression.size());
+         {
+            Block block = (Block) expression.get(0);
+
+            assertEquals(1, block.size());
+            {
+               Sentence blkExpression = (Sentence) block.get(0);
+
+               assertEquals(1, blkExpression.size());
+               assertEquals("true", blkExpression.get(0).value());
+            }
+         }
+      }
+   // -----------------------------------------------------------------------
+      program = parse("{true};");
+
+      assertEquals(1, program.size());
+      {
+         Sentence expression = (Sentence) program.get(0);
+
+         assertEquals(1, expression.size());
+         {
+            Block block = (Block) expression.get(0);
+
+            assertEquals(1, block.size());
+            {
+               Sentence blkExpression = (Sentence) block.get(0);
+
+               assertEquals(1, blkExpression.size());
+               assertEquals("true", blkExpression.get(0).value());
+            }
+         }
+      }
+      program = parse("{true   };");
+
+      assertEquals(1, program.size());
+      {
+         Sentence expression = (Sentence) program.get(0);
+
+         assertEquals(1, expression.size());
+         {
+            Block block = (Block) expression.get(0);
+
+            assertEquals(1, block.size());
+            {
+               Sentence blkExpression = (Sentence) block.get(0);
+
+               assertEquals(1, blkExpression.size());
+               assertEquals("true", blkExpression.get(0).value());
+            }
+         }
+      }
+      // -----------------------------------------------------------------------
       program = parse("{set add: \"abc\" or: 1;};");
 
       assertEquals(1, program.size());
@@ -445,7 +526,7 @@ public class ParserUseCases {
          }
       }
       // -----------------------------------------------------------------------
-      program = parse("set add: {:a | a round;} or: 1;");
+      program = parse("set add: {:a | a round } or: 1;");
 
       assertEquals(1, program.size());
       {
@@ -502,7 +583,7 @@ public class ParserUseCases {
 
       Block program = parse("""
             # comment
-            :MyClass = Object subClass: "MyClass";
+            !MyClass = Object subClass: "MyClass";
 
             MyClass addField "value"; #another comment
             MyClass addMethod: "method1" using: {:this :param1 |
@@ -517,7 +598,7 @@ public class ParserUseCases {
          Sentence expression = (Sentence) program.get(0);
 
          assertEquals(5, expression.size());
-         assertEquals(":MyClass", expression.get(0).value());
+         assertEquals("!MyClass", expression.get(0).value());
          assertEquals("=", expression.get(1).value());
          assertEquals("Object", expression.get(2).value());
          assertEquals("subClass:", expression.get(3).value());
@@ -668,6 +749,19 @@ public class ParserUseCases {
          fail("EOF failed. Result: ".concat(result.toString()));
       } catch (final EOFException e) {
          assertTrue(true);
+      }
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   private void assertSyntaxException(final String str, final String symbol)
+         throws IOException {
+
+      try {
+         Object result = parse(str);
+         fail("EOF failed. Result: ".concat(result.toString()));
+      } catch (final SyntaxException e) {
+         assertEquals(symbol, e.symbol);
       }
    }
    /****************************************************************************

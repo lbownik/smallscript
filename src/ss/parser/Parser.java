@@ -16,8 +16,10 @@
 package ss.parser;
 
 import static java.util.Arrays.copyOf;
+
 import java.io.EOFException;
 import java.io.IOException;
+import java.io.PushbackReader;
 import java.io.Reader;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
@@ -43,13 +45,14 @@ public final class Parser {
    ****************************************************************************/
    public Block parse(final Reader reader) throws IOException {
 
-      this.reader = reader;
+      this.reader = new PushbackReader(reader);
       try {
          this.position = -1;
          final Block result = new Block();
+         int currentChar;
 
          do {
-            final int currentChar = consumeWhitespace(read());
+            currentChar = consumeWhitespace(read());
             if (currentChar == -1) {
                break;
             } else if (currentChar == '#') {
@@ -57,7 +60,7 @@ public final class Parser {
             } else if (currentChar != ';') {
                result.add(parseExpression(currentChar));
             }
-         } while (this.recentChar != -1);
+         } while (currentChar != -1);
 
          return result;
       } finally {
@@ -81,10 +84,12 @@ public final class Parser {
             throwUnexpected(currentChar);
          } else if (currentChar != ';') {
             result.add(parseValue(currentChar));
-            currentChar = this.recentChar;
+            currentChar = consumeWhitespace(read());
          }
-      } while (currentChar != ';');
-
+      } while (currentChar != ';' & currentChar != '}');
+      if (currentChar == '}') {
+         unread(currentChar);
+      }
       return result;
    }
    /****************************************************************************
@@ -115,7 +120,6 @@ public final class Parser {
 
          currentChar = consumeWhitespace(read());
       }
-      this.recentChar = read();
 
       return result;
    }
@@ -129,9 +133,8 @@ public final class Parser {
       int currentChar = consumeWhitespace(read());
       while (currentChar != ')') {
          result.add(parseValue(currentChar));
-         currentChar = consumeWhitespace(this.recentChar);
+         currentChar = consumeWhitespace(read());
       }
-      this.recentChar = read();
 
       return result;
    }
@@ -161,7 +164,7 @@ public final class Parser {
       }
       if (isEndOfValue(currentChar)) {
          // integer - no exponent
-         this.recentChar = currentChar;
+         unread(currentChar);
          return new LongConstant(integer * signum);
       } else if (currentChar == '.') {
          // floating point
@@ -182,7 +185,7 @@ public final class Parser {
          }
          // floating point without exponent
          if (isEndOfValue(currentChar)) {
-            this.recentChar = currentChar;
+            unread(currentChar);
             return new DoubleConstant((integer + decimal) * signum);
          }
          throwUnexpected(currentChar);
@@ -207,7 +210,6 @@ public final class Parser {
          currentChar = read();
       }
 
-      this.recentChar = read();
       return new StringConstant(new String(this.buffer, 0, this.bufIndex));
    }
    /****************************************************************************
@@ -225,7 +227,6 @@ public final class Parser {
          } else if (nextChar != '\'') {
             throwUnexpected(nextChar);
          }
-         this.recentChar = read();
          return new CharacterConstant((char) currentChar);
       }
    }
@@ -245,7 +246,7 @@ public final class Parser {
          }
       } while (!isEndOfValue(currentChar));
 
-      this.recentChar = currentChar;
+      unread(currentChar);
       return new Symbol(new String(this.buffer, 0, this.bufIndex));
    }
    /****************************************************************************
@@ -257,8 +258,6 @@ public final class Parser {
       do {
          chr = read();
       } while (!isEndOfComment(chr));
-
-      this.recentChar = chr;
    }
    /****************************************************************************
    * 
@@ -373,8 +372,15 @@ public final class Parser {
    /****************************************************************************
    * 
    ****************************************************************************/
-   private Reader reader;
-   private int recentChar = -1;
+   private void unread(final int chr) throws IOException {
+
+      --this.position;
+      this.reader.unread(chr);
+   }
+   /****************************************************************************
+   * 
+   ****************************************************************************/
+   private PushbackReader reader;
    private int position = 0;
    private char[] buffer;
    private int bufferSize;

@@ -12,8 +12,10 @@
 //WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //See the License for the specific language governing permissions and
 //limitations under the License.
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 package ss.parser;
+
+import java.util.regex.Pattern;
 
 import ss.runtime.SSObject;
 import ss.runtime.SSVariableReference;
@@ -26,21 +28,29 @@ public final class Symbol implements Expression {
    ****************************************************************************/
    public Symbol(final String value) {
 
-      ensureProperSymbol(value);
+//      ensureProperSymbol(value);
       this.value = value;
    }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static void ensureProperSymbol(final String value) {
-
-      final var index = value.indexOf(':');
-      if (index == -1 | index == 0 | index == (value.length() - 1)) {
-         return;
-      } else {
-         throw new RuntimeException("Invalid symbol '" + value + "'.");
-      }
-   }
+//   /****************************************************************************
+//    * 
+//   ****************************************************************************/
+//   private static void ensureProperSymbol(final String value) {
+//
+//      if(varDeclaration.matcher(value).matches()) {
+//         return ; // proper variable declaration
+//      }else if(varReference.matcher(value).matches()) { 
+//         return ; // proper variable reference or no-arg method name
+//      } else {
+//         throw new SyntaxException(value);
+//      }
+//      
+////      final var index = value.indexOf(':');
+////      if (index == -1 | index == 0 | index == (value.length() - 1)) {
+////         return;
+////      } else {
+////         throw new RuntimeException("Invalid symbol '" + value + "'.");
+////      }
+//   }
    /****************************************************************************
     * 
    ****************************************************************************/
@@ -141,4 +151,7 @@ public final class Symbol implements Expression {
     * 
    ****************************************************************************/
    private final String value;
+   
+//   private final static Pattern varDeclaration = Pattern.compile("![a-zA-Z][a-zA-Z0-9]*");
+//   private final static Pattern varReference = Pattern.compile("[a-zA-Z][a-zA-Z0-9]*");
 }

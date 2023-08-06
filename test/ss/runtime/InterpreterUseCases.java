@@ -16,7 +16,7 @@
 package ss.runtime;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
@@ -31,6 +31,8 @@ public class InterpreterUseCases {
    @Test
    public void complexExpressios_evaluateProperly() throws Exception {
 
+      assertResultEquals(new SSTrue(), "true;");
+      assertResultEquals(new SSTrue(), "(true);");
       assertResultEquals(new SSString("true"), "true asString;");
       assertResultEquals(new SSLong(3569038), "true asString hash;");
       assertResultEquals(new SSString("3569038"), "true asString hash asString;");
@@ -73,7 +75,7 @@ public class InterpreterUseCases {
       assertResultEquals(new SSLong(2), "true ifTrue: 2;");
       assertResultEquals(new SSLong(3), "!var = 2; var = 3; var;");
       
-      assertResultEquals(new SSLong(10),"!c = 1; {c < 10;} whileTrue: {c = c + 1;}; c;");
+      assertResultEquals(new SSLong(10),"!c = 1; {c isLessThan: 10} whileTrue: {c = c plus: 1}; c;");
    }
    /****************************************************************************
     * 

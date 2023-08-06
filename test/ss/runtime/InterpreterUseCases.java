@@ -129,6 +129,16 @@ public class InterpreterUseCases {
    /****************************************************************************
     * 
     ***************************************************************************/
+   @Test
+   public void lists_workProperly() throws Exception {
+      
+      assertResultEquals(new SSString("a"),"""
+            List new append: "a" append: null append: true at: 0;
+            """);
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
    private void assertResultEquals(final SSObject o, final String program)
          throws IOException {
 

@@ -16,118 +16,82 @@
 package ss.runtime;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 /*******************************************************************************
- * @author lukasz.bownik@gmail.com
+ * @author lukasz.bownik@gmail.com {
  ******************************************************************************/
-public class SSDynamicObject implements SSObject {
+public final class SSList extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public SSDynamicObject() {
+   private SSList() {
 
-      this(new HashMap<>(0), new HashMap<>(0));
+      this.elements = new ArrayList<>();
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   protected SSDynamicObject(final Map<String, SSBlock> methods,
-         final Map<String, SSObject> fields) {
+   private SSList(final ArrayList<SSObject> elements) {
 
-      this.methods = new HashMap<>(methods);
-      this.fields = new HashMap<>(fields);
-
+      this.elements = new ArrayList<>(elements);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
    protected SSObject doClone() {
 
-      return new SSDynamicObject(this.methods, this.fields);
+      return new SSList(this.elements);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
+   @Override
    public SSObject invoke(final Stack stack, final String method,
          final List<SSObject> args) {
 
-      final var block = this.methods.get(method);
-      if (block != null) {
-         final ArrayList<SSObject> nArgs = new ArrayList<>();
-         nArgs.add(this);
-         nArgs.addAll(args);
-         return block.invoke(stack, "execute", nArgs);
-      } else {
-         if (this.fields.containsKey(method)) {
-            return this.fields.get(method);
-         } else if (method.endsWith(":") && this.fields
-               .containsKey(method.substring(0, method.length() - 1))) {
-            return setField(method.substring(0, method.length() - 1), args.get(0));
-         } else {
-            return switch (method) {
-               case "addMethod::using:" ->
-                  addMethod(args.get(0).toString(), (SSBlock) args.get(1));
-               case "addField:" -> addField(args.get(0).toString(), stack.getNull());
-               case "clone" -> doClone();
-               case "execute" -> evaluate(stack);
-               case "asString" -> new SSString(toString());
-               case "hash" -> new SSLong(hashCode());
-               case "equals:" -> stack.get(this.equals(args.get(0).evaluate(stack)));
-               case "isNotEqualTo:" ->
-                  stack.get(!this.equals(args.get(0).evaluate(stack)));
-               case "throw" -> throw new AuxiliaryException(this);
-               case "try::catch:" -> tryCatch(stack, args.get(0), args.get(1));
-               case "size" -> new SSLong(1);
-               case "at:" -> this;
-               default -> throw new RuntimeException(
-                     "Method '" + method + "' is not defined.");
-            };
-         }
-      }
+      return switch (method) {
+         case "size" -> new SSLong(this.elements.size());
+         case "at:" -> this.elements.get(((SSLong) args.get(0)).intValue());
+         case "append:" -> append(args.get(0));
+         default -> super.invoke(stack, method, args);
+      };
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSObject tryCatch(final Stack stack, final SSObject tryBlock,
-         final SSObject catchBlock) {
-
-      try {
-         return tryBlock.invoke(stack.pushNewFrame(), "execute");
-      } catch (final AuxiliaryException e) {
-         return catchBlock.invoke(stack.pushNewFrame(), "execute",
-               List.of(e.object));
-      }
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private SSObject addMethod(final String name, final SSBlock body) {
-
-      this.methods.put(name, body);
+   private SSObject append(final SSObject item) {
+      
+      this.elements.add(item);
       return this;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSObject addField(final String name, final SSObject value) {
+   @Override
+   public String toString() {
 
-      return setField(name, value);
+      return this.elements.toString();
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   SSObject setField(final String name, final SSObject value) {
+   @Override
+   public int hashCode() {
 
-      this.fields.put(name, value);
-      return this;
+      return this.elements.hashCode();
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   protected final Map<String, SSBlock> methods;
-   protected final Map<String, SSObject> fields;
+   @Override
+   public boolean equals(final Object o) {
+
+      return o instanceof SSList s && this.elements.equals(s.elements);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private final ArrayList<SSObject> elements;
    /****************************************************************************
     * 
     ***************************************************************************/
@@ -154,7 +118,7 @@ public class SSDynamicObject implements SSObject {
       *************************************************************************/
       private SSObject createNew() {
 
-         final var result = new SSDynamicObject();
+         final var result = new SSList();
          result.setField("nature", nature);
          return result;
       }
@@ -169,6 +133,6 @@ public class SSDynamicObject implements SSObject {
       /*************************************************************************
        * 
       *************************************************************************/
-      private final static SSString nature = new SSString("object");
+      private final static SSString nature = new SSString("list");
    }
 }

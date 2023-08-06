@@ -87,6 +87,7 @@ public interface Stack {
 		stack.addVariable("true", new SSTrue());
 		stack.addVariable("false", new SSFalse());
 		stack.addVariable("Object", new SSDynamicObject.Factory());
+		stack.addVariable("List", new SSList.Factory());
 		return stack;
 	}
 	/****************************************************************************

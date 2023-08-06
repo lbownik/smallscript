@@ -76,6 +76,56 @@ public class InterpreterUseCases {
       
       assertResultEquals(new SSLong(10),"!c = 1; {c isLessThan: 10} whileTrue: {c = c plus: 1}; c;");
    }
+   
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void exceptions_workProperly() throws Exception {
+      
+      assertResultEquals(SSNull.instance(),"""
+            null try: { true} :catch: {!e | false};
+            """);
+      
+      assertResultEquals(new SSTrue(),"""
+            1 try: { 
+              true;
+            } :catch: {!e | 
+              e;
+            };
+            """);
+      assertResultEquals(new SSString("Exception"),"""
+            1 try: {
+              "Exception" throw;
+            } :catch: {!e |
+               e;
+            };
+            """);
+      
+      assertResultEquals(new SSString("Exception"),"""
+            1 try: {
+              {
+                "Exception" throw;
+              } execute;
+            } :catch: {!e |
+              e;
+            };
+            """);
+      
+      assertResultEquals(new SSString("Exception2"),"""
+            1 try: {
+              1 try: {
+                {
+                  "Exception" throw;
+                 } execute;
+               } :catch: {!e |
+                 "Exception2" throw;
+               };
+            } :catch: {!e |
+              e;
+            };
+            """);
+   }
    /****************************************************************************
     * 
     ***************************************************************************/

@@ -77,10 +77,25 @@ public class SSDynamicObject implements SSObject {
                case "equals:" -> stack.get(this.equals(args.get(0).evaluate(stack)));
                case "isNotEqualTo:" ->
                   stack.get(!this.equals(args.get(0).evaluate(stack)));
+               case "throw" -> throw new AuxiliaryException(this);
+               case "try::catch:" -> tryCatch(stack, args.get(0), args.get(1));
                default -> throw new RuntimeException(
                      "Method '" + method + "' is not defined.");
             };
          }
+      }
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private SSObject tryCatch(final Stack stack, final SSObject tryBlock,
+         final SSObject catchBlock) {
+
+      try {
+         return tryBlock.invoke(stack.pushNewFrame(), "execute");
+      } catch (final AuxiliaryException e) {
+         return catchBlock.invoke(stack.pushNewFrame(), "execute",
+               List.of(e.object));
       }
    }
    /****************************************************************************

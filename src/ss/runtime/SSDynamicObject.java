@@ -38,6 +38,7 @@ public class SSDynamicObject implements SSObject {
 
       this.methods = new HashMap<>(methods);
       this.fields = new HashMap<>(fields);
+
    }
    /****************************************************************************
     * 
@@ -68,7 +69,7 @@ public class SSDynamicObject implements SSObject {
             return switch (method) {
                case "addMethod::using:" ->
                   addMethod(args.get(0).toString(), (SSBlock) args.get(1));
-               case "addField:" -> addField(args.get(0).toString(), stack);
+               case "addField:" -> addField(args.get(0).toString(), stack.getNull());
                case "clone" -> doClone();
                case "execute" -> evaluate(stack);
                case "asString" -> new SSString(toString());
@@ -93,9 +94,9 @@ public class SSDynamicObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSObject addField(final String name, final Stack stack) {
+   private SSObject addField(final String name, final SSObject value) {
 
-      return setField(name, stack.getNull());
+      return setField(name, value);
    }
    /****************************************************************************
     * 
@@ -128,8 +129,17 @@ public class SSDynamicObject implements SSObject {
       public SSObject invoke(final Stack stack, final String method,
             final List<SSObject> args) {
 
-         return method.equals("new") ? new SSDynamicObject()
+         return method.equals("new") ? createNew()
                : super.invoke(stack, method, args);
+      }
+      /*************************************************************************
+       * 
+      *************************************************************************/
+      private SSObject createNew() {
+
+         final var result = new SSDynamicObject();
+         result.setField("nature", nature);
+         return result;
       }
       /*************************************************************************
        * 
@@ -142,5 +152,6 @@ public class SSDynamicObject implements SSObject {
       /*************************************************************************
        * 
       *************************************************************************/
+      private final static SSString nature = new SSString("object");
    }
 }

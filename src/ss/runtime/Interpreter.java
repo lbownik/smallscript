@@ -16,6 +16,7 @@
 package ss.runtime;
 
 import static java.lang.System.out;
+import static java.util.Collections.emptyList;
 
 import java.io.IOException;
 
@@ -41,24 +42,24 @@ public class Interpreter {
       if (console != null) {
          final var stack = Stack.create();
          final var parser = new Parser();
-         
-         
+
          out.print(">");
-         for (var line = console.readLine(); line != null; line = console.readLine()) {
-            
-            final var result = parser.parse(line).toSSObject().invoke(stack, "execute").toString();
-            out.println(result);
+         var line = console.readLine();
+         while (line != null) {
+            out.println(parser.parse(line).toSSObject().invoke(stack, "execute",
+                  emptyList()));
             out.print(">");
+            line = console.readLine();
          }
       } else {
-         out.println("no Console found");
+         out.println("No Console found.");
       }
    }
    /****************************************************************************
     * 
    ****************************************************************************/
    public static void main(String[] args) throws Exception {
-      
+
       new Interpreter().repl();
    }
 }

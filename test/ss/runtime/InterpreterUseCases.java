@@ -16,7 +16,6 @@
 package ss.runtime;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
@@ -63,7 +62,7 @@ public class InterpreterUseCases {
             "(2 isGreaterThan: 1) ifTrue: 2 :ifFalse: 3;");
       assertResultEquals(new SSLong(7),
             "((2 isGreaterThan: 1) ifTrue: 2 :ifFalse: 3) plus: 5;");
-      assertResultEquals(new SSLong(8),
+      assertResultEquals(new SSLong(8), 
             "(2 isLessThan: 1) ifTrue: 2 :ifFalse: (3 plus: 5);");
       assertResultEquals(new SSLong(3),
             "(2 isLessThan: 1) ifTrue: 2 :ifFalse: 3 execute;");

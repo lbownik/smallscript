@@ -15,24 +15,19 @@
 //-----------------------------------------------------------------------------
 package ss.runtime;
 
-import static java.util.Collections.emptyList;
-
-import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.util.List;
-
-import ss.parser.Parser;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
  ******************************************************************************/
-public final class SSApplication extends SSDynamicObject {
+public final class SSOutput extends SSDynamicObject {
+   
    /****************************************************************************
     * 
    ****************************************************************************/
-   public SSApplication() {
+   public SSOutput(final PrintStream out) {
       
-      setField("stdIn", new SSInput());
-      setField("stdOut", new SSOutput(System.out));
-      setField("stdErr", new SSOutput(System.err));
+      this.out = out;
    }
    /****************************************************************************
     * 
@@ -49,51 +44,25 @@ public final class SSApplication extends SSDynamicObject {
          final List<SSObject> args) {
 
       return switch (method) {
-         case "exit:" -> exit(args.get(0));
-         case "load:" -> load(stack, args.get(0));
+         case "writeLine:" -> writeLine(stack, args.get(0));
          default -> super.invoke(stack, method, args);
       };
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSObject exit(final SSObject code) {
+   private SSObject writeLine(final Stack stack, final SSObject arg) {
 
-      System.exit(((SSLong) code).intValue());
-      return SSNull.instance();
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private SSObject load(final Stack stack, final SSObject code) {
-
-      try (final var reader = new InputStreamReader(
-            getClass().getResourceAsStream(code.toString()), "utf-8")) {
-
-         return new Parser().parse(reader).toSSObject().invoke(stack, "execute",
-               emptyList());
-         
+      try {
+         out.println(arg);
+         return this;
       } catch (final Exception e) {
          throw new RuntimeException(e);
       }
    }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   @Override
-   public String toString() {
 
-      return "application";
-   }
    /****************************************************************************
     * 
    ****************************************************************************/
-   @Override
-   public boolean equals(final Object obj) {
-
-      return getClass().equals(obj.getClass());
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
+   private final PrintStream out;
 }

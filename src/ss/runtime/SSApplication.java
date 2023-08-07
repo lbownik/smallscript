@@ -17,7 +17,9 @@ package ss.runtime;
 
 import static java.util.Collections.emptyList;
 
+import java.io.BufferedReader;
 import java.io.InputStreamReader;
+import java.io.PrintStream;
 import java.util.List;
 
 import ss.parser.Parser;
@@ -25,14 +27,24 @@ import ss.parser.Parser;
  * @author lukasz.bownik@gmail.com {
  ******************************************************************************/
 public final class SSApplication extends SSDynamicObject {
+
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   public SSApplication(final BufferedReader in, final PrintStream out,
+         final PrintStream err) {
+
+      setField("stdIn", new SSInput(in));
+      setField("stdOut", new SSOutput(out));
+      setField("stdErr", new SSOutput(err));
+   }
    /****************************************************************************
     * 
    ****************************************************************************/
    public SSApplication() {
-      
-      setField("stdIn", new SSInput());
-      setField("stdOut", new SSOutput(System.out));
-      setField("stdErr", new SSOutput(System.err));
+
+      this(new BufferedReader(new InputStreamReader(System.in)), System.out,
+            System.err);
    }
    /****************************************************************************
     * 
@@ -72,7 +84,7 @@ public final class SSApplication extends SSDynamicObject {
 
          return new Parser().parse(reader).toSSObject().invoke(stack, "execute",
                emptyList());
-         
+
       } catch (final Exception e) {
          throw new RuntimeException(e);
       }

@@ -25,6 +25,20 @@ public final class SSInput extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
+   public SSInput(final BufferedReader reader) {
+
+      this.reader = reader;
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   public SSInput() {
+
+      this(new BufferedReader(new InputStreamReader(System.in)));
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
    protected SSObject doClone() {
 
       return this;
@@ -47,15 +61,14 @@ public final class SSInput extends SSDynamicObject {
    private SSObject readLine(final Stack stack) {
 
       try {
-         final var line = new BufferedReader(new InputStreamReader(System.in))
-               .readLine();
+         final var line = this.reader.readLine();
          return line != null ? new SSString(line) : stack.getNull();
       } catch (final Exception e) {
          throw new RuntimeException(e);
       }
    }
-
    /****************************************************************************
     * 
    ****************************************************************************/
+   private final BufferedReader reader;
 }

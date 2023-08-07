@@ -41,6 +41,7 @@ public class Interpreter {
       final var console = System.console();
       if (console != null) {
          final var stack = Stack.create();
+         stack.addVariable("application", new SSApplication());
          final var parser = new Parser();
 
          out.print(">");

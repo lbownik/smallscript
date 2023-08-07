@@ -15,32 +15,32 @@
 //-----------------------------------------------------------------------------
 package ss.runtime;
 
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
  ******************************************************************************/
-public final class SSList extends SSDynamicObject {
+public final class SSMap extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSList() {
+   private SSMap() {
 
-      this.elements = new ArrayList<>();
+      this.elements = new HashMap<>();
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSList(final ArrayList<SSObject> elements) {
+   private SSMap(HashMap<SSObject, SSObject> elements) {
 
-      this.elements = new ArrayList<>(elements);
+      this.elements = new HashMap<>(elements);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
    protected SSObject doClone() {
 
-      return new SSList(this.elements);
+      return new SSMap(this.elements);
    }
    /****************************************************************************
     * 
@@ -51,18 +51,19 @@ public final class SSList extends SSDynamicObject {
 
       return switch (method) {
          case "size" -> new SSLong(this.elements.size());
-         case "at:" -> this.elements.get(((SSLong) args.get(0)).intValue());
-         case "add:", "append:" -> append(args.get(0));
+         case "at:" -> this.elements.get(args.get(0));
+         case "at::put:" -> atPut(stack, args.get(0), args.get(1));
          default -> super.invoke(stack, method, args);
       };
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSObject append(final SSObject item) {
-      
-      this.elements.add(item);
-      return this;
+   private SSObject atPut(final Stack stack, final SSObject key,
+         final SSObject value) {
+
+      final var previous = this.elements.put(key, value);
+      return previous != null ? previous : stack.getNull();
    }
    /****************************************************************************
     * 
@@ -86,12 +87,12 @@ public final class SSList extends SSDynamicObject {
    @Override
    public boolean equals(final Object o) {
 
-      return o instanceof SSList s && this.elements.equals(s.elements);
+      return o instanceof SSMap s && this.elements.equals(s.elements);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private final ArrayList<SSObject> elements;
+   private final HashMap<SSObject, SSObject> elements;
    /****************************************************************************
     * 
     ***************************************************************************/
@@ -118,7 +119,7 @@ public final class SSList extends SSDynamicObject {
       *************************************************************************/
       private SSObject createNew() {
 
-         final var result = new SSList();
+         final var result = new SSMap();
          result.setField("nature", nature);
          return result;
       }
@@ -128,11 +129,11 @@ public final class SSList extends SSDynamicObject {
       @Override
       public String toString() {
 
-         return "List";
+         return "Map";
       }
       /*************************************************************************
        * 
       *************************************************************************/
-      private final static SSString nature = new SSString("list");
+      private final static SSString nature = new SSString("map");
    }
 }

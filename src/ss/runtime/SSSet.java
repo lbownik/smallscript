@@ -15,32 +15,32 @@
 //-----------------------------------------------------------------------------
 package ss.runtime;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
  ******************************************************************************/
-public final class SSList extends SSDynamicObject {
+public final class SSSet extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSList() {
+   private SSSet() {
 
-      this.elements = new ArrayList<>();
+      this.elements = new HashSet<>();
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSList(final ArrayList<SSObject> elements) {
+   private SSSet(final HashSet<SSObject> elements) {
 
-      this.elements = new ArrayList<>(elements);
+      this.elements = new HashSet<>(elements);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
    protected SSObject doClone() {
 
-      return new SSList(this.elements);
+      return new SSSet(this.elements);
    }
    /****************************************************************************
     * 
@@ -51,7 +51,6 @@ public final class SSList extends SSDynamicObject {
 
       return switch (method) {
          case "size" -> new SSLong(this.elements.size());
-         case "at:" -> this.elements.get(((SSLong) args.get(0)).intValue());
          case "add:", "append:" -> append(args.get(0));
          default -> super.invoke(stack, method, args);
       };
@@ -86,12 +85,12 @@ public final class SSList extends SSDynamicObject {
    @Override
    public boolean equals(final Object o) {
 
-      return o instanceof SSList s && this.elements.equals(s.elements);
+      return o instanceof SSSet s && this.elements.equals(s.elements);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private final ArrayList<SSObject> elements;
+   private final HashSet<SSObject> elements;
    /****************************************************************************
     * 
     ***************************************************************************/
@@ -118,7 +117,7 @@ public final class SSList extends SSDynamicObject {
       *************************************************************************/
       private SSObject createNew() {
 
-         final var result = new SSList();
+         final var result = new SSSet();
          result.setField("nature", nature);
          return result;
       }
@@ -133,6 +132,6 @@ public final class SSList extends SSDynamicObject {
       /*************************************************************************
        * 
       *************************************************************************/
-      private final static SSString nature = new SSString("list");
+      private final static SSString nature = new SSString("set");
    }
 }

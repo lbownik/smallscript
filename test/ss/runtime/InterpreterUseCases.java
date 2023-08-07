@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
@@ -134,6 +135,18 @@ public class InterpreterUseCases {
       
       assertResultEquals(new SSString("a"),"""
             List new append: "a" append: null append: true at: 0;
+            """);
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Ignore
+   @Test
+   public void map_workProperly() throws Exception {
+      
+      assertResultEquals(new SSString("a"),"""
+            !m = Map new at: "x" :put: "a";
+            m = at: "x";
             """);
    }
    /****************************************************************************

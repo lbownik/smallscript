@@ -15,17 +15,22 @@
 //-----------------------------------------------------------------------------
 package ss.runtime;
 
+import static java.util.Collections.emptyList;
+
+import java.io.InputStreamReader;
 import java.util.List;
+
+import ss.parser.Parser;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
  ******************************************************************************/
-public final class SSNull extends SSDynamicObject {
+public final class SSApplication extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public static SSNull instance() {
+   protected SSObject doClone() {
 
-      return instance;
+      return this;
    }
    /****************************************************************************
     * 
@@ -35,21 +40,33 @@ public final class SSNull extends SSDynamicObject {
          final List<SSObject> args) {
 
       return switch (method) {
-         case "asString" -> new SSString(toString());
-         case "hash" -> new SSLong(hashCode());
-         case "size" -> new SSLong(0);
-         case "at:" -> this;
-         case "equals:" -> stack.get(this.equals(args.get(0).evaluate(stack)));
-         case "isNotEqualTo:" ->
-            stack.get(!this.equals(args.get(0).evaluate(stack)));
-         default -> this;
+         case "exit:" -> exit(args.get(0));
+         case "load:" -> load(stack, args.get(0));
+         default -> super.invoke(stack, method, args);
       };
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSNull() {
+   private SSObject exit(final SSObject code) {
 
+      System.exit(((SSLong) code).intValue());
+      return SSNull.instance();
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private SSObject load(final Stack stack, final SSObject code) {
+
+      try (final var reader = new InputStreamReader(
+            getClass().getResourceAsStream(code.toString()), "utf-8")) {
+
+         return new Parser().parse(reader).toSSObject().invoke(stack, "execute",
+               emptyList());
+         
+      } catch (final Exception e) {
+         throw new RuntimeException(e);
+      }
    }
    /****************************************************************************
     * 
@@ -57,19 +74,17 @@ public final class SSNull extends SSDynamicObject {
    @Override
    public String toString() {
 
-      return name;
+      return "application";
    }
    /****************************************************************************
     * 
    ****************************************************************************/
    @Override
-   public int hashCode() {
+   public boolean equals(final Object obj) {
 
-      return 0;
+      return getClass().equals(obj.getClass());
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private final static SSNull instance = new SSNull();
-   public final static String name = "null";
 }

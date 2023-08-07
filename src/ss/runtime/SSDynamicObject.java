@@ -81,6 +81,7 @@ public class SSDynamicObject implements SSObject {
                case "try::catch:" -> tryCatch(stack, args.get(0), args.get(1));
                case "size" -> new SSLong(1);
                case "at:" -> this;
+               case "forEach:" -> forEach(stack, args.get(0));
                default -> throw new RuntimeException(
                      "Method '" + method + "' is not defined.");
             };
@@ -99,6 +100,14 @@ public class SSDynamicObject implements SSObject {
          return catchBlock.invoke(stack.pushNewFrame(), "execute",
                List.of(e.object));
       }
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private SSObject forEach(final Stack stack, final SSObject block) {
+      
+      block.invoke(stack.pushNewFrame(), "executeWith:", List.of(this));
+      return this;
    }
    /****************************************************************************
     * 

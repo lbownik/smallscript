@@ -39,6 +39,8 @@ public final class SSTrue extends SSDynamicObject {
          case "and:" -> args.get(0).evaluate(stack.pushNewFrame());
          case "or:" -> this;
          case "xor:" -> args.get(0).invoke(stack, "not");
+         case "size" -> new SSLong(1);
+         case "at:" -> this;
          case "ifTrue:" -> args.get(0).evaluate(stack.pushNewFrame());
          case "ifFalse:" -> stack.getNull();
          case "ifTrue::ifFalse:" -> args.get(0).evaluate(stack.pushNewFrame());

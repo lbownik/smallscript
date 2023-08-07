@@ -31,6 +31,7 @@ public class SSBlock extends SSDynamicObject {
 
       this.statements = statements;
       this.argumentNames = argumentNames;
+      setField("nature", new SSString("block"));
    }
    /****************************************************************************
     * 

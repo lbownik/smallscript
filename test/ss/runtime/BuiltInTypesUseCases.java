@@ -18,7 +18,6 @@ package ss.runtime;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
-import static java.util.Collections.emptyList;
 
 import java.io.IOException;
 
@@ -272,8 +271,7 @@ public class BuiltInTypesUseCases {
       assertSSTrue("!o = Object new; o clone isNotEqualTo: o;");
       assertSSTrue("!o = Object new; o at: 0 equals: o;");
       assertSSTrue("!o = Object new; o execute equals: o;");
-      assertSSTrue("!o = Object new; o asString size isGreaterThan: 0;");
-      assertSSTrue("!o = Object new; o asString isNotEqualTo: o;");
+      assertSSTrue("!o = Object new; o asString startsWith: \"object#\";");
       assertSSTrue("!o = Object new; o hash asDouble isGreaterThan: 0.0;");
    }
    /****************************************************************************
@@ -317,6 +315,23 @@ public class BuiltInTypesUseCases {
    * 
    ****************************************************************************/
    @Test
+   public void object_overridingMethodsWoks_forProperInvocation() throws Exception {
+
+      assertSSTrue(
+            """
+                  !object = Object new;
+                  object addMethod: "$super_asString" :using: (object getMethod: "asString");
+                  object addMethod: "asString" :using: {!this |
+                     "@" concat: (this $super_asString);
+                  }
+                  object asString startsWith: "@Object#";
+                  """);
+   }
+
+   /****************************************************************************
+   * 
+   ****************************************************************************/
+   @Test
    public void object_addVield_createsNewFieldAccessorMethods_forProperInvocation()
          throws Exception {
 
@@ -324,6 +339,11 @@ public class BuiltInTypesUseCases {
             !object = Object new;
             object addField: 'a';
             object a: 10;
+            object a;
+            """);
+      assertResultEquals(new SSLong(10), """
+            !object = Object new;
+            object addField: 'a' :withValue: 10;
             object a;
             """);
    }

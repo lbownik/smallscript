@@ -31,7 +31,7 @@ public final class SSChar extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSChar(final Map<String, SSBlock> methods,
+   private SSChar(final Map<String, SSObject> methods,
          final Map<String, SSObject> fields, final char value) {
 
       super(methods, fields);

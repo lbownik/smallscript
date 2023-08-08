@@ -31,7 +31,7 @@ public final class SSString extends SSDynamicObject {
     /****************************************************************************
      * 
     ****************************************************************************/
-    private SSString(final Map<String, SSBlock> methods,
+    private SSString(final Map<String, SSObject> methods,
             final Map<String, SSObject> fields, final String value) {
 
         super(methods, fields);
@@ -56,6 +56,7 @@ public final class SSString extends SSDynamicObject {
             new SSString(this.value.concat(((SSString) args.get(0)).value));
         case "size" -> new SSLong(this.value.length());
         case "at:" -> new SSChar(this.value.charAt(((SSLong) args.get(0)).intValue()));
+        case "startsWith:" -> stack.get(this.value.startsWith(args.get(0).toString()));
         default -> super.invoke(stack, method, args);
         };
     }

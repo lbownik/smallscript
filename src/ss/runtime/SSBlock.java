@@ -12,7 +12,7 @@
 //WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //See the License for the specific language governing permissions and
 //limitations under the License.
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 package ss.runtime;
 
 import static java.util.Collections.emptyList;
@@ -36,7 +36,7 @@ public class SSBlock extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSBlock(final Map<String, SSBlock> methods,
+   private SSBlock(final Map<String, SSObject> methods,
          final Map<String, SSObject> fields, final List<SSObject> statements,
          final List<String> argumentNames) {
 

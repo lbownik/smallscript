@@ -27,6 +27,7 @@ public final class SSChar extends SSDynamicObject {
    public SSChar(final char value) {
 
       this.value = value;
+      
    }
    /****************************************************************************
     * 
@@ -35,6 +36,7 @@ public final class SSChar extends SSDynamicObject {
          final Map<String, SSObject> fields, final char value) {
 
       super(methods, fields);
+      //addBinaryMethod("isGreaterThanz:", this::isGreaterThan);
       this.value = value;
    }
    /****************************************************************************
@@ -71,6 +73,13 @@ public final class SSChar extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
+   private static char evaluateSecond(final Stack stack, final List<SSObject> args) {
+
+      return ((SSChar) args.get(1).evaluate(stack.pushNewFrame())).value;
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
    @Override
    public String toString() {
 
@@ -92,6 +101,13 @@ public final class SSChar extends SSDynamicObject {
 
       return getClass() == o.getClass() && this.value == ((SSChar) o).value;
 
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private SSObject isGreaterThan(final Stack stack, final List<SSObject> args) {
+
+      return stack.get(this.value > evaluateSecond(stack, args));
    }
    /****************************************************************************
     * 

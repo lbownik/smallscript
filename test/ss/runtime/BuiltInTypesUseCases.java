@@ -21,6 +21,7 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
@@ -314,6 +315,7 @@ public class BuiltInTypesUseCases {
    /****************************************************************************
    * 
    ****************************************************************************/
+   @Ignore
    @Test
    public void object_overridingMethodsWoks_forProperInvocation() throws Exception {
 

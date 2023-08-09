@@ -29,7 +29,7 @@ public class SSDynamicObject implements SSObject {
    ****************************************************************************/
    public SSDynamicObject() {
 
-      this(new HashMap<>(0), new HashMap<>(0));
+      this(new HashMap<>(), new HashMap<>(0));
    }
    /****************************************************************************
     * 
@@ -40,6 +40,13 @@ public class SSDynamicObject implements SSObject {
       this.methods = new HashMap<>(methods);
       this.fields = new HashMap<>(fields);
 
+      initMethods();
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private void initMethods() {
+      
       addBinaryMethod("addField:", this::addField);
       addBinaryMethod("addField::withValue:", this::addFieldWithValue);
       addBinaryMethod("addMethod::using:", this::addMethod);
@@ -54,13 +61,13 @@ public class SSDynamicObject implements SSObject {
       addBinaryMethod("hash", (stack, args) -> new SSLong(hashCode()));
       addBinaryMethod("isNotEqualTo:", this::isNotEqualTo);
       addBinaryMethod("size", (stack, args) -> new SSLong(1));
-      addBinaryMethod("throw", this::throwThis);
-      addBinaryMethod("try::catch:", this::tryCatch);
+      addBinaryMethod("throw", SSDynamicObject::throwThis);
+      addBinaryMethod("try::catch:", SSDynamicObject::tryCatch);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private void addBinaryMethod(final String name,
+   protected void addBinaryMethod(final String name,
          final BiFunction<Stack, List<SSObject>, SSObject> code) {
 
       this.methods.put(name, new SSBinaryBlock(code));
@@ -109,14 +116,14 @@ public class SSDynamicObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSObject throwThis(final Stack stack, final List<SSObject> args) {
+   private static SSObject throwThis(final Stack stack, final List<SSObject> args) {
 
-      throw new AuxiliaryException(this);
+      throw new AuxiliaryException(args.get(0));
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSObject tryCatch(final Stack stack, final List<SSObject> args) {
+   private static SSObject tryCatch(final Stack stack, final List<SSObject> args) {
 
       try {
          return args.get(1).invoke(stack.pushNewFrame(), "execute");

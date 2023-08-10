@@ -19,15 +19,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.fail;
 
-import java.io.IOException;
-
-import org.junit.Ignore;
 import org.junit.Test;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
-public class BuiltInTypesUseCases {
-
+public class BuiltInTypesUseCases extends UseCaseBase {
    /****************************************************************************
     * 
     ***************************************************************************/
@@ -262,105 +258,8 @@ public class BuiltInTypesUseCases {
       assertResultEquals(new SSString("Object"), "Object clone asString;");
       assertNotNull(new Interpreter().exacute("Object new;", this.stack));
    }
-   /****************************************************************************
-    * 
-    ****************************************************************************/
-   @Test
-   public void object_worksProperly_forBasicOperations() throws Exception {
 
-      assertResultEquals(new SSLong(1), "Object new size;");
-      assertSSTrue("!o = Object new; o clone isNotEqualTo: o;");
-      assertSSTrue("!o = Object new; o at: 0 equals: o;");
-      assertSSTrue("!o = Object new; o execute equals: o;");
-      assertSSTrue("!o = Object new; o asString startsWith: \"object#\";");
-      assertSSTrue("!o = Object new; o hash asDouble isGreaterThan: 0.0;");
-   }
-   /****************************************************************************
-    * 
-    ***************************************************************************/
-   @Test
-   public void object_tryThrowCach_worksProperly() throws Exception {
 
-      assertSSTrue("""
-            !o = Object new;
-            o try: {
-              o throw;
-            } :catch: {!e |
-              e equals: o;
-            };
-            """);
-      assertSSTrue("""
-            !o = Object new;
-            !counter = 0;
-            !result = o forEach: {!item |
-               counter = counter plus: 1;
-               item;
-            };
-            (counter equals: 1) and: (result equals: o);
-            """);
-   }
-   /****************************************************************************
-   * 
-   ****************************************************************************/
-   @Test
-   public void object_addMethod_createsNewMethod_forProperInvocation()
-         throws Exception {
-
-      assertResultEquals(new SSLong(1), """
-            !object = Object new;
-            object addMethod: 'a' :using: { 1;};
-            object a;
-            """);
-   }
-   /****************************************************************************
-   * 
-   ****************************************************************************/
-   @Ignore
-   @Test
-   public void object_overridingMethodsWoks_forProperInvocation() throws Exception {
-
-      assertSSTrue(
-            """
-                  !object = Object new;
-                  object addMethod: "$super_asString" :using: (object getMethod: "asString");
-                  object addMethod: "asString" :using: {!this |
-                     "@" concat: (this $super_asString);
-                  }
-                  object asString startsWith: "@Object#";
-                  """);
-   }
-
-   /****************************************************************************
-   * 
-   ****************************************************************************/
-   @Test
-   public void object_addVield_createsNewFieldAccessorMethods_forProperInvocation()
-         throws Exception {
-
-      assertResultEquals(new SSLong(10), """
-            !object = Object new;
-            object addField: 'a';
-            object a: 10;
-            object a;
-            """);
-      assertResultEquals(new SSLong(10), """
-            !object = Object new;
-            object addField: 'a' :withValue: 10;
-            object a;
-            """);
-   }
-   /****************************************************************************
-   * 
-   ****************************************************************************/
-   @Test
-   public void object_clone_createsNewObject_forProperInvocation() throws Exception {
-
-      assertSSFalse("""
-            !o = Object new;
-            !new = (o clone);
-            new equals: o;
-            """);
-   }
    /****************************************************************************
     * 
     ****************************************************************************/
@@ -435,35 +334,5 @@ public class BuiltInTypesUseCases {
    }
    /****************************************************************************
     * 
-    ***************************************************************************/
-   private void assertSSNull(final String program) throws IOException {
-
-      assertResultEquals(SSNull.instance(), program);
-   }
-   /****************************************************************************
-    * 
-    ***************************************************************************/
-   private void assertSSFalse(final String program) throws IOException {
-
-      assertResultEquals(new SSFalse(), program);
-   }
-   /****************************************************************************
-    * 
-    ***************************************************************************/
-   private void assertSSTrue(final String program) throws IOException {
-
-      assertResultEquals(new SSTrue(), program);
-   }
-   /****************************************************************************
-    * 
-    ***************************************************************************/
-   private void assertResultEquals(final SSObject o, final String program)
-         throws IOException {
-
-      assertEquals(o, new Interpreter().exacute(program, this.stack));
-   }
-   /****************************************************************************
-    * 
-    ***************************************************************************/
-   private Stack stack = Stack.create();
+    ****************************************************************************/
 }

@@ -53,7 +53,7 @@ public final class SSString extends SSDynamicObject {
 
         return switch (method) {
         case "concatenate:" ->
-            new SSString(this.value.concat(((SSString) args.get(0)).value));
+            new SSString(this.value.concat(((SSString) args.get(0).evaluate(stack.pushNewFrame())).value));
         case "size" -> new SSLong(this.value.length());
         case "at:" -> new SSChar(this.value.charAt(((SSLong) args.get(0)).intValue()));
         case "startsWith:" -> stack.get(this.value.startsWith(args.get(0).toString()));

@@ -102,8 +102,13 @@ public class SSBlock extends SSDynamicObject {
 
       initiateLocalVariables(stack, args);
 
-      return this.statements.stream().map(s -> s.evaluate(stack))
-            .reduce(stack.getNull(), (r, o) -> o);
+      var result = stack.getNull();
+
+      for (final var statement : this.statements) {
+         result = statement.evaluate(stack);
+      }
+
+      return result;
    }
    /****************************************************************************
     * 

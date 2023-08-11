@@ -170,41 +170,66 @@ public class DynamicObjectUseCases extends UseCaseBase {
    * 
    ****************************************************************************/
    @Test
-   public void object_overridingMethodsWoks_forProperInvocation() throws Exception {
+   public void askingForInexistentMethod_returnsNull() throws Exception {
 
-//      assertSSTrue(
-//            """
-//                  !object = Object new;
-//                  !oldMethod = object getMethod: "asString";
-//                  object addMethod: "$super_asString" :using: oldMethod;
-//                  object addMethod: "asString" :using: {!this |
-//                     "@" concat: (this $super_asString);
-//                  }
-//                  object asString startsWith: "@Object#";
-//                  """);
-      assertSSTrue(
-            """
-                  !object = Object new;
-                  !oldMethod = object method: "asString";
-                  object addMethod: "$super_asString" :using: oldMethod;
-                  object addMethod: "asString" :using: {!this |
-                     "@" concatenate: (this $super_asString);
-                  };
-                  object asString startsWith: "@object#";
-                  """);
+      assertSSNull("Object new method: \"abc\";");
    }
    /****************************************************************************
    * 
    ****************************************************************************/
    @Test
-   public void object_clone_createsNewObject_forProperInvocation() throws Exception {
+   public void overridingMethodsWoks() throws Exception {
 
-      assertSSFalse("""
+      assertSSTrue("""
+            !object = Object new;
+            !oldMethod = object method: "asString";
+            object addMethod: "$super_asString" :using: oldMethod;
+            object addMethod: "asString" :using: {!this |
+               "@" concatenate: (this $super_asString);
+            };
+            object asString startsWith: "@object#";
+            """);
+   }
+   /****************************************************************************
+   * 
+   ****************************************************************************/
+   @Test
+   public void cloneingCreatesNewObject() throws Exception {
+
+      assertSSTrue("""
             !o = Object new;
             !new = (o clone);
-            new equals: o;
+            new isNotEqualTo: o;
             """);
-      // TODO rozszerzyć to
+   }
+   /****************************************************************************
+   * 
+   ****************************************************************************/
+   @Test
+   public void clonedObjectsHaveIndependentFields() throws Exception {
+      
+      assertSSTrue("""
+            !old = Object new;
+            !new = (old clone);
+            old addField: "test" :withValue: "a";
+            new addField: "test" :withValue: 10;
+            (old test) isNotEqualTo: (new test);
+            """);
+   }
+   /****************************************************************************
+   * 
+   ****************************************************************************/
+   @Test
+   public void cloningObjectWithFieldsCreatesNewObjectWithIndependentFields()
+         throws Exception {
+
+      assertSSTrue("""
+            !old = Object new;
+            old addField: "test" :withValue: "a";
+            !new = old clone;
+            new test: "b";
+            (old test equals: "a") and: (new test equals: "b");
+            """);
    }
    /****************************************************************************
     * 

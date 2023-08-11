@@ -28,22 +28,22 @@ public final class SSString extends SSDynamicObject {
 
         this.value = value;
     }
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    private SSString(final Map<String, SSObject> methods,
-            final Map<String, SSObject> fields, final String value) {
-
-        super(methods, fields);
-        this.value = value;
-    }
-    /****************************************************************************
-     * 
-    ****************************************************************************/
-    protected SSObject doClone() {
-
-        return new SSString(this.methods, this.fields, this.value);
-    }
+//    /****************************************************************************
+//     * 
+//    ****************************************************************************/
+//    private SSString(final Map<String, SSObject> methods,
+//            final Map<String, SSObject> fields, final String value) {
+//
+//        super(methods, fields);
+//        this.value = value;
+//    }
+//    /****************************************************************************
+//     * 
+//    ****************************************************************************/
+//    protected SSObject doClone() {
+//
+//        return new SSString(this.methods, this.fields, this.value);
+//    }
     /****************************************************************************
      * 
     ****************************************************************************/

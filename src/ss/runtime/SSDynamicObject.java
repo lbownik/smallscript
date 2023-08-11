@@ -24,42 +24,42 @@ import java.util.function.BiFunction;
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
 public class SSDynamicObject implements SSObject {
+
    /****************************************************************************
     * 
    ****************************************************************************/
    public SSDynamicObject() {
 
-      this(new HashMap<>(), new HashMap<>(0));
+      initMethods();
    }
+
    /****************************************************************************
     * 
    ****************************************************************************/
-   protected SSDynamicObject(final Map<String, SSObject> methods,
+   public SSDynamicObject(final Map<String, SSObject> methods,
          final Map<String, SSObject> fields) {
 
-      this.methods = new HashMap<>(methods);
-      this.fields = new HashMap<>(fields);
-
-      initMethods();
+      this.methods.putAll(methods);
+      this.fields.putAll(fields);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
    private void initMethods() {
 
-      addBinaryMethod("addField:", this::addField);
-      addBinaryMethod("addField::withValue:", this::addFieldWithValue);
-      addBinaryMethod("addMethod::using:", this::addMethod);
-      addBinaryMethod("asString", (stack, args) -> new SSString(toString()));
+      addBinaryMethod("addField:", SSDynamicObject::addField);
+      addBinaryMethod("addField::withValue:", SSDynamicObject::addFieldWithValue);
+      addBinaryMethod("addMethod::using:", SSDynamicObject::addMethod);
+      addBinaryMethod("asString", SSDynamicObject::toString);
       addBinaryMethod("at:", SSDynamicObject::at);
-      addBinaryMethod("clone", (stack, args) -> doClone());
-      addBinaryMethod("doesNotUnderstand:", this::doesNotUnderstand);
-      addBinaryMethod("equals:", this::equals);
-      addBinaryMethod("execute", (stack, args) -> evaluate(stack));
-      addBinaryMethod("forEach:", this::forEach);
-      addBinaryMethod("method:", this::getMethod);
-      addBinaryMethod("hash", (stack, args) -> new SSLong(hashCode()));
-      addBinaryMethod("isNotEqualTo:", this::isNotEqualTo);
+      addBinaryMethod("clone", SSDynamicObject::clone);
+      addBinaryMethod("doesNotUnderstand:", SSDynamicObject::doesNotUnderstand);
+      addBinaryMethod("equals:", SSDynamicObject::equals);
+      addBinaryMethod("execute", SSDynamicObject::evaluate);
+      addBinaryMethod("forEach:", SSDynamicObject::forEach);
+      addBinaryMethod("method:", SSDynamicObject::getMethod);
+      addBinaryMethod("hash", SSDynamicObject::hashCode);
+      addBinaryMethod("isNotEqualTo:", SSDynamicObject::isNotEqualTo);
       addBinaryMethod("size", (stack, args) -> new SSLong(1));
       addBinaryMethod("throw", SSDynamicObject::throwThis);
       addBinaryMethod("try::catch:", SSDynamicObject::tryCatch);
@@ -101,6 +101,13 @@ public class SSDynamicObject implements SSObject {
    }
    /****************************************************************************
     * 
+    ****************************************************************************/
+   private static SSObject evaluate(final Stack stack, final List<SSObject> args) {
+
+      return args.get(0).evaluate(stack);
+   }
+   /****************************************************************************
+    * 
    ****************************************************************************/
    @Override
    public String toString() {
@@ -110,9 +117,24 @@ public class SSDynamicObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   protected SSObject doClone() {
+   private static SSObject toString(final Stack stack, final List<SSObject> args) {
 
-      return new SSDynamicObject(this.methods, this.fields);
+      return new SSString(args.get(0).toString());
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject hashCode(final Stack stack, final List<SSObject> args) {
+
+      return new SSLong(args.get(0).hashCode());
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject clone(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSDynamicObject) args.get(0);
+      return new SSDynamicObject(subject.methods, subject.fields);
    }
    /****************************************************************************
     * 
@@ -152,49 +174,74 @@ public class SSDynamicObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSObject forEach(final Stack stack, final List<SSObject> args) {
+   private static SSObject forEach(final Stack stack, final List<SSObject> args) {
 
-      args.get(1).invoke(stack.pushNewFrame(), "executeWith:", List.of(this));
-      return this;
+      final var subject = (SSDynamicObject) args.get(0);
+      args.get(1).invoke(stack.pushNewFrame(), "executeWith:", List.of(subject));
+      return subject;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSObject addMethod(final Stack stack, final List<SSObject> args) {
+   private static SSObject addMethod(final Stack stack, final List<SSObject> args) {
 
-      this.methods.put(args.get(1).toString(), args.get(2).evaluate(stack.pushNewFrame()));
-      return this;
+      final var subject = (SSDynamicObject) args.get(0);
+      subject.methods.put(args.get(1).toString(),
+            args.get(2).evaluate(stack.pushNewFrame()));
+      return subject;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSObject getMethod(final Stack stack, final List<SSObject> args) {
+   private static SSObject getMethod(final Stack stack, final List<SSObject> args) {
 
-      return this.methods.get(args.get(1).toString());
+      final var subject = (SSDynamicObject) args.get(0);
+      return subject.methods.getOrDefault(args.get(1).toString(), stack.getNull());
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSObject addField(final Stack stack, final List<SSObject> args) {
+   private static SSObject addField(final Stack stack, final List<SSObject> args) {
 
-      return addField(args.get(1).toString(), stack.getNull());
+      final var subject = (SSDynamicObject) args.get(0);
+      return subject.addField(args.get(1).toString(), stack.getNull());
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSObject addFieldWithValue(final Stack stack, final List<SSObject> args) {
+   private static SSObject addFieldWithValue(final Stack stack,
+         final List<SSObject> args) {
 
-      return addField(args.get(1).toString(), args.get(2));
+      final var subject = (SSDynamicObject) args.get(0);
+      return subject.addField(args.get(1).toString(), args.get(2));
    }
    /****************************************************************************
     * 
    ****************************************************************************/
    private SSObject addField(final String name, final SSObject value) {
 
-      addBinaryMethod(name, (s, a) -> this.fields.get(name));
-      addBinaryMethod(name + ":", (s, a) -> setField(name, a.get(1)));
+      addBinaryMethod(name, (s, a) -> getField(s, name, a));
+      addBinaryMethod(name + ":", (s, a) -> setField(s, name, a));
 
       return setField(name, value);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject getField(final Stack stack, final String name,
+         final List<SSObject> args) {
+
+      final var subject = (SSDynamicObject) args.get(0);
+      return subject.fields.getOrDefault(name, stack.getNull());
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject setField(final Stack stack, final String name,
+         final List<SSObject> args) {
+
+      final var subject = (SSDynamicObject) args.get(0);
+      return subject.setField(name, args.get(1));
    }
    /****************************************************************************
     * 
@@ -207,28 +254,23 @@ public class SSDynamicObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public SSObject getField(final String name) {
+   private static SSObject isNotEqualTo(final Stack stack,
+         final List<SSObject> args) {
 
-      return this.fields.get(name);
+      return stack.get(!args.get(0).equals(args.get(1).evaluate(stack)));
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSObject isNotEqualTo(final Stack stack, final List<SSObject> args) {
+   private static SSObject equals(final Stack stack, final List<SSObject> args) {
 
-      return stack.get(!this.equals(args.get(1).evaluate(stack)));
+      return stack.get(args.get(0).equals(args.get(1).evaluate(stack)));
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSObject equals(final Stack stack, final List<SSObject> args) {
-
-      return stack.get(this.equals(args.get(1).evaluate(stack)));
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private SSObject doesNotUnderstand(final Stack stack, final List<SSObject> args) {
+   private static SSObject doesNotUnderstand(final Stack stack,
+         final List<SSObject> args) {
 
       final var message = args.get(1);
       final var method = message.invoke(stack.pushNewFrame(), "method");
@@ -238,8 +280,8 @@ public class SSDynamicObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   protected final Map<String, SSObject> methods;
-   protected final Map<String, SSObject> fields;
+   protected final Map<String, SSObject> methods = new HashMap<>();
+   protected final Map<String, SSObject> fields = new HashMap<>();
    /****************************************************************************
     * 
     ***************************************************************************/
@@ -247,24 +289,15 @@ public class SSDynamicObject implements SSObject {
       /*************************************************************************
        * 
       *************************************************************************/
-      protected SSObject doClone() {
+      public Factory() {
 
-         return new SSDynamicObject.Factory();
+         addBinaryMethod("new", Factory::createNew);
       }
       /*************************************************************************
        * 
       *************************************************************************/
-      @Override
-      public SSObject invoke(final Stack stack, final String method,
+      private static SSObject createNew(final Stack stack,
             final List<SSObject> args) {
-
-         return method.equals("new") ? createNew()
-               : super.invoke(stack, method, args);
-      }
-      /*************************************************************************
-       * 
-      *************************************************************************/
-      private SSObject createNew() {
 
          final var result = new SSDynamicObject();
          result.addField("nature", nature);
@@ -276,7 +309,7 @@ public class SSDynamicObject implements SSObject {
       @Override
       public String toString() {
 
-         return "Object";
+         return "Object#" + hashCode();
       }
       /*************************************************************************
        * 

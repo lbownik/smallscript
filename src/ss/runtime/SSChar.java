@@ -29,23 +29,23 @@ public final class SSChar extends SSDynamicObject {
       this.value = value;
       
    }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private SSChar(final Map<String, SSObject> methods,
-         final Map<String, SSObject> fields, final char value) {
-
-      super(methods, fields);
-      //addBinaryMethod("isGreaterThanz:", this::isGreaterThan);
-      this.value = value;
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   protected SSObject doClone() {
-
-      return new SSChar(this.methods, this.fields, this.value);
-   }
+//   /****************************************************************************
+//    * 
+//   ****************************************************************************/
+//   private SSChar(final Map<String, SSObject> methods,
+//         final Map<String, SSObject> fields, final char value) {
+//
+//      super(methods, fields);
+//      //addBinaryMethod("isGreaterThanz:", this::isGreaterThan);
+//      this.value = value;
+//   }
+//   /****************************************************************************
+//    * 
+//   ****************************************************************************/
+//   protected SSObject doClone() {
+//
+//      return new SSChar(this.methods, this.fields, this.value);
+//   }
    /****************************************************************************
     * 
    ****************************************************************************/

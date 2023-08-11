@@ -33,25 +33,25 @@ public class SSBlock extends SSDynamicObject {
       this.argumentNames = argumentNames;
       setField("nature", new SSString("block"));
    }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private SSBlock(final Map<String, SSObject> methods,
-         final Map<String, SSObject> fields, final List<SSObject> statements,
-         final List<String> argumentNames) {
-
-      super(methods, fields);
-      this.statements = statements;
-      this.argumentNames = argumentNames;
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   protected SSObject doClone() {
-
-      return new SSBlock(this.methods, this.fields, this.statements,
-            this.argumentNames);
-   }
+//   /****************************************************************************
+//    * 
+//   ****************************************************************************/
+//   private SSBlock(final Map<String, SSObject> methods,
+//         final Map<String, SSObject> fields, final List<SSObject> statements,
+//         final List<String> argumentNames) {
+//
+//      super(methods, fields);
+//      this.statements = statements;
+//      this.argumentNames = argumentNames;
+//   }
+//   /****************************************************************************
+//    * 
+//   ****************************************************************************/
+//   protected SSObject doClone() {
+//
+//      return new SSBlock(this.methods, this.fields, this.statements,
+//            this.argumentNames);
+//   }
    /****************************************************************************
     * 
    ****************************************************************************/

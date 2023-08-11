@@ -28,22 +28,22 @@ public final class SSDouble extends SSDynamicObject {
 
       this.value = value;
    }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private SSDouble(final Map<String, SSObject> methods,
-         final Map<String, SSObject> fields, final double value) {
-
-      super(methods, fields);
-      this.value = value;
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   protected SSObject doClone() {
-
-      return new SSDouble(this.methods, this.fields, this.value);
-   }
+//   /****************************************************************************
+//    * 
+//   ****************************************************************************/
+//   private SSDouble(final Map<String, SSObject> methods,
+//         final Map<String, SSObject> fields, final double value) {
+//
+//      super(methods, fields);
+//      this.value = value;
+//   }
+//   /****************************************************************************
+//    * 
+//   ****************************************************************************/
+//   protected SSObject doClone() {
+//
+//      return new SSDouble(this.methods, this.fields, this.value);
+//   }
    /****************************************************************************
     * 
    ****************************************************************************/

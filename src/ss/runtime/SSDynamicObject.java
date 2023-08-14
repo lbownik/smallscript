@@ -86,7 +86,7 @@ public class SSDynamicObject implements SSObject {
          message.addField("nature", new SSString("message"));
          message.addField("method", new SSString(method));
          message.addField("args", new SSList(args));
-         return invoke(stack, "doesNotUnderstand:", List.of(this, message));
+         return invoke(stack, "doesNotUnderstand:", List.of(message));
       }
    }
    /****************************************************************************
@@ -164,11 +164,7 @@ public class SSDynamicObject implements SSObject {
       if (index == 0) {
          return args.get(0);
       } else {
-         final var exception = new SSDynamicObject();
-         exception.addField("nature", new SSString("exception"));
-         exception.addField("message",
-               new SSString("Index " + index + " out of bounds."));
-         throw new AuxiliaryException(exception);
+         return throwException(args.get(1), "Index " + index + " out of bounds.");
       }
    }
    /****************************************************************************
@@ -275,7 +271,19 @@ public class SSDynamicObject implements SSObject {
       final var message = args.get(1);
       final var method = message.invoke(stack.pushNewFrame(), "method");
 
-      throw new RuntimeException("Method '" + method + "' is not defined.");
+      return throwException(message, "Method '" + method + "' is not defined.");
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject throwException(final SSObject cause,
+         final String message) {
+
+      final var exception = new SSDynamicObject();
+      exception.addField("nature", new SSString("exception"));
+      exception.addField("cause", cause);
+      exception.addField("message", new SSString(message));
+      throw new AuxiliaryException(exception);
    }
    /****************************************************************************
     * 

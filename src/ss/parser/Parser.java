@@ -210,7 +210,7 @@ public final class Parser {
          currentChar = read();
       }
 
-      return new StringConstant(new String(this.buffer, 0, this.bufIndex));
+      return new StringConstant(new String(this.buffer, 0, this.bufIndex).intern());
    }
    /****************************************************************************
    * 
@@ -424,6 +424,7 @@ public final class Parser {
       /*************************************************************************
        * 
        ************************************************************************/
+      @Override
       public int read() throws IOException {
 
          return this.pos < this.length ? this.s.charAt(this.pos++) : -1;

@@ -207,7 +207,7 @@ public class DynamicObjectUseCases extends UseCaseBase {
    ****************************************************************************/
    @Test
    public void clonedObjectsHaveIndependentFields() throws Exception {
-      
+
       assertSSTrue("""
             !old = Object new;
             !new = (old clone);
@@ -230,6 +230,22 @@ public class DynamicObjectUseCases extends UseCaseBase {
             new test: "b";
             (old test equals: "a") and: (new test equals: "b");
             """);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   @Test
+   public void callingInexistentMethodThrowsException() throws Exception {
+
+      assertSSTrue(
+            """
+                  !old = Object new;
+                  old try: {
+                     old test;
+                  } :catch: {!e |
+                     (e nature equals: "exception") and: (e message equals: "Method 'test' is not defined.");
+                  };
+                  """);
    }
    /****************************************************************************
     * 

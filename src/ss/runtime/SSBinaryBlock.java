@@ -45,10 +45,22 @@ public class SSBinaryBlock implements SSObject {
             case "equals:" -> stack.get(this.equals(args.get(0).evaluate(stack)));
             case "isNotEqualTo:" ->
                stack.get(!this.equals(args.get(0).evaluate(stack)));
-            default ->
-               throw new RuntimeException("Method '" + method + "' is not defined.");
+            default -> doesNotUnderstand(stack, method, args);
          };
       }
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private SSObject doesNotUnderstand(final Stack stack, final String method,
+         final List<SSObject> args) {
+
+      final var message = new SSDynamicObject();
+      message.addField("nature", new SSString("message"));
+      message.addField("method", new SSString(method));
+      message.addField("args", new SSList(args));
+      
+      return SSDynamicObject.doesNotUnderstand(stack, List.of(this, message));
    }
    /****************************************************************************
     * 

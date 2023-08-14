@@ -214,7 +214,7 @@ public class SSDynamicObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSObject addField(final String name, final SSObject value) {
+   SSObject addField(final String name, final SSObject value) {
 
       addBinaryMethod(name, (s, a) -> getField(s, name, a));
       addBinaryMethod(name + ":", (s, a) -> setField(s, name, a));
@@ -265,7 +265,7 @@ public class SSDynamicObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject doesNotUnderstand(final Stack stack,
+   static SSObject doesNotUnderstand(final Stack stack,
          final List<SSObject> args) {
 
       final var message = args.get(1);
@@ -276,7 +276,7 @@ public class SSDynamicObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject throwException(final SSObject cause,
+   static SSObject throwException(final SSObject cause,
          final String message) {
 
       final var exception = new SSDynamicObject();

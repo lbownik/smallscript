@@ -15,10 +15,6 @@
 //------------------------------------------------------------------------------
 package ss.runtime;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-
 import org.junit.Test;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
@@ -28,23 +24,76 @@ public class NullUseCases extends UseCaseBase {
     * 
     ***************************************************************************/
    @Test
-   public void null_WorksProperly_forAllOperations() throws Exception {
+   public void nullHasSetBasicProperties() throws Exception {
 
-      assertSSNull("null;");
-      assertSSNull("null evaluate;");
-      assertResultEquals(new SSLong(0), "null hash;");
+      assertSSTrue("null size equals: 0;");
+      assertSSNull("null nature;");
+      assertSSTrue("null asString equals: \"null\";");
+      assertSSTrue("null hash equals: 0;");
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void nullEualsOnlyToItself() throws Exception {
+
       assertSSTrue("null equals: null;");
       assertSSFalse("null isNotEqualTo: null;");
+
       assertSSFalse("null equals: true;");
       assertSSTrue("null isNotEqualTo: true;");
-      assertResultEquals(new SSString("null"), "null asString;");
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void executingNullDoesNothingAndReturnNull() throws Exception {
+
+      assertSSNull("null execute;");
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void negationOfNullIsStillNull() throws Exception {
 
       assertSSNull("null not;");
-      assertSSNull("null ifTrue: false;");
-      assertSSNull("null execute;");
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void invokingUndefinedMethodsOnNull_doesNothing_andReturnsNull()
+         throws Exception {
 
-      assertResultEquals(new SSLong(0), "null size;");
-      // assertResultEquals(new SSLong(0), "null at: 0;");
+      assertSSNull("null ifTrue: false;");
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void nullIsEquivalentToEmptyList()
+         throws Exception {
+
+      assertSSTrue("null size equals: 0;");
+      assertSSTrue("""
+            !o = Object new;
+            o try: {
+              null at: 0;
+            } :catch: {!e |
+              (e nature equals: "exception") and:
+              (e message equals: "Index 0 out of bounds.");
+            };
+            """);
+      assertSSTrue("""
+            !counter = 0;
+            !innerItem = null;
+            !result = null forEach: {!item |
+               counter = counter plus: 1;
+               innerItem = item;
+            };
+            (counter equals: 0) and: (result equals: null) and: (innerItem equals: null);
+            """);
    }
    /****************************************************************************
     * 

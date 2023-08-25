@@ -75,6 +75,7 @@ public class SSDynamicObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
+   @Override
    public SSObject invoke(final Stack stack, final String method,
          final List<SSObject> args) {
 
@@ -290,6 +291,8 @@ public class SSDynamicObject implements SSObject {
    ****************************************************************************/
    protected final Map<String, SSObject> methods = new HashMap<>();
    protected final Map<String, SSObject> fields = new HashMap<>();
+   
+   public final static SSString nature = new SSString("object");
    /****************************************************************************
     * 
     ***************************************************************************/
@@ -322,6 +325,5 @@ public class SSDynamicObject implements SSObject {
       /*************************************************************************
        * 
       *************************************************************************/
-      private final static SSString nature = new SSString("object");
    }
 }

@@ -20,33 +20,72 @@ import java.util.List;
  * @author lukasz.bownik@gmail.com {
  ******************************************************************************/
 public final class SSTrue extends SSDynamicObject {
+
    /****************************************************************************
     * 
    ****************************************************************************/
-   protected SSObject doClone() {
+   public SSTrue() {
 
-      return this;
+      addBinaryMethod("and:", SSTrue::and);
+      addBinaryMethod("clone", SSTrue::clone);
+      addBinaryMethod("ifFalse:", SSTrue::ifFalse);
+      addBinaryMethod("ifTrue:", SSTrue::ifTrue);
+      addBinaryMethod("ifTrue::ifFalse:", SSTrue::ifTrue);
+      addBinaryMethod("not", SSTrue::not);
+      addBinaryMethod("or:", SSTrue::or);
+      addBinaryMethod("xor:", SSTrue::xor);
+      addField("nature", SSDynamicObject.nature);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   @Override
-   public SSObject invoke(final Stack stack, final String method,
-         final List<SSObject> args) {
+   private static SSObject clone(final Stack stack, final List<SSObject> args) {
 
-      return switch (method) {
-         case "not" -> stack.getFalse();
-         case "and:" -> args.get(0).evaluate(stack.pushNewFrame());
-         case "or:" -> this;
-         case "xor:" -> args.get(0).invoke(stack, "not");
-         case "size" -> new SSLong(1);
-         case "at:" -> this;
-         case "ifTrue:" -> args.get(0).evaluate(stack.pushNewFrame());
-         case "ifFalse:" -> stack.getNull();
-         case "ifTrue::ifFalse:" -> args.get(0).evaluate(stack.pushNewFrame());
-         default -> super.invoke(stack, method, args);
-      };
+      return args.get(0);
    }
+   /****************************************************************************
+    * 
+    ****************************************************************************/
+   private static SSObject not(final Stack stack, final List<SSObject> args) {
+
+      return stack.getFalse();
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject and(final Stack stack, final List<SSObject> args) {
+
+      return args.get(1).evaluate(stack.pushNewFrame());
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject or(final Stack stack, final List<SSObject> args) {
+
+      return args.get(0);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject xor(final Stack stack, final List<SSObject> args) {
+
+      return args.get(1).invoke(stack, "not");
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject ifTrue(final Stack stack, final List<SSObject> args) {
+
+      return args.get(1).invoke(stack.pushNewFrame(), "execute");
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject ifFalse(final Stack stack, final List<SSObject> args) {
+
+      return stack.getNull();
+   }
+
    /****************************************************************************
     * 
    ****************************************************************************/

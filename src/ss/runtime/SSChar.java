@@ -27,48 +27,28 @@ public final class SSChar extends SSDynamicObject {
    public SSChar(final char value) {
 
       this.value = value;
-      
-   }
-//   /****************************************************************************
-//    * 
-//   ****************************************************************************/
-//   private SSChar(final Map<String, SSObject> methods,
-//         final Map<String, SSObject> fields, final char value) {
-//
-//      super(methods, fields);
-//      //addBinaryMethod("isGreaterThanz:", this::isGreaterThan);
-//      this.value = value;
-//   }
-//   /****************************************************************************
-//    * 
-//   ****************************************************************************/
-//   protected SSObject doClone() {
-//
-//      return new SSChar(this.methods, this.fields, this.value);
-//   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   @Override
-   public SSObject invoke(final Stack stack, final String method,
-         final List<SSObject> args) {
-
-      return switch (method) {
-         case "isGreaterThan:" -> stack.get(this.value > evaluateFirst(args, stack));
-         case "isLessThan:" -> stack.get(this.value < evaluateFirst(args, stack));
-         case "isGreaterOrEqualTo:" ->
-            stack.get(this.value >= evaluateFirst(args, stack));
-         case "isLessOrEqualTo:" ->
-            stack.get(this.value <= evaluateFirst(args, stack));
-         default -> super.invoke(stack, method, args);
-      };
+      addBinaryMethod("clone", SSChar::clone);
+      addBinaryMethod("isGreaterOrEqualTo:", SSChar::isGreaterThanOrEqualTo);
+      addBinaryMethod("isGreaterThan:", SSChar::isGreaterThan);
+      addBinaryMethod("isLessOrEqualTo:", SSChar::isLessOrEqualTo);
+      addBinaryMethod("isLessThan:", SSChar::isLessThan);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static char evaluateFirst(final List<SSObject> args, final Stack stack) {
+   private SSChar(final Map<String, SSObject> methods,
+         final Map<String, SSObject> fields, final char value) {
 
-      return ((SSChar) args.get(0).evaluate(stack.pushNewFrame())).value;
+      super(methods, fields);
+      this.value = value;
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject clone(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSChar) args.get(0);
+      return new SSChar(subject.methods, subject.fields, subject.value);
    }
    /****************************************************************************
     * 
@@ -105,9 +85,37 @@ public final class SSChar extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSObject isGreaterThan(final Stack stack, final List<SSObject> args) {
+   private static SSObject isGreaterThan(final Stack stack,
+         final List<SSObject> args) {
 
-      return stack.get(this.value > evaluateSecond(stack, args));
+      final var subject = (SSChar) args.get(0);
+      return stack.get(subject.value > evaluateSecond(stack, args));
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject isGreaterThanOrEqualTo(final Stack stack,
+         final List<SSObject> args) {
+
+      final var subject = (SSChar) args.get(0);
+      return stack.get(subject.value >= evaluateSecond(stack, args));
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject isLessThan(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSChar) args.get(0);
+      return stack.get(subject.value < evaluateSecond(stack, args));
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject isLessOrEqualTo(final Stack stack,
+         final List<SSObject> args) {
+
+      final var subject = (SSChar) args.get(0);
+      return stack.get(subject.value <= evaluateSecond(stack, args));
    }
    /****************************************************************************
     * 

@@ -661,6 +661,30 @@ public class ParserUseCases {
    /****************************************************************************
    * 
    ****************************************************************************/
+   @Test
+   public void returnsParseTree_forProperProgramWithComments() throws Exception {
+
+      Block program = parse("""
+            true; # comment
+            false;
+            """);
+
+      assertEquals(2, program.size());
+      {
+         Sentence expression = (Sentence) program.get(0);
+
+         assertEquals(1, expression.size());
+         assertEquals("true", expression.get(0).value());
+
+         expression = (Sentence) program.get(1);
+
+         assertEquals(1, expression.size());
+         assertEquals("false", expression.get(0).value());
+      }
+   }
+   /****************************************************************************
+   * 
+   ****************************************************************************/
 
    private void assertUnexpected(final String str, final char unexpectedChar)
          throws IOException {

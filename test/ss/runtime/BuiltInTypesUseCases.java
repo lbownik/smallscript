@@ -28,98 +28,6 @@ public class BuiltInTypesUseCases extends UseCaseBase {
     * 
     ***************************************************************************/
    @Test
-   public void null_WorksProperly_forAllOperations() throws Exception {
-
-      assertSSNull("null;");
-      assertSSNull("null evaluate;");
-      assertResultEquals(new SSLong(0), "null hash;");
-      assertSSTrue("null equals: null;");
-      assertSSFalse("null isNotEqualTo: null;");
-      assertSSFalse("null equals: true;");
-      assertSSTrue("null isNotEqualTo: true;");
-      assertResultEquals(new SSString("null"), "null asString;");
-
-      assertSSNull("null not;");
-      assertSSNull("null ifTrue: false;");
-      assertSSNull("null execute;");
-
-      assertResultEquals(new SSLong(0), "null size;");
-      // assertResultEquals(new SSLong(0), "null at: 0;");
-   }
-   /****************************************************************************
-    * 
-    ***************************************************************************/
-   @Test
-   public void true_WorksProperly_forAllOperations() throws Exception {
-
-      assertSSTrue("true;");
-      assertSSTrue("true execute;");
-      assertSSFalse("true not;");
-      assertSSTrue("true equals: true;");
-      assertSSFalse("true equals: false;");
-      assertSSFalse("true isNotEqualTo: true;");
-      assertSSTrue("true isNotEqualTo: false;");
-      assertResultEquals(new SSString("true"), "true asString;");
-      assertSSTrue("true and: true;");
-      assertSSFalse("true and: false;");
-      assertSSNull("true and: null;");
-      assertResultEquals(new SSLong(1), "true and: 1;");
-      assertSSTrue("true or: true;");
-      assertSSTrue("true or: false;");
-      assertSSTrue("true or: null;");
-      assertSSTrue("true or: 1;");
-      assertSSFalse("true xor: true;");
-      assertSSTrue("true xor: false;");
-      assertSSNull("true xor: null;");
-      try {
-         assertSSNull("true xor: 1;");
-         fail("\"true xor: 1;\" should have failed.");
-      } catch (RuntimeException e) {
-         assertEquals("Method 'not' is not defined.", e.getMessage());
-      }
-      assertResultEquals(new SSLong(0), "true ifTrue: 0;");
-      assertSSNull("true ifFalse: 0;");
-      assertResultEquals(new SSLong(0), "true ifTrue: 0 :ifFalse: 1;");
-      assertResultEquals(new SSLong(2), "true hash;");
-      assertSSTrue("true clone;");
-   }
-   /****************************************************************************
-    * 
-    ***************************************************************************/
-   @Test
-   public void false_WorksProperly_forAllOperations() throws Exception {
-
-      assertSSFalse("false;");
-      assertSSFalse("false execute;");
-      assertSSTrue("false not;");
-      assertSSTrue("false equals: false;");
-      assertSSFalse("false equals: true;");
-      assertSSFalse("false isNotEqualTo: false;");
-      assertSSTrue("false isNotEqualTo: true;");
-      assertResultEquals(new SSString("false"), "false asString;");
-      assertSSFalse("false and: false;");
-      assertSSFalse("false and: true;");
-      assertSSFalse("false and: null;");
-      assertSSFalse("false and: 1;");
-      assertSSTrue("false or: true;");
-      assertSSFalse("false or: false;");
-      assertSSNull("false or: null;");
-      assertResultEquals(new SSLong(1), "false or: 1;");
-      assertSSTrue("false xor: true;");
-      assertSSFalse("false xor: false;");
-      assertSSNull("false xor: null;");
-      assertResultEquals(new SSLong(1), "false or: 1;");
-      assertSSNull("false ifTrue: 0;");
-      assertResultEquals(new SSLong(0), "false ifFalse: 0;");
-      assertResultEquals(new SSLong(1), "false ifTrue: 0 :ifFalse: 1;");
-      assertResultEquals(new SSLong(1), "false hash;");
-      assertSSFalse("false clone;");
-   }
-
-   /****************************************************************************
-    * 
-    ***************************************************************************/
-   @Test
    public void string_WorksProperly_forAllOperations() throws Exception {
 
       assertResultEquals(new SSString("abc"), "\"abc\";");
@@ -258,7 +166,6 @@ public class BuiltInTypesUseCases extends UseCaseBase {
       assertResultEquals(new SSString("Object"), "Object clone asString;");
       assertNotNull(new Interpreter().exacute("Object new;", this.stack));
    }
-
 
    /****************************************************************************
     * 

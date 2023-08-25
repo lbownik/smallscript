@@ -39,9 +39,30 @@ public final class SSTrue extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
+   private static SSObject and(final Stack stack, final List<SSObject> args) {
+
+      return args.get(1).evaluate(stack.pushNewFrame());
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
    private static SSObject clone(final Stack stack, final List<SSObject> args) {
 
       return args.get(0);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject ifFalse(final Stack stack, final List<SSObject> args) {
+
+      return stack.getNull();
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject ifTrue(final Stack stack, final List<SSObject> args) {
+
+      return args.get(1).invoke(stack.pushNewFrame(), "execute");
    }
    /****************************************************************************
     * 
@@ -49,13 +70,6 @@ public final class SSTrue extends SSDynamicObject {
    private static SSObject not(final Stack stack, final List<SSObject> args) {
 
       return stack.getFalse();
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject and(final Stack stack, final List<SSObject> args) {
-
-      return args.get(1).evaluate(stack.pushNewFrame());
    }
    /****************************************************************************
     * 
@@ -71,21 +85,6 @@ public final class SSTrue extends SSDynamicObject {
 
       return args.get(1).invoke(stack, "not");
    }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject ifTrue(final Stack stack, final List<SSObject> args) {
-
-      return args.get(1).invoke(stack.pushNewFrame(), "execute");
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject ifFalse(final Stack stack, final List<SSObject> args) {
-
-      return stack.getNull();
-   }
-
    /****************************************************************************
     * 
    ****************************************************************************/

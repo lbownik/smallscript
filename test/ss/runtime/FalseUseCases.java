@@ -29,8 +29,8 @@ public class FalseUseCases extends UseCaseBase {
 
       assertSSTrue("false size equals: 1;");
       assertSSTrue("false nature equals: \"object\";");
-      assertSSTrue("tfalserue asString equals: \"false\";");
-      assertSSTrue("true hash equals: 1;");
+      assertSSTrue("false asString equals: \"false\";");
+      assertSSTrue("false hash equals: 1;");
    }
    /****************************************************************************
     * 
@@ -50,7 +50,7 @@ public class FalseUseCases extends UseCaseBase {
     * 
     ***************************************************************************/
    @Test
-   public void executingFalseDoesNothingAndReturnNull() throws Exception {
+   public void executingFalseDoesNothingAndReturnFalse() throws Exception {
 
       assertSSFalse("false execute;");
    }
@@ -77,6 +77,24 @@ public class FalseUseCases extends UseCaseBase {
     * 
     ***************************************************************************/
    @Test
+   public void invokingUndefinedMethodsOnFalse_throwsException()
+         throws Exception {
+
+      assertSSTrue("""
+            !o = Object new;
+            o try: {
+              false test; 
+              false;
+            } :catch: {!e |
+              (e nature equals: "exception") and:
+              (e message equals: "Method 'test' is not defined.");
+            };
+            """);
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
    public void falseOrSomethigElse_returnsSomethingElese() throws Exception {
 
       assertSSTrue("false or: true;");
@@ -88,22 +106,51 @@ public class FalseUseCases extends UseCaseBase {
     * 
     ***************************************************************************/
    @Test
-   public void test() throws Exception {
-      
-     
+   public void falseXorSomethigElse_returnsSomethingElese() throws Exception {
+
       assertSSTrue("false or: true;");
       assertSSFalse("false or: false;");
       assertSSNull("false or: null;");
-      assertResultEquals(new SSLong(1), "false or: 1;");
-      assertSSTrue("false xor: true;");
-      assertSSFalse("false xor: false;");
-      assertSSNull("false xor: null;");
-      assertResultEquals(new SSLong(1), "false or: 1;");
-      assertSSNull("false ifTrue: 0;");
-      assertResultEquals(new SSLong(0), "false ifFalse: 0;");
-      assertResultEquals(new SSLong(1), "false ifTrue: 0 :ifFalse: 1;");
-      assertResultEquals(new SSLong(1), "false hash;");
-      assertSSFalse("false clone;");
+      assertResultEquals(new SSLong(1), "false xor: 1;");
    }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void ifTrue_doesNothing() throws Exception {
 
+      assertSSNull("false ifTrue: {0;};");
+      assertSSTrue("""
+            !x = null;
+            false ifTrue: { x = 0;};
+            x equals: null;
+            """);
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void ifFalse_executesGivenBlock() throws Exception {
+
+      assertResultEquals(new SSLong(0), "false ifFalse: {0;};");
+      assertResultEquals(new SSLong(0), "false ifFalse: 0;");
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void false_cannotBeCloned() throws Exception {
+
+      assertSSFalse("false clone;");
+      assertSSTrue("false clone equals: false;");
+      assertSSTrue("""
+            false addField: "test" :withValue: 1;
+            !new = false clone;
+            false test: 2;
+            new test equals: 2;
+            """);
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
 }

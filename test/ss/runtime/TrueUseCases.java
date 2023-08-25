@@ -50,7 +50,7 @@ public class TrueUseCases  extends UseCaseBase {
     * 
     ***************************************************************************/
    @Test
-   public void executingTrueDoesNothingAndReturnNull() throws Exception {
+   public void executingTrueDoesNothingAndReturnTrue() throws Exception {
 
       assertSSTrue("true execute;");
    }

@@ -52,6 +52,7 @@ public final class SSDouble extends SSDynamicObject {
          final List<SSObject> args) {
 
       return switch (method) {
+         case "clone" -> new SSDouble(this.value);
          case "plus:" -> new SSDouble(this.value + evaluateFirst(args, stack));
          case "minus:" -> new SSDouble(this.value - evaluateFirst(args, stack));
          case "multipliedBy:" ->

@@ -38,13 +38,6 @@ public final class SSFalse extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   protected SSObject doClone() {
-
-      return this;
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
    private static SSObject and(final Stack stack, final List<SSObject> args) {
 
       return args.get(0);

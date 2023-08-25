@@ -61,6 +61,7 @@ public final class SSLong extends SSDynamicObject {
          final List<SSObject> args) {
 
       return switch (method) {
+         case "clone" -> new SSLong(this.value);
          case "plus:" -> calc(stack, args, (x, y) -> x + y, (x, y) -> x + y);
          case "minus:" -> calc(stack, args, (x, y) -> x - y, (x, y) -> x - y);
          case "multipliedBy:" -> calc(stack, args, (x, y) -> x * y, (x, y) -> x * y);

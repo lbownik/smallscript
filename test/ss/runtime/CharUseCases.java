@@ -29,7 +29,7 @@ public class CharUseCases extends UseCaseBase {
       assertSSTrue("'a' size equals: 1;");
       assertSSTrue("'a' nature equals: \"character\";");
       assertSSTrue("'a' asString equals: \"a\";");
-      assertSSTrue("'a' hash isGreaterThan: 0;");
+      assertResultEquals(new SSLong(97), "'a' hash;");
    }
    /****************************************************************************
     * 

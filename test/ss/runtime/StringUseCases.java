@@ -16,26 +16,58 @@
 package ss.runtime;
 
 import org.junit.Test;
-
+/*******************************************************************************
+ * @author lukasz.bownik@gmail.com
+ ******************************************************************************/
 public class StringUseCases extends UseCaseBase {
-
    /****************************************************************************
     * 
     ***************************************************************************/
    @Test
-   public void string_WorksProperly_forAllOperations() throws Exception {
+   public void charHasSetBasicProperties() throws Exception {
 
-      assertResultEquals(new SSString("abc"), "\"abc\";");
+      assertSSTrue("\"abc\" size equals: 3;");
+      assertSSTrue("\"abc\" nature equals: \"string\";");
+      assertSSTrue("\"abc\" nature nature equals: \"string\";");
+      assertSSTrue("\"abc\" asString equals: \"abc\";");
       assertResultEquals(new SSLong(96354), "\"abc\" hash;");
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void stringEualsOnlyToItself() throws Exception {
+
       assertSSTrue("\"abc\" equals: \"abc\";");
       assertSSFalse("\"abc\" equals: \"a\";");
       assertSSFalse("\"abc\" equals: null;");
       assertSSFalse("\"abc\" isNotEqualTo: \"abc\";");
       assertSSTrue("\"abc\" isNotEqualTo: \"a\";");
       assertSSTrue("\"abc\" isNotEqualTo: null;");
-      assertResultEquals(new SSLong(3), "\"abc\" size;");
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void at_returnsCharacterAtPosition() throws Exception {
+      
       assertResultEquals(new SSChar('a'), "\"abc\" at: 0;");
+      //TODO add tests for out-of-bounds-exception
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void stringsCanBeConcatenated() throws Exception {
+      
       assertResultEquals(new SSString("abcd"), "\"abc\" concatenate: \"d\";");
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void stringCanBeCloned() throws Exception {
+
       assertSSTrue("\"abc\" clone equals: \"abc\";");
    }
 }

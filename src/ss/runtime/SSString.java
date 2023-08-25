@@ -23,7 +23,24 @@ public final class SSString extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
+   static {
+      
+      var n = new SSString("string", true);
+      n.addField("nature", n);
+      nature = n;
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
    public SSString(final String value) {
+
+      this.value = value;
+      addField("nature", nature);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private SSString(final String value, boolean noNature) {
 
       this.value = value;
    }
@@ -74,4 +91,6 @@ public final class SSString extends SSDynamicObject {
     * 
    ****************************************************************************/
    private final String value;
+   
+   private final static SSString nature;
 }

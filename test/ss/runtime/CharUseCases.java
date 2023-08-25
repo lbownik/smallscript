@@ -16,21 +16,39 @@
 package ss.runtime;
 
 import org.junit.Test;
-
+/*******************************************************************************
+ * @author lukasz.bownik@gmail.com
+ ******************************************************************************/
 public class CharUseCases extends UseCaseBase {
-
    /****************************************************************************
-   * 
-   ****************************************************************************/
+    * 
+    ***************************************************************************/
    @Test
-   public void char_WorksProperly_forAllOperations() throws Exception {
+   public void charHasSetBasicProperties() throws Exception {
 
-      assertResultEquals(new SSChar('a'), "'a';");
+      assertSSTrue("'a' size equals: 1;");
+      assertSSTrue("'a' nature equals: \"character\";");
+      assertSSTrue("'a' asString equals: \"a\";");
+      assertSSTrue("'a' hash isGreaterThan: 0;");
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void charEualsOnlyToItself() throws Exception {
+
       assertSSTrue("'a' equals: 'a';");
       assertSSFalse("'a' equals: 'b';");
       assertSSFalse("'a' equals: null;");
       assertSSFalse("'a' isNotEqualTo: 'a';");
       assertSSTrue("'a' isNotEqualTo: 'b';");
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void charsAreLessOrGreaterThanOneAnother() throws Exception {
+
       assertSSTrue("'a' isLessOrEqualTo: 'a';");
       assertSSTrue("'a' isLessOrEqualTo: 'b';");
       assertSSFalse("'b' isLessOrEqualTo: 'a';");
@@ -41,8 +59,22 @@ public class CharUseCases extends UseCaseBase {
       assertSSFalse("'a' isGreaterThan: 'a';");
       assertSSTrue("'a' isLessThan: 'b';");
       assertSSFalse("'a' isLessThan: 'a';");
-      assertResultEquals(new SSString("a"), "'a' asString;");
-      assertResultEquals(new SSLong(97), "'a' hash;");
-      assertResultEquals(new SSChar('a'), "'a' clone;");
    }
+   /****************************************************************************
+   * 
+   ****************************************************************************/
+   @Test
+   public void charCanBeCloned() throws Exception {
+
+      assertSSTrue("""
+            !old = 'a';
+            old addField: "test" :withValue: 1;
+            !new = old clone;
+            new test: 2;
+            old test equals: 1;
+            """);
+   }
+   /****************************************************************************
+   * 
+   ****************************************************************************/
 }

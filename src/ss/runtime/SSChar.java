@@ -32,6 +32,7 @@ public final class SSChar extends SSDynamicObject {
       addBinaryMethod("isGreaterThan:", SSChar::isGreaterThan);
       addBinaryMethod("isLessOrEqualTo:", SSChar::isLessOrEqualTo);
       addBinaryMethod("isLessThan:", SSChar::isLessThan);
+      addField("nature", nature);
    }
    /****************************************************************************
     * 
@@ -121,4 +122,6 @@ public final class SSChar extends SSDynamicObject {
     * 
    ****************************************************************************/
    private final char value;
+   
+   private final static SSString nature = new SSString("character");
 }

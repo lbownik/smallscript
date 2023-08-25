@@ -29,7 +29,7 @@ public final class SSFalse extends SSDynamicObject {
       addBinaryMethod("clone", SSFalse::clone);
       addBinaryMethod("ifFalse:", SSFalse::ifFalse);
       addBinaryMethod("ifTrue:", SSFalse::ifTrue);
-      addBinaryMethod("ifTrue::ifFalse:", SSFalse::ifFalse);
+      addBinaryMethod("ifTrue::ifFalse:", SSFalse::ifTrueIfFalse);
       addBinaryMethod("not", SSFalse::not);
       addBinaryMethod("or:", SSFalse::or);
       addBinaryMethod("xor:", SSFalse::or);
@@ -62,6 +62,14 @@ public final class SSFalse extends SSDynamicObject {
    private static SSObject ifTrue(final Stack stack, final List<SSObject> args) {
 
       return stack.getNull();
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject ifTrueIfFalse(final Stack stack,
+         final List<SSObject> args) {
+
+      return args.get(2).invoke(stack.pushNewFrame(), "execute");
    }
    /****************************************************************************
     * 

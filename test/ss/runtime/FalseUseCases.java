@@ -139,6 +139,18 @@ public class FalseUseCases extends UseCaseBase {
     * 
     ***************************************************************************/
    @Test
+   public void ifTrueIfFalse_executesGivenFalseBlock() throws Exception {
+
+      assertSSTrue("""
+            !x = null;
+            !y = false ifTrue: { x = 0;} :ifFalse: {0};
+            (x equals: null) and: (y equals: 0);
+            """);
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
    public void false_cannotBeCloned() throws Exception {
 
       assertSSFalse("false clone;");

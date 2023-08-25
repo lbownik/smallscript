@@ -148,7 +148,7 @@ public class TrueUseCases  extends UseCaseBase {
     * 
     ***************************************************************************/
    @Test
-   public void ifTrueifFalse_executesGivenTrueBlock() throws Exception {
+   public void ifTrueIfFalse_executesGivenTrueBlock() throws Exception {
 
       assertSSTrue("""
             !x = null;

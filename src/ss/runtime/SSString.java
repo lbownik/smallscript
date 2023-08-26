@@ -16,6 +16,7 @@
 package ss.runtime;
 
 import java.util.List;
+import java.util.Map;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
  ******************************************************************************/
@@ -24,7 +25,7 @@ public final class SSString extends SSDynamicObject {
     * 
    ****************************************************************************/
    static {
-      
+
       var n = new SSString("string", true);
       n.addField("nature", n);
       nature = n;
@@ -34,7 +35,7 @@ public final class SSString extends SSDynamicObject {
    ****************************************************************************/
    public SSString(final String value) {
 
-      this.value = value;
+      this(value, true);
       addField("nature", nature);
    }
    /****************************************************************************
@@ -43,25 +44,74 @@ public final class SSString extends SSDynamicObject {
    private SSString(final String value, boolean noNature) {
 
       this.value = value;
+      initMethods();
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   @Override
-   public SSObject invoke(final Stack stack, final String method,
+   private SSString(final Map<String, SSObject> methods,
+         final Map<String, SSObject> fields, final String value) {
+
+      super(methods, fields);
+      this.value = value;
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private void initMethods() {
+
+      addBinaryMethod("at:", SSString::at);
+      addBinaryMethod("clone", SSString::clone);
+      addBinaryMethod("concatenate:", SSString::concatenate);
+      addBinaryMethod("size", SSString::size);
+      addBinaryMethod("startsWith:", SSString::startsWith);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject at(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSString) args.get(0);
+      final var index = ((SSLong) args.get(1)).intValue();
+      if (index > -1 & index < subject.value.length()) {
+         return new SSChar(subject.value.charAt(index));
+      } else {
+         return throwException(args.get(1), "Index " + index + " out of bounds.");
+      }
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject clone(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSString) args.get(0);
+      return new SSString(subject.methods, subject.fields, subject.value);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject concatenate(final Stack stack,
          final List<SSObject> args) {
 
-      return switch (method) {
-         case "clone" -> new SSString(this.value);
-         case "concatenate:" -> new SSString(this.value.concat(
-               ((SSString) args.get(0).evaluate(stack.pushNewFrame())).value));
-         case "size" -> new SSLong(this.value.length());
-         case "at:" ->
-            new SSChar(this.value.charAt(((SSLong) args.get(0)).intValue()));
-         case "startsWith:" ->
-            stack.get(this.value.startsWith(args.get(0).toString()));
-         default -> super.invoke(stack, method, args);
-      };
+      final var subject = (SSString) args.get(0);
+      return new SSString(subject.value
+            .concat(args.get(1).evaluate(stack.pushNewFrame()).toString()));
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject size(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSString) args.get(0);
+      return new SSLong(subject.value.length());
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject startsWith(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSString) args.get(0);
+      return stack.get(subject.value.startsWith(args.get(1).toString()));
    }
    /****************************************************************************
     * 
@@ -91,6 +141,6 @@ public final class SSString extends SSDynamicObject {
     * 
    ****************************************************************************/
    private final String value;
-   
+
    private final static SSString nature;
 }

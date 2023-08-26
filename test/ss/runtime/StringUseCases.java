@@ -52,7 +52,24 @@ public class StringUseCases extends UseCaseBase {
    public void at_returnsCharacterAtPosition() throws Exception {
       
       assertResultEquals(new SSChar('a'), "\"abc\" at: 0;");
-      //TODO add tests for out-of-bounds-exception
+      assertSSTrue("""
+            true try: {
+               \"abc\" at: -1;
+               false;
+            } :catch: {!e|
+               (e nature equals: "exception") and:
+               (e message equals: "Index -1 out of bounds.");
+            };
+            """);
+      assertSSTrue("""
+            true try: {
+               \"abc\" at: 3;
+               false;
+            } :catch: {!e|
+               (e nature equals: "exception") and:
+               (e message equals: "Index 3 out of bounds.");
+            };
+            """);
    }
    /****************************************************************************
     * 
@@ -61,6 +78,16 @@ public class StringUseCases extends UseCaseBase {
    public void stringsCanBeConcatenated() throws Exception {
       
       assertResultEquals(new SSString("abcd"), "\"abc\" concatenate: \"d\";");
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void stringCanStartWithOtherString() throws Exception {
+      
+      assertSSTrue("\"abc\" startsWith: \"ab\";");
+      assertSSTrue("\"abc\" startsWith: \"abc\";");
+      assertSSFalse("\"abc\" startsWith: \"c\";");
    }
    /****************************************************************************
     * 

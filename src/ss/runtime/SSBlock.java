@@ -18,7 +18,6 @@ package ss.runtime;
 import static java.util.Collections.emptyList;
 
 import java.util.List;
-import java.util.Map;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
@@ -32,26 +31,9 @@ public class SSBlock extends SSDynamicObject {
       this.statements = statements;
       this.argumentNames = argumentNames;
       setField("nature", new SSString("block"));
+      addBinaryMethod("clone", SSBlock::clone);
+      addBinaryMethod("whileTrue:", SSBlock::whileTrue);
    }
-//   /****************************************************************************
-//    * 
-//   ****************************************************************************/
-//   private SSBlock(final Map<String, SSObject> methods,
-//         final Map<String, SSObject> fields, final List<SSObject> statements,
-//         final List<String> argumentNames) {
-//
-//      super(methods, fields);
-//      this.statements = statements;
-//      this.argumentNames = argumentNames;
-//   }
-//   /****************************************************************************
-//    * 
-//   ****************************************************************************/
-//   protected SSObject doClone() {
-//
-//      return new SSBlock(this.methods, this.fields, this.statements,
-//            this.argumentNames);
-//   }
    /****************************************************************************
     * 
    ****************************************************************************/
@@ -62,22 +44,27 @@ public class SSBlock extends SSDynamicObject {
       if (method.startsWith("execute")) {
          return execute(stack, args);
       } else {
-         return switch (method) {
-            case "whileTrue:" -> whileTrue(stack, args);
-            default -> super.invoke(stack, method, args);
-         };
+         return super.invoke(stack, method, args);
       }
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSObject whileTrue(final Stack stack, final List<SSObject> args) {
+   private static SSObject clone(final Stack stack, final List<SSObject> args) {
+
+      return args.get(0);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject whileTrue(final Stack stack, final List<SSObject> args) {
 
       var result = stack.getNull();
-      final var block = args.get(0);
+      final var subject = (SSBlock)args.get(0);
+      final var block = args.get(1);
 
       for (;;) {
-         if (execute(stack.pushNewFrame(), emptyList()).equals(stack.getTrue())) {
+         if (subject.execute(stack.pushNewFrame(), emptyList()).equals(stack.getTrue())) {
             result = block.invoke(stack.pushNewFrame(), "execute");
          } else {
             return result;

@@ -27,64 +27,132 @@ public final class SSDouble extends SSDynamicObject {
    public SSDouble(final double value) {
 
       this.value = value;
+      addField("nature", nature);
+      addBinaryMethod("asDouble", SSDouble::asDouble);
+      addBinaryMethod("asLong", SSDouble::asLong);
+      addBinaryMethod("clone", SSDouble::clone);
+      addBinaryMethod("dividedBy:", SSDouble::dividedBy);
+      addBinaryMethod("isGreaterThan:", SSDouble::isGreaterThan);
+      addBinaryMethod("isGreaterOrEqualTo:", SSDouble::isGreaterOrEqualTo);
+      addBinaryMethod("isLessThan:", SSDouble::isLessThan);
+      addBinaryMethod("isLessOrEqualTo:", SSDouble::isLessOrEqualTo);
+      addBinaryMethod("minus:", SSDouble::minus);
+      addBinaryMethod("multipliedBy:", SSDouble::multipliedBy);
+      addBinaryMethod("plus:", SSDouble::plus);
    }
-//   /****************************************************************************
-//    * 
-//   ****************************************************************************/
-//   private SSDouble(final Map<String, SSObject> methods,
-//         final Map<String, SSObject> fields, final double value) {
-//
-//      super(methods, fields);
-//      this.value = value;
-//   }
-//   /****************************************************************************
-//    * 
-//   ****************************************************************************/
-//   protected SSObject doClone() {
-//
-//      return new SSDouble(this.methods, this.fields, this.value);
-//   }
    /****************************************************************************
     * 
    ****************************************************************************/
-   @Override
-   public SSObject invoke(final Stack stack, final String method,
-         final List<SSObject> args) {
+   private SSDouble(final Map<String, SSObject> methods,
+         final Map<String, SSObject> fields, final double value) {
 
-      return switch (method) {
-         case "clone" -> new SSDouble(this.value);
-         case "plus:" -> new SSDouble(this.value + evaluateFirst(args, stack));
-         case "minus:" -> new SSDouble(this.value - evaluateFirst(args, stack));
-         case "multipliedBy:" ->
-            new SSDouble(this.value * evaluateFirst(args, stack));
-         case "dividedBy:" -> new SSDouble(this.value / evaluateFirst(args, stack));
-         case "asLong" -> new SSLong((long)this.value);
-         case "asDouble" -> this;
-         case "isGreaterThan:" -> stack.get(this.value > evaluateFirst(args, stack));
-         case "isLessThan:" -> stack.get(this.value < evaluateFirst(args, stack));
-         case "isGreaterOrEqualTo:" ->
-            stack.get(this.value >= evaluateFirst(args, stack));
-         case "isLessOrEqualTo:" ->
-            stack.get(this.value <= evaluateFirst(args, stack));
-         default -> super.invoke(stack, method, args);
-      };
+      super(methods, fields);
+      this.value = value;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static double evaluateFirst(final List<SSObject> args,
+   private static double evaluateSecond(final List<SSObject> args,
          final Stack stack) {
 
-      var first = args.get(0).evaluate(stack.pushNewFrame());
+      var first = args.get(1).evaluate(stack.pushNewFrame());
 
       if (first instanceof SSDouble d) {
          return d.value;
       } else if (first instanceof SSLong l) {
          return l.value;
       } else {
-         throw new RuntimeException(
-               "Cannot cast " + first.getClass() + " to SSDouble.");
+         final var n = first.invoke(stack.pushNewFrame(), "nature").toString();
+         throwException(first, "Cannot cast " + n + " to number.");
+         return 0.0; //never happens
       }
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject asDouble(final Stack stack, final List<SSObject> args) {
+
+      return args.get(0);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject asLong(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSDouble) args.get(0);
+      return new SSLong((long) subject.value);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject clone(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSDouble) args.get(0);
+      return new SSDouble(subject.methods, subject.fields, subject.value);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject dividedBy(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSDouble) args.get(0);
+      return new SSDouble(subject.value / evaluateSecond(args, stack));
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject isGreaterThan(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSDouble) args.get(0);
+      return stack.get(subject.value > evaluateSecond(args, stack));
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject isGreaterOrEqualTo(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSDouble) args.get(0);
+      return stack.get(subject.value >= evaluateSecond(args, stack));
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject isLessThan(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSDouble) args.get(0);
+      return stack.get(subject.value < evaluateSecond(args, stack));
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject isLessOrEqualTo(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSDouble) args.get(0);
+      return stack.get(subject.value <= evaluateSecond(args, stack));
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject minus(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSDouble) args.get(0);
+      return new SSDouble(subject.value - evaluateSecond(args, stack));
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject multipliedBy(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSDouble) args.get(0);
+      return new SSDouble(subject.value * evaluateSecond(args, stack));
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject plus(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSDouble) args.get(0);
+      return new SSDouble(subject.value + evaluateSecond(args, stack));
    }
    /****************************************************************************
     * 
@@ -116,4 +184,6 @@ public final class SSDouble extends SSDynamicObject {
     * 
    ****************************************************************************/
    public final double value;
+   
+   private final static SSString nature = new SSString("number");
 }

@@ -66,6 +66,7 @@ public class CharUseCases extends UseCaseBase {
    @Test
    public void charCanBeCloned() throws Exception {
 
+      assertSSTrue("'a' clone equals: 'a';");
       assertSSTrue("""
             !old = 'a';
             old addField: "test" :withValue: 1;

@@ -96,5 +96,15 @@ public class StringUseCases extends UseCaseBase {
    public void stringCanBeCloned() throws Exception {
 
       assertSSTrue("\"abc\" clone equals: \"abc\";");
+      assertSSTrue("""
+            !old = \"abc\";
+            old addField: "test" :withValue: 1;
+            !new = old clone;
+            new test: 2;
+            old test equals: 1;
+            """);
    }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
 }

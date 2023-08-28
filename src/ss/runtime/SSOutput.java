@@ -21,43 +21,48 @@ import java.util.List;
  * @author lukasz.bownik@gmail.com {
  ******************************************************************************/
 public final class SSOutput extends SSDynamicObject {
-   
+
    /****************************************************************************
     * 
    ****************************************************************************/
    public SSOutput(final PrintStream out) {
-      
+
       this.out = out;
+      addBinaryMethod("clone", SSOutput::clone);
+      addBinaryMethod("writeLine:", SSOutput::writeLine);
+      addBinaryMethod("append:", SSOutput::append);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   protected SSObject doClone() {
+   private static SSObject clone(final Stack stack, final List<SSObject> args) {
 
-      return this;
+      return args.get(0);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   @Override
-   public SSObject invoke(final Stack stack, final String method,
-         final List<SSObject> args) {
+   private static SSObject writeLine(final Stack stack, final List<SSObject> args) {
 
-      return switch (method) {
-         case "writeLine:" -> writeLine(stack, args.get(0));
-         default -> super.invoke(stack, method, args);
-      };
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private SSObject writeLine(final Stack stack, final SSObject arg) {
-
+      final var subject = (SSOutput) args.get(0);
       try {
-         out.println(arg);
-         return this;
+         subject.out.println(args.get(1));
+         return subject;
       } catch (final Exception e) {
-         throw new RuntimeException(e);
+         return throwException(subject, e.getMessage());
+      }
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject append(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSOutput) args.get(0);
+      try {
+         subject.out.print(args.get(1));
+         return subject;
+      } catch (final Exception e) {
+         return throwException(subject, e.getMessage());
       }
    }
 

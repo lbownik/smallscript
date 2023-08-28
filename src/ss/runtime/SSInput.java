@@ -28,6 +28,8 @@ public final class SSInput extends SSDynamicObject {
    public SSInput(final BufferedReader reader) {
 
       this.reader = reader;
+      addBinaryMethod("clone", SSInput::clone);
+      addBinaryMethod("readLine:", SSInput::readLine);
    }
    /****************************************************************************
     * 
@@ -39,32 +41,21 @@ public final class SSInput extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   protected SSObject doClone() {
+   private static SSObject clone(final Stack stack, final List<SSObject> args) {
 
-      return this;
+      return args.get(0);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   @Override
-   public SSObject invoke(final Stack stack, final String method,
-         final List<SSObject> args) {
+   private static SSObject readLine(final Stack stack, final List<SSObject> args) {
 
-      return switch (method) {
-         case "readLine" -> readLine(stack);
-         default -> super.invoke(stack, method, args);
-      };
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private SSObject readLine(final Stack stack) {
-
+      final var subject = (SSInput) args.get(0);
       try {
-         final var line = this.reader.readLine();
+         final var line = subject.reader.readLine();
          return line != null ? new SSString(line) : stack.getNull();
       } catch (final Exception e) {
-         throw new RuntimeException(e);
+         return throwException(subject, e.getMessage());
       }
    }
    /****************************************************************************

@@ -44,7 +44,12 @@ public final class SSString extends SSDynamicObject {
    private SSString(final String value, boolean noNature) {
 
       this.value = value;
-      initMethods();
+      addBinaryMethod("append:", SSString::concatenate);
+      addBinaryMethod("at:", SSString::at);
+      addBinaryMethod("clone", SSString::clone);
+      addBinaryMethod("concatenate:", SSString::concatenate);
+      addBinaryMethod("size", SSString::size);
+      addBinaryMethod("startsWith:", SSString::startsWith);
    }
    /****************************************************************************
     * 
@@ -54,17 +59,6 @@ public final class SSString extends SSDynamicObject {
 
       super(methods, fields);
       this.value = value;
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private void initMethods() {
-
-      addBinaryMethod("at:", SSString::at);
-      addBinaryMethod("clone", SSString::clone);
-      addBinaryMethod("concatenate:", SSString::concatenate);
-      addBinaryMethod("size", SSString::size);
-      addBinaryMethod("startsWith:", SSString::startsWith);
    }
    /****************************************************************************
     * 

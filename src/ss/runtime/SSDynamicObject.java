@@ -30,23 +30,6 @@ public class SSDynamicObject implements SSObject {
    ****************************************************************************/
    public SSDynamicObject() {
 
-      initMethods();
-   }
-
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   public SSDynamicObject(final Map<String, SSObject> methods,
-         final Map<String, SSObject> fields) {
-
-      this.methods.putAll(methods);
-      this.fields.putAll(fields);
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private void initMethods() {
-
       addBinaryMethod("addField:", SSDynamicObject::addField);
       addBinaryMethod("addField::withValue:", SSDynamicObject::addFieldWithValue);
       addBinaryMethod("addMethod::using:", SSDynamicObject::addMethod);
@@ -63,6 +46,15 @@ public class SSDynamicObject implements SSObject {
       addBinaryMethod("size", (stack, args) -> new SSLong(1));
       addBinaryMethod("throw", SSDynamicObject::throwThis);
       addBinaryMethod("try::catch:", SSDynamicObject::tryCatch);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   public SSDynamicObject(final Map<String, SSObject> methods,
+         final Map<String, SSObject> fields) {
+
+      this.methods.putAll(methods);
+      this.fields.putAll(fields);
    }
    /****************************************************************************
     * 

@@ -34,9 +34,13 @@ public final class SSApplication extends SSDynamicObject {
    public SSApplication(final BufferedReader in, final PrintStream out,
          final PrintStream err) {
 
-      setField("stdIn", new SSInput(in));
-      setField("stdOut", new SSOutput(out));
-      setField("stdErr", new SSOutput(err));
+      setField("input", new SSInput(in));
+      setField("output", new SSOutput(out));
+      setField("error", new SSOutput(err));
+
+      addBinaryMethod("clone", SSApplication::clone);
+      addBinaryMethod("exit:", SSApplication::exit);
+      addBinaryMethod("load:", SSApplication::load);
    }
    /****************************************************************************
     * 
@@ -49,44 +53,32 @@ public final class SSApplication extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   protected SSObject doClone() {
+   private static SSObject clone(final Stack stack, final List<SSObject> args) {
 
-      return this;
+      return args.get(0);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   @Override
-   public SSObject invoke(final Stack stack, final String method,
-         final List<SSObject> args) {
+   private static SSObject exit(final Stack stack, final List<SSObject> args) {
 
-      return switch (method) {
-         case "exit:" -> exit(args.get(0));
-         case "load:" -> load(stack, args.get(0));
-         default -> super.invoke(stack, method, args);
-      };
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private SSObject exit(final SSObject code) {
-
-      System.exit(((SSLong) code).intValue());
+      System.exit(((SSLong) args.get(1)).intValue());
       return SSNull.instance();
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSObject load(final Stack stack, final SSObject code) {
+   private static SSObject load(final Stack stack, final List<SSObject> args) {
 
       try (final var reader = new InputStreamReader(
-            getClass().getResourceAsStream(code.toString()), "utf-8")) {
+            SSApplication.class.getResourceAsStream(args.get(1).toString()),
+            "utf-8")) {
 
          return new Parser().parse(reader).toSSObject().invoke(stack, "execute",
                emptyList());
 
       } catch (final Exception e) {
-         throw new RuntimeException(e);
+         return throwException(args.get(0), e.getMessage());
       }
    }
    /****************************************************************************

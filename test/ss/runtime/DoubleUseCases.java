@@ -16,7 +16,9 @@
 package ss.runtime;
 
 import org.junit.Test;
-
+/*******************************************************************************
+ * @author lukasz.bownik@gmail.com
+ ******************************************************************************/
 public class DoubleUseCases extends UseCaseBase {
    /****************************************************************************
     * 
@@ -36,7 +38,7 @@ public class DoubleUseCases extends UseCaseBase {
     * 
     ***************************************************************************/
    @Test
-   public void stringEualsOnlyToItself() throws Exception {
+   public void doubleEualsOnlyToItself() throws Exception {
 
       assertSSTrue("1.0 equals: 1.0;");
       assertSSFalse("1.0 equals: 1;");

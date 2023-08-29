@@ -1,0 +1,117 @@
+//------------------------------------------------------------------------------
+//Copyright 2014 Lukasz Bownik
+//
+//Licensed under the Apache License, Version 2.0 (the "License");
+//you may not use this file except in compliance with the License.
+//You may obtain a copy of the License at
+//
+//    http://www.apache.org/licenses/LICENSE-2.0
+//
+//Unless required by applicable law or agreed to in writing, software
+//distributed under the License is distributed on an "AS IS" BASIS,
+//WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+//See the License for the specific language governing permissions and
+//limitations under the License.
+//------------------------------------------------------------------------------
+package ss.runtime;
+
+import org.junit.Test;
+/*******************************************************************************
+ * @author lukasz.bownik@gmail.com
+ ******************************************************************************/
+public class ListUseCases extends UseCaseBase {
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void listHasSetBasicProperties() throws Exception {
+
+      assertSSTrue("List new size equals: 0;");
+      assertSSTrue("List new nature equals: \"list\";");
+      assertSSTrue("List new asString equals: \"[]\";");
+      assertSSTrue("List hash isGreaterThan: 0;");
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void listEualsOnlyToIdenticalList() throws Exception {
+
+      assertSSTrue("List new equals: (List new);");
+      assertSSFalse("List new isNotEqualTo: (List new);");
+
+      assertSSFalse("List new equals: null;");
+      assertSSTrue("List new isNotEqualTo: null;");
+      
+      assertSSTrue("List append: 1 equals: (List append: 1);");
+      assertSSFalse("List append: 1 equals: (List append: 1 append: 2);");
+      assertSSTrue("List append: 1 isNotEqualTo: (List append: 1 append: 2);");
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void executingListDoesNothingAndReturnNull() throws Exception {
+
+      assertSSTrue("List execute equals: List;");
+      assertSSTrue("List new execute equals: (List new);");
+      assertSSTrue("List append: 1 execute equals: (List append: 1);");
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void emptyListHasNoElements()
+         throws Exception {
+
+      assertSSTrue("""
+            !l = List new;
+            l try: {
+              l at: 0;
+            } :catch: {!e |
+              (e nature equals: "exception") and:
+              (e message equals: "Index 0 out of bounds.");
+            };
+            """);
+      assertSSTrue("""
+            !counter = 0;
+            !innerItem = null;
+            !result = List new forEach: {!item |
+               counter = counter plus: 1;
+               innerItem = item;
+            };
+            counter equals: 0;
+            """);
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void nonEmptyListReturnsElementsAtIndex()
+         throws Exception {
+
+      assertSSTrue("List append: 10 at: 0 equals: 10;");
+      assertSSTrue("List append: 10 append: 11 at: 1 equals: 11;");
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void forEachPerformsActionForEachElement()
+         throws Exception {
+
+      assertSSTrue("""
+            !counter = 0;
+            !innerItem = null;
+            !list = List append: 10 append: 11;
+            !result = list forEach: {!item |
+               counter = counter plus: 1;
+               innerItem = item;
+            };
+            counter equals: 2 and innerItem equals: 11;
+            """);
+   }
+   /****************************************************************************
+    * 
+    ****************************************************************************/
+}

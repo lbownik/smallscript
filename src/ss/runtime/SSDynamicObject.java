@@ -294,7 +294,7 @@ public class SSDynamicObject implements SSObject {
       *************************************************************************/
       public Factory() {
 
-         addBinaryMethod("new", Factory::createNew);
+         addBinaryMethod("new", SSDynamicObject.Factory::createNew);
       }
       /*************************************************************************
        * 

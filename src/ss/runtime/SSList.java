@@ -26,7 +26,7 @@ public final class SSList extends SSDynamicObject {
    ****************************************************************************/
    private SSList() {
 
-      this.elements = new ArrayList<>();
+      this(new ArrayList<>());
    }
    /****************************************************************************
     * 
@@ -34,35 +34,53 @@ public final class SSList extends SSDynamicObject {
    public SSList(final List<SSObject> elements) {
 
       this.elements = new ArrayList<>(elements);
+      addBinaryMethod("add:", SSList::append);
+      addBinaryMethod("append:", SSList::append);
+      addBinaryMethod("at:", SSList::at);
+      addBinaryMethod("forEach:", SSList::forEach);
+      addBinaryMethod("size", SSList::size);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   protected SSObject doClone() {
+   private static SSObject append(final Stack stack, final List<SSObject> args) {
 
-      return new SSList(this.elements);
+      final var subject = (SSList) args.get(0);
+      subject.elements.add(args.get(1));
+      return subject;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   @Override
-   public SSObject invoke(final Stack stack, final String method,
-         final List<SSObject> args) {
+   private static SSObject at(final Stack stack, final List<SSObject> args) {
 
-      return switch (method) {
-         case "size" -> new SSLong(this.elements.size());
-         case "at:" -> this.elements.get(((SSLong) args.get(0)).intValue());
-         case "add:", "append:" -> append(args.get(0));
-         default -> super.invoke(stack, method, args);
-      };
+      final var subject = (SSList) args.get(0);
+      final var index = ((SSLong) args.get(1)).intValue();
+
+      if (index > -1 & index < subject.elements.size()) {
+         return subject.elements.get(index);
+      } else {
+         return throwException(args.get(1), "Index " + index + " out of bounds.");
+      }
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSObject append(final SSObject item) {
-      
-      this.elements.add(item);
-      return this;
+   private static SSObject forEach(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSList) args.get(0);
+      for (var item : subject.elements) {
+         args.get(1).invoke(stack.pushNewFrame(), "executeWith:", List.of(item));
+      }
+      return subject;
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject size(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSList) args.get(0);
+      return new SSLong(subject.elements.size());
    }
    /****************************************************************************
     * 
@@ -99,27 +117,28 @@ public final class SSList extends SSDynamicObject {
       /*************************************************************************
        * 
       *************************************************************************/
-      protected SSObject doClone() {
+      public Factory() {
 
-         return new SSDynamicObject.Factory();
+         addBinaryMethod("new", SSList.Factory::createNew);
+         addBinaryMethod("append:", SSList.Factory::append);
       }
       /*************************************************************************
        * 
       *************************************************************************/
-      @Override
-      public SSObject invoke(final Stack stack, final String method,
+      private static SSList createNew(final Stack stack,
             final List<SSObject> args) {
 
-         return method.equals("new") ? createNew()
-               : super.invoke(stack, method, args);
+         final var result = new SSList();
+         result.addField("nature", nature);
+         return result;
       }
       /*************************************************************************
        * 
       *************************************************************************/
-      private SSObject createNew() {
+      private static SSObject append(final Stack stack, final List<SSObject> args) {
 
-         final var result = new SSList();
-         result.setField("nature", nature);
+         final var result = createNew(stack, args);
+         result.elements.add(args.get(1));
          return result;
       }
       /*************************************************************************

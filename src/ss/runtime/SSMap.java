@@ -26,44 +26,92 @@ public final class SSMap extends SSDynamicObject {
    ****************************************************************************/
    private SSMap() {
 
-      this.elements = new HashMap<>();
+      this(new HashMap<>());
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSMap(HashMap<SSObject, SSObject> elements) {
+   public SSMap(final HashMap<SSObject, SSObject> elements) {
 
       this.elements = new HashMap<>(elements);
+      addBinaryMethod("at:", SSMap::at);
+      addBinaryMethod("at::put:", SSMap::atPut);
+      addBinaryMethod("at::put::andReturnPreviousItem",
+            SSMap::atPutAndReturnPreviousItem);
+      addBinaryMethod("forEach:", SSMap::forEach);
+      addBinaryMethod("removeAt:", SSMap::removeAt);
+      addBinaryMethod("removeAt::andReturnRemovedItem",
+            SSMap::removeAtAndReturnRemovedItem);
+      addBinaryMethod("size", SSMap::size);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   protected SSObject doClone() {
+   private static SSObject at(final Stack stack, final List<SSObject> args) {
 
-      return new SSMap(this.elements);
+      final var subject = (SSMap) args.get(0);
+      final var key = args.get(1).evaluate(stack.pushNewFrame());
+
+      return subject.elements.getOrDefault(key, stack.getNull());
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   @Override
-   public SSObject invoke(final Stack stack, final String method,
+   private static SSObject atPut(final Stack stack, final List<SSObject> args) {
+
+      atPutAndReturnPreviousItem(stack, args);
+      return args.get(0);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject atPutAndReturnPreviousItem(final Stack stack,
          final List<SSObject> args) {
 
-      return switch (method) {
-         case "size" -> new SSLong(this.elements.size());
-         case "at:" -> this.elements.get(args.get(0));
-         case "at::put:" -> atPut(stack, args.get(0), args.get(1));
-         default -> super.invoke(stack, method, args);
-      };
+      final var subject = (SSMap) args.get(0);
+      final var key = args.get(1).evaluate(stack.pushNewFrame());
+
+      return subject.elements.put(key, args.get(2).evaluate(stack.pushNewFrame()));
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSObject atPut(final Stack stack, final SSObject key,
-         final SSObject value) {
+   private static SSObject removeAt(final Stack stack, final List<SSObject> args) {
 
-      final var previous = this.elements.put(key, value);
-      return previous != null ? previous : stack.getNull();
+      removeAtAndReturnRemovedItem(stack, args);
+      return args.get(0);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject removeAtAndReturnRemovedItem(final Stack stack,
+         final List<SSObject> args) {
+
+      final var subject = (SSMap) args.get(0);
+      final var key = args.get(1).evaluate(stack.pushNewFrame());
+
+      return subject.elements.remove(key);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject forEach(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSMap) args.get(0);
+      for (var item : subject.elements.entrySet()) {
+         args.get(1).invoke(stack.pushNewFrame(), "executeWith::and:",
+               List.of(item.getKey().evaluate(stack.pushNewFrame()),
+                     item.getValue().evaluate(stack.pushNewFrame())));
+      }
+      return subject;
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject size(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSMap) args.get(0);
+      return new SSLong(subject.elements.size());
    }
    /****************************************************************************
     * 
@@ -100,27 +148,28 @@ public final class SSMap extends SSDynamicObject {
       /*************************************************************************
        * 
       *************************************************************************/
-      protected SSObject doClone() {
+      public Factory() {
 
-         return new SSDynamicObject.Factory();
+         addBinaryMethod("new", SSMap.Factory::createNew);
+         addBinaryMethod("at::put:", SSMap.Factory::atPut);
       }
       /*************************************************************************
        * 
       *************************************************************************/
-      @Override
-      public SSObject invoke(final Stack stack, final String method,
-            final List<SSObject> args) {
-
-         return method.equals("new") ? createNew()
-               : super.invoke(stack, method, args);
-      }
-      /*************************************************************************
-       * 
-      *************************************************************************/
-      private SSObject createNew() {
+      private static SSMap createNew(final Stack stack, final List<SSObject> args) {
 
          final var result = new SSMap();
-         result.setField("nature", nature);
+         result.addField("nature", nature);
+         return result;
+      }
+      /*************************************************************************
+       * 
+      *************************************************************************/
+      private static SSObject atPut(final Stack stack, final List<SSObject> args) {
+
+         final var result = createNew(stack, args);
+         result.elements.put(args.get(1).evaluate(stack.pushNewFrame()),
+               args.get(2).evaluate(stack.pushNewFrame()));
          return result;
       }
       /*************************************************************************

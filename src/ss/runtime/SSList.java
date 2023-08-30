@@ -37,7 +37,11 @@ public final class SSList extends SSDynamicObject {
       addBinaryMethod("add:", SSList::append);
       addBinaryMethod("append:", SSList::append);
       addBinaryMethod("at:", SSList::at);
+      addBinaryMethod("at::put:", SSList::atPut);
+      addBinaryMethod("at::put::andReturnPreviousItem", SSList::atPutAndReturnPreviousItem);
       addBinaryMethod("forEach:", SSList::forEach);
+      addBinaryMethod("removeAt:", SSList::removeAt);
+      addBinaryMethod("removeAt::andReturnRemovedItem", SSList::removeAtAndReturnRemovedItem);
       addBinaryMethod("size", SSList::size);
    }
    /****************************************************************************
@@ -59,6 +63,50 @@ public final class SSList extends SSDynamicObject {
 
       if (index > -1 & index < subject.elements.size()) {
          return subject.elements.get(index);
+      } else {
+         return throwException(args.get(1), "Index " + index + " out of bounds.");
+      }
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject atPut(final Stack stack, final List<SSObject> args) {
+
+      atPutAndReturnPreviousItem(stack, args);
+      return args.get(0);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject atPutAndReturnPreviousItem(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSList) args.get(0);
+      final var index = ((SSLong) args.get(1)).intValue();
+
+      if (index > -1 & index < subject.elements.size()) {
+         return subject.elements.set(index, args.get(2));
+      } else {
+         return throwException(args.get(1), "Index " + index + " out of bounds.");
+      }
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject removeAt(final Stack stack, final List<SSObject> args) {
+
+      removeAtAndReturnRemovedItem(stack, args);
+      return args.get(0);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject removeAtAndReturnRemovedItem(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSList) args.get(0);
+      final var index = ((SSLong) args.get(1)).intValue();
+
+      if (index > -1 & index < subject.elements.size()) {
+         return subject.elements.remove(index);
       } else {
          return throwException(args.get(1), "Index " + index + " out of bounds.");
       }
@@ -125,8 +173,7 @@ public final class SSList extends SSDynamicObject {
       /*************************************************************************
        * 
       *************************************************************************/
-      private static SSList createNew(final Stack stack,
-            final List<SSObject> args) {
+      private static SSList createNew(final Stack stack, final List<SSObject> args) {
 
          final var result = new SSList();
          result.addField("nature", nature);

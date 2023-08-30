@@ -108,8 +108,30 @@ public class ListUseCases extends UseCaseBase {
                counter = counter plus: 1;
                innerItem = item;
             };
-            counter equals: 2 and innerItem equals: 11;
+            (counter equals: 2) and: (innerItem equals: 11);
             """);
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void elementsCanBeRemovedFromNonEptyList()
+         throws Exception {
+
+      assertSSTrue("List append: 10 append: 11 removeAt: 1 equals: (List append: 10);");
+      assertSSTrue("List append: 10 append: 11 removeAt: 0 equals: (List append: 11);");
+      assertSSTrue("List append: 10 removeAt: 0 equals: (List new);");
+      assertSSTrue("List append: 10 removeAt: 0 :andReturnRemovedItem equals: 10;");
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void elementsCanBePutAtSepcifiedIndex()
+         throws Exception {
+
+      assertSSTrue("List append: 10 at: 0 :put: 11 equals: (List append: 11);");
+      assertSSTrue("List append: 10 at: 0 :put: 11 :andReturnPreviousItem equals: 10;");
    }
    /****************************************************************************
     * 

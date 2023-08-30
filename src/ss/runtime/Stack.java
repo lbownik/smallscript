@@ -117,7 +117,6 @@ public interface Stack {
 						"Variable '" + name + "' already exists in this scope.");
 			}
 		}
-
 		/*************************************************************************
 		 * 
 		*************************************************************************/
@@ -128,7 +127,6 @@ public interface Stack {
 			return previousValue != null ? this
 					: this.previousFrame.setVariable(name, value);
 		}
-
 		/*************************************************************************
 		 * 
 		*************************************************************************/
@@ -138,7 +136,6 @@ public interface Stack {
 			final var value = get(name);
 			return value != null ? value : this.previousFrame.getVariable(name);
 		}
-
 		/*************************************************************************
 		 * 
 		*************************************************************************/

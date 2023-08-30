@@ -60,11 +60,12 @@ public class SSBlock extends SSDynamicObject {
    private static SSObject whileTrue(final Stack stack, final List<SSObject> args) {
 
       var result = stack.getNull();
-      final var subject = (SSBlock)args.get(0);
+      final var subject = (SSBlock) args.get(0);
       final var block = args.get(1);
 
       for (;;) {
-         if (subject.doExecute(stack.pushNewFrame(), emptyList()).equals(stack.getTrue())) {
+         if (subject.doExecute(stack.pushNewFrame(), emptyList())
+               .equals(stack.getTrue())) {
             result = block.invoke(stack.pushNewFrame(), "execute");
          } else {
             return result;
@@ -89,13 +90,13 @@ public class SSBlock extends SSDynamicObject {
 
       initiateLocalVariables(stack, args);
 
-      var result = stack.getNull();
+      SSObject result = null;
 
       for (final var statement : this.statements) {
          result = statement.evaluate(stack);
       }
 
-      return result;
+      return result != null ? result : stack.getNull();
    }
    /****************************************************************************
     * 

@@ -43,6 +43,7 @@ public class SSDynamicObject implements SSObject {
       addBinaryMethod("method:", SSDynamicObject::getMethod);
       addBinaryMethod("hash", SSDynamicObject::hashCode);
       addBinaryMethod("isNotEqualTo:", SSDynamicObject::isNotEqualTo);
+      addBinaryMethod("removeMethod:", SSDynamicObject::removeMethod);
       addBinaryMethod("size", (stack, args) -> new SSLong(1));
       addBinaryMethod("throw", SSDynamicObject::throwThis);
       addBinaryMethod("try::catch:", SSDynamicObject::tryCatch);
@@ -186,6 +187,15 @@ public class SSDynamicObject implements SSObject {
 
       final var subject = (SSDynamicObject) args.get(0);
       return subject.methods.getOrDefault(args.get(1).toString(), stack.getNull());
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject removeMethod(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSDynamicObject) args.get(0);
+      subject.methods.remove(args.get(1).toString());
+      return subject;
    }
    /****************************************************************************
     * 

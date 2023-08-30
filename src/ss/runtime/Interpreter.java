@@ -29,6 +29,14 @@ public class Interpreter {
    /****************************************************************************
     * 
    ****************************************************************************/
+   public Interpreter() {
+      
+       var n = load(this.stack, "Null.ss");
+       this.stack.addVariable("null", n);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
    public SSObject execute(final String program) throws IOException {
 
       return this.parser.parse(program).toSSObject().execute(this.stack);
@@ -43,11 +51,13 @@ public class Interpreter {
    /****************************************************************************
     * 
    ****************************************************************************/
-   SSObject load(final Stack stack, final SSObject resourceName) throws Exception {
+   SSObject load(final Stack stack, final String resourceName) {
 
-      try (final var reader = getResource(resourceName.toString())) {
+      try (final var reader = getResource(resourceName)) {
 
          return this.parser.parse(reader).toSSObject().execute(stack);
+      } catch (final Exception e) {
+         throw new RuntimeException(e);
       }
    }
    /****************************************************************************

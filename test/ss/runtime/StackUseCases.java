@@ -31,13 +31,13 @@ public class StackUseCases {
    @Test
    public void variableOnStack_canBeRetrieved() throws Exception {
 
-      var stack = Stack.create().addVariable("a", new SSTrue());
+      var stack = Stack.create().addVariable("a", new SSString("x"));
 
-      assertEquals(new SSTrue(), stack.getVariable("a"));
+      assertEquals(new SSString("x"), stack.getVariable("a"));
 
       stack = stack.pushNewFrame();
 
-      assertEquals(new SSTrue(), stack.getVariable("a"));
+      assertEquals(new SSString("x"), stack.getVariable("a"));
    }
 
    /****************************************************************************
@@ -46,16 +46,16 @@ public class StackUseCases {
    @Test
    public void variableOnStack_canBeChanged() throws Exception {
 
-      var stack = Stack.create().addVariable("a", new SSTrue());
-      stack.setVariable("a", new SSFalse());
+      var stack = Stack.create().addVariable("a", new SSString("x"));
+      stack.setVariable("a", new SSString("y"));
 
-      assertEquals(new SSFalse(), stack.getVariable("a"));
+      assertEquals(new SSString("y"), stack.getVariable("a"));
 
       var topFrame = stack.pushNewFrame();
 
-      stack = topFrame.setVariable("a", SSNull.instance());
+      stack = topFrame.setVariable("a", new SSString("z"));
 
-      assertEquals(SSNull.instance(), stack.getVariable("a"));
+      assertEquals(new SSString("z"), stack.getVariable("a"));
       assertEquals("{}", topFrame.toString());
    }
 
@@ -66,10 +66,10 @@ public class StackUseCases {
    public void addVariable_throwsException_whenVariableAlreadyExistsInTheSameFrame()
          throws Exception {
 
-      var stack = Stack.create().addVariable("a", new SSTrue());
+      var stack = Stack.create().addVariable("a", new SSString("x"));
 
       try {
-         stack.addVariable("a", new SSFalse());
+         stack.addVariable("a", new SSString("y"));
          fail("Expected exception");
       } catch (RuntimeException e) {
          assertEquals("Variable 'a' already exists in this scope.", e.getMessage());
@@ -83,9 +83,9 @@ public class StackUseCases {
    public void addVariable_addsVriableToTopLevelFrame() throws Exception {
 
       var stack = Stack.create();
-      var topLevelFrame = stack.pushNewFrame().addVariable("a", new SSFalse());
+      var topLevelFrame = stack.pushNewFrame().addVariable("a", new SSString("x"));
 
-      assertEquals(new SSFalse(), topLevelFrame.getVariable("a"));
+      assertEquals(new SSString("x"), topLevelFrame.getVariable("a"));
 
       try {
          stack.getVariable("a");
@@ -102,11 +102,11 @@ public class StackUseCases {
    public void addVariable_shadowsVariablesAlreadyExistingOnStack()
          throws Exception {
 
-      var stack = Stack.create().addVariable("a", new SSTrue());
-      var topLevelFrame = stack.pushNewFrame().addVariable("a", new SSFalse());
+      var stack = Stack.create().addVariable("a", new SSString("x"));
+      var topLevelFrame = stack.pushNewFrame().addVariable("a", new SSString("y"));
 
-      assertEquals(new SSTrue(), stack.getVariable("a"));
-      assertEquals(new SSFalse(), topLevelFrame.getVariable("a"));
+      assertEquals(new SSString("x"), stack.getVariable("a"));
+      assertEquals(new SSString("y"), topLevelFrame.getVariable("a"));
    }
 
    /****************************************************************************

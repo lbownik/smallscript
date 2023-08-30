@@ -27,8 +27,8 @@ public class InterpreterUseCases extends UseCaseBase {
    @Test
    public void complexExpressios_evaluateProperly() throws Exception {
 
-      assertResultEquals(new SSTrue(), "true;");
-      assertResultEquals(new SSTrue(), "(true);");
+      assertSSTrue("true;");
+      assertSSTrue("(true);");
       assertResultEquals(new SSString("true"), "true asString;");
       assertResultEquals(new SSLong(3569038), "true asString hash;");
       assertResultEquals(new SSString("3569038"), "true asString hash asString;");
@@ -54,7 +54,7 @@ public class InterpreterUseCases extends UseCaseBase {
       assertResultEquals(new SSLong(4), "({2 multipliedBy: 1;} execute) plus: 2;");
       assertResultEquals(new SSLong(6), "2 multipliedBy: ({1 plus: 2;} execute);");
       assertResultEquals(new SSLong(2), "(2 isGreaterThan: 1) ifTrue: 2;");
-      assertResultEquals(SSNull.instance(), "(2 isGreaterThan: 1) ifFalse: 2;");
+      assertSSTrue("(2 isGreaterThan: 1) ifFalse: 2 equals: null;");
       assertResultEquals(new SSLong(2),
             "(2 isGreaterThan: 1) ifTrue: 2 :ifFalse: 3;");
       assertResultEquals(new SSLong(7),
@@ -80,11 +80,11 @@ public class InterpreterUseCases extends UseCaseBase {
    @Test
    public void exceptions_workProperly() throws Exception {
       
-      assertResultEquals(SSNull.instance(),"""
-            null try: { true} :catch: {!e | false};
+      assertSSTrue("""
+            null try: { true} :catch: {!e | false} equals: null;
             """);
       
-      assertResultEquals(new SSTrue(),"""
+      assertSSTrue("""
             1 try: { 
               true;
             } :catch: {!e | 

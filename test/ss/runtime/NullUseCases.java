@@ -27,7 +27,7 @@ public class NullUseCases extends UseCaseBase {
    public void nullHasSetBasicProperties() throws Exception {
 
       assertSSTrue("null size equals: 0;");
-      assertSSNull("null nature;");
+      assertSSTrue("null nature equals: \"null\";");
       assertSSTrue("null asString equals: \"null\";");
       assertSSTrue("null hash equals: 0;");
    }
@@ -76,15 +76,7 @@ public class NullUseCases extends UseCaseBase {
          throws Exception {
 
       assertSSTrue("null size equals: 0;");
-      assertSSTrue("""
-            !o = Object new;
-            o try: {
-              null at: 0;
-            } :catch: {!e |
-              (e nature equals: "exception") and:
-              (e message equals: "Index 0 out of bounds.");
-            };
-            """);
+      assertSSTrue("null at: 0 equals: null;");
       assertSSTrue("""
             !counter = 0;
             !innerItem = null;

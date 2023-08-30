@@ -33,6 +33,7 @@ public final class SSLong extends SSDynamicObject {
       addBinaryMethod("asDouble", SSLong::asDouble);
       addBinaryMethod("asLong", SSLong::asLong);
       addBinaryMethod("clone", SSLong::clone);
+      addBinaryMethod("incremented", SSLong::incremented);
       addBinaryMethod("isGreaterThan:", SSLong::isGreaterThan);
       addBinaryMethod("isGreaterOrEqualTo:", SSLong::isGreaterOrEqualTo);
       addBinaryMethod("isLessThan:", SSLong::isLessThan);
@@ -98,6 +99,14 @@ public final class SSLong extends SSDynamicObject {
 
       final var subject = (SSLong) args.get(0);
       return new SSLong(subject.methods, subject.fields, subject.value);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject incremented(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSLong) args.get(0);
+      return new SSLong(subject.value + 1);
    }
    /****************************************************************************
     * 

@@ -38,10 +38,12 @@ public final class SSList extends SSDynamicObject {
       addBinaryMethod("append:", SSList::append);
       addBinaryMethod("at:", SSList::at);
       addBinaryMethod("at::put:", SSList::atPut);
-      addBinaryMethod("at::put::andReturnPreviousItem", SSList::atPutAndReturnPreviousItem);
+      addBinaryMethod("at::put::andReturnPreviousItem",
+            SSList::atPutAndReturnPreviousItem);
       addBinaryMethod("forEach:", SSList::forEach);
       addBinaryMethod("removeAt:", SSList::removeAt);
-      addBinaryMethod("removeAt::andReturnRemovedItem", SSList::removeAtAndReturnRemovedItem);
+      addBinaryMethod("removeAt::andReturnRemovedItem",
+            SSList::removeAtAndReturnRemovedItem);
       addBinaryMethod("size", SSList::size);
    }
    /****************************************************************************
@@ -50,7 +52,7 @@ public final class SSList extends SSDynamicObject {
    private static SSObject append(final Stack stack, final List<SSObject> args) {
 
       final var subject = (SSList) args.get(0);
-      subject.elements.add(args.get(1));
+      subject.elements.add(args.get(1).evaluate(stack.pushNewFrame()));
       return subject;
    }
    /****************************************************************************
@@ -59,7 +61,8 @@ public final class SSList extends SSDynamicObject {
    private static SSObject at(final Stack stack, final List<SSObject> args) {
 
       final var subject = (SSList) args.get(0);
-      final var index = ((SSLong) args.get(1)).intValue();
+      final var index = ((SSLong) args.get(1).evaluate(stack.pushNewFrame()))
+            .intValue();
 
       if (index > -1 & index < subject.elements.size()) {
          return subject.elements.get(index);
@@ -78,13 +81,16 @@ public final class SSList extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject atPutAndReturnPreviousItem(final Stack stack, final List<SSObject> args) {
+   private static SSObject atPutAndReturnPreviousItem(final Stack stack,
+         final List<SSObject> args) {
 
       final var subject = (SSList) args.get(0);
-      final var index = ((SSLong) args.get(1)).intValue();
+      final var index = ((SSLong) args.get(1).evaluate(stack.pushNewFrame()))
+            .intValue();
 
       if (index > -1 & index < subject.elements.size()) {
-         return subject.elements.set(index, args.get(2));
+         return subject.elements.set(index,
+               args.get(2).evaluate(stack.pushNewFrame()));
       } else {
          return throwException(args.get(1), "Index " + index + " out of bounds.");
       }
@@ -100,10 +106,12 @@ public final class SSList extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject removeAtAndReturnRemovedItem(final Stack stack, final List<SSObject> args) {
+   private static SSObject removeAtAndReturnRemovedItem(final Stack stack,
+         final List<SSObject> args) {
 
       final var subject = (SSList) args.get(0);
-      final var index = ((SSLong) args.get(1)).intValue();
+      final var index = ((SSLong) args.get(1).evaluate(stack.pushNewFrame()))
+            .intValue();
 
       if (index > -1 & index < subject.elements.size()) {
          return subject.elements.remove(index);
@@ -118,7 +126,8 @@ public final class SSList extends SSDynamicObject {
 
       final var subject = (SSList) args.get(0);
       for (var item : subject.elements) {
-         args.get(1).invoke(stack.pushNewFrame(), "executeWith:", List.of(item));
+         args.get(1).invoke(stack.pushNewFrame(), "executeWith:",
+               List.of(item.evaluate(stack.pushNewFrame())));
       }
       return subject;
    }
@@ -185,7 +194,7 @@ public final class SSList extends SSDynamicObject {
       private static SSObject append(final Stack stack, final List<SSObject> args) {
 
          final var result = createNew(stack, args);
-         result.elements.add(args.get(1));
+         result.elements.add(args.get(1).evaluate(stack.pushNewFrame()));
          return result;
       }
       /*************************************************************************

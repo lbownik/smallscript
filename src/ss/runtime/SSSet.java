@@ -17,6 +17,7 @@ package ss.runtime;
 
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
  ******************************************************************************/
@@ -26,42 +27,58 @@ public final class SSSet extends SSDynamicObject {
    ****************************************************************************/
    private SSSet() {
 
-      this.elements = new HashSet<>();
+      this(new HashSet<>());
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSSet(final HashSet<SSObject> elements) {
+   public SSSet(final Set<SSObject> elements) {
 
       this.elements = new HashSet<>(elements);
+      addBinaryMethod("add:", SSSet::append);
+      addBinaryMethod("append:", SSSet::append);
+      addBinaryMethod("forEach:", SSSet::forEach);
+      addBinaryMethod("remove:", SSSet::remove);
+      addBinaryMethod("size", SSSet::size);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   protected SSObject doClone() {
+   private static SSObject append(final Stack stack, final List<SSObject> args) {
 
-      return new SSSet(this.elements);
+      final var subject = (SSSet) args.get(0);
+      subject.elements.add(args.get(1).evaluate(stack.pushNewFrame()));
+      return subject;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   @Override
-   public SSObject invoke(final Stack stack, final String method,
-         final List<SSObject> args) {
+   private static SSObject remove(final Stack stack, final List<SSObject> args) {
 
-      return switch (method) {
-         case "size" -> new SSLong(this.elements.size());
-         case "add:", "append:" -> append(args.get(0));
-         default -> super.invoke(stack, method, args);
-      };
+      final var subject = (SSSet) args.get(0);
+
+      subject.elements.remove(args.get(1).evaluate(stack.pushNewFrame()));
+      return subject;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSObject append(final SSObject item) {
-      
-      this.elements.add(item);
-      return this;
+   private static SSObject forEach(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSSet) args.get(0);
+      for (var item : subject.elements) {
+         args.get(1).invoke(stack.pushNewFrame(), "executeWith:",
+               List.of(item.evaluate(stack.pushNewFrame())));
+      }
+      return subject;
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject size(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSSet) args.get(0);
+      return new SSLong(subject.elements.size());
    }
    /****************************************************************************
     * 
@@ -98,27 +115,27 @@ public final class SSSet extends SSDynamicObject {
       /*************************************************************************
        * 
       *************************************************************************/
-      protected SSObject doClone() {
+      public Factory() {
 
-         return new SSDynamicObject.Factory();
+         addBinaryMethod("new", SSSet.Factory::createNew);
+         addBinaryMethod("append:", SSSet.Factory::append);
       }
       /*************************************************************************
        * 
       *************************************************************************/
-      @Override
-      public SSObject invoke(final Stack stack, final String method,
-            final List<SSObject> args) {
-
-         return method.equals("new") ? createNew()
-               : super.invoke(stack, method, args);
-      }
-      /*************************************************************************
-       * 
-      *************************************************************************/
-      private SSObject createNew() {
+      private static SSSet createNew(final Stack stack, final List<SSObject> args) {
 
          final var result = new SSSet();
-         result.setField("nature", nature);
+         result.addField("nature", nature);
+         return result;
+      }
+      /*************************************************************************
+       * 
+      *************************************************************************/
+      private static SSObject append(final Stack stack, final List<SSObject> args) {
+
+         final var result = createNew(stack, args);
+         result.elements.add(args.get(1).evaluate(stack.pushNewFrame()));
          return result;
       }
       /*************************************************************************
@@ -127,7 +144,7 @@ public final class SSSet extends SSDynamicObject {
       @Override
       public String toString() {
 
-         return "List";
+         return "Set";
       }
       /*************************************************************************
        * 

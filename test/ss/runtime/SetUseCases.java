@@ -19,64 +19,54 @@ import org.junit.Test;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
-public class ListUseCases extends UseCaseBase {
+public class SetUseCases extends UseCaseBase {
    /****************************************************************************
     * 
     ***************************************************************************/
    @Test
-   public void listHasSetBasicProperties() throws Exception {
+   public void setHasSetBasicProperties() throws Exception {
 
-      assertSSTrue("List new size equals: 0;");
-      assertSSTrue("List new nature equals: \"list\";");
-      assertSSTrue("List new asString equals: \"[]\";");
-      assertSSTrue("List hash isGreaterThan: 0;");
+      assertSSTrue("Set new size equals: 0;");
+      assertSSTrue("Set new nature equals: \"set\";");
+      assertSSTrue("Set new asString equals: \"[]\";");
+      assertSSTrue("Set hash isGreaterThan: 0;");
    }
    /****************************************************************************
     * 
     ***************************************************************************/
    @Test
-   public void listEualsOnlyToIdenticalList() throws Exception {
+   public void setEualsOnlyToIdenticalSet() throws Exception {
 
-      assertSSTrue("List new equals: (List new);");
-      assertSSFalse("List new isNotEqualTo: (List new);");
+      assertSSTrue("Set new equals: (Set new);");
+      assertSSFalse("Set new isNotEqualTo: (Set new);");
 
-      assertSSFalse("List new equals: null;");
-      assertSSTrue("List new isNotEqualTo: null;");
-      
-      assertSSTrue("List append: 1 equals: (List append: 1);");
-      assertSSFalse("List append: 1 equals: (List append: 1 append: 2);");
-      assertSSTrue("List append: 1 isNotEqualTo: (List append: 1 append: 2);");
+      assertSSFalse("Set new equals: null;");
+      assertSSTrue("Set new isNotEqualTo: null;");
+
+      assertSSTrue("Set append: 1 equals: (Set append: 1);");
+      assertSSFalse("Set append: 1 equals: (Set append: 1 append: 2);");
+      assertSSTrue("Set append: 1 isNotEqualTo: (Set append: 1 append: 2);");
    }
    /****************************************************************************
     * 
     ***************************************************************************/
    @Test
-   public void executingListDoesNothingAndReturnNull() throws Exception {
+   public void executingSetDoesNothingAndReturnNull() throws Exception {
 
-      assertSSTrue("List execute equals: List;");
-      assertSSTrue("List new execute equals: (List new);");
-      assertSSTrue("List append: 1 execute equals: (List append: 1);");
+      assertSSTrue("Set execute equals: Set;");
+      assertSSTrue("Set new execute equals: (Set new);");
+      assertSSTrue("Set append: 1 execute equals: (Set append: 1);");
    }
    /****************************************************************************
     * 
     ***************************************************************************/
    @Test
-   public void emptyListHasNoElements()
-         throws Exception {
+   public void emptySetHasNoElements() throws Exception {
 
-      assertSSTrue("""
-            !l = List new;
-            l try: {
-              l at: 0;
-            } :catch: {!e |
-              (e nature equals: "exception") and:
-              (e message equals: "Index 0 out of bounds.");
-            };
-            """);
       assertSSTrue("""
             !counter = 0;
             !innerItem = null;
-            !result = List new forEach: {!item |
+            !result = Set new forEach: {!item |
                counter = counter plus: 1;
                innerItem = item;
             };
@@ -87,51 +77,42 @@ public class ListUseCases extends UseCaseBase {
     * 
     ***************************************************************************/
    @Test
-   public void nonEmptyListReturnsElementsAtIndex()
-         throws Exception {
+   public void nonEmptySetGrows() throws Exception {
 
-      assertSSTrue("List append: 10 at: 0 equals: 10;");
-      assertSSTrue("List append: 10 append: 11 at: 1 equals: 11;");
+      assertSSTrue("Set append: 10 size equals: 1;");
+      assertSSTrue("Set append: 10 append: 11 size equals: 2;");
    }
    /****************************************************************************
     * 
     ***************************************************************************/
    @Test
-   public void forEachPerformsActionForEachElement()
-         throws Exception {
+   public void addingElementsIsIdempotent() throws Exception {
+
+      assertSSTrue("Set append: 10 append: 10 equals: (Set append: 10);");
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void forEachPerformsActionForEachElement() throws Exception {
 
       assertSSTrue("""
-            !counter = 0;
-            !innerItem = null;
-            !list = List append: 10 append: 11;
-            !result = list forEach: {!item |
-               counter = counter incremented;
-               innerItem = item;
-            };
-            (counter equals: 2) and: (innerItem equals: 11);
+            !items = Set new;
+            Set append: 10 append: 11 forEach: {!item |
+               items append: item;
+            } equals: items;
             """);
    }
    /****************************************************************************
     * 
     ***************************************************************************/
    @Test
-   public void elementsCanBeRemovedFromNonEptyList()
-         throws Exception {
+   public void elementsCanBeRemovedFromNonEptySet() throws Exception {
 
-      assertSSTrue("List append: 10 append: 11 removeAt: 1 equals: (List append: 10);");
-      assertSSTrue("List append: 10 append: 11 removeAt: 0 equals: (List append: 11);");
-      assertSSTrue("List append: 10 removeAt: 0 equals: (List new);");
-      assertSSTrue("List append: 10 removeAt: 0 :andReturnRemovedItem equals: 10;");
-   }
-   /****************************************************************************
-    * 
-    ***************************************************************************/
-   @Test
-   public void elementsCanBePutAtSepcifiedIndex()
-         throws Exception {
-
-      assertSSTrue("List append: 10 at: 0 :put: 11 equals: (List append: 11);");
-      assertSSTrue("List append: 10 at: 0 :put: 11 :andReturnPreviousItem equals: 10;");
+      assertSSTrue("Set append: 10 append: 11 remove: 11 equals: (Set append: 10);");
+      assertSSTrue(
+            "Set append: 10 append: 11 remove: 10 equals: (Set append: 11);");
+      assertSSTrue("Set append: 10 remove: 10 equals: (Set new);");
    }
    /****************************************************************************
     * 

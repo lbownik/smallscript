@@ -16,9 +16,10 @@
 package ss.runtime;
 
 import static java.lang.System.out;
-import static java.util.Collections.emptyList;
 
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 
 import ss.parser.Parser;
 /*******************************************************************************
@@ -28,10 +29,34 @@ public class Interpreter {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public SSObject exacute(final String program, final Stack stack)
-         throws IOException {
+   public SSObject execute(final String program) throws IOException {
 
-      return new Parser().parse(program).toSSObject().invoke(stack, "execute");
+      return this.parser.parse(program).toSSObject().execute(this.stack);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   Stack getStack() {
+
+      return this.stack;
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   SSObject load(final Stack stack, final SSObject resourceName) throws Exception {
+
+      try (final var reader = getResource(resourceName.toString())) {
+
+         return this.parser.parse(reader).toSSObject().execute(stack);
+      }
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private Reader getResource(final String resourceName) throws Exception {
+
+      return new InputStreamReader(getClass().getResourceAsStream(resourceName),
+            "utf-8");
    }
    /****************************************************************************
     * 
@@ -40,15 +65,12 @@ public class Interpreter {
 
       final var console = System.console();
       if (console != null) {
-         final var stack = Stack.create();
-         stack.addVariable("application", new SSApplication());
-         final var parser = new Parser();
+         stack.addVariable("application", new SSApplication(this));
 
          out.print(">");
          var line = console.readLine();
          while (line != null) {
-            out.println(parser.parse(line).toSSObject().invoke(stack, "execute",
-                  emptyList()));
+            out.println(this.parser.parse(line).toSSObject().execute(stack));
             out.print(">");
             line = console.readLine();
          }
@@ -63,4 +85,9 @@ public class Interpreter {
 
       new Interpreter().repl();
    }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private final Parser parser = new Parser();
+   private final Stack stack = Stack.create();
 }

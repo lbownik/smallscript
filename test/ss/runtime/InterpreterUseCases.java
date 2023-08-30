@@ -15,16 +15,12 @@
 //------------------------------------------------------------------------------
 package ss.runtime;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
-
 import org.junit.Ignore;
 import org.junit.Test;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
-public class InterpreterUseCases {
+public class InterpreterUseCases extends UseCaseBase {
    /****************************************************************************
     * 
     ***************************************************************************/
@@ -152,13 +148,4 @@ public class InterpreterUseCases {
    /****************************************************************************
     * 
     ***************************************************************************/
-   private void assertResultEquals(final SSObject o, final String program)
-         throws IOException {
-
-      assertEquals(o, new Interpreter().exacute(program, this.stack));
-   }
-   /****************************************************************************
-    * 
-    ***************************************************************************/
-   private Stack stack = Stack.create();
 }

@@ -46,6 +46,24 @@ public interface SSObject {
             emptyList());
    }
    /****************************************************************************
+    * Executes encompassed object performing necessary computations if needed.
+    * 
+    * @param stack a clean stack frame
+    ****************************************************************************/
+   default public SSObject execute(final Stack stack) {
+
+      return invoke(stack, "execute");
+   }
+   /****************************************************************************
+    * Executes encompassed object performing necessary computations if needed.
+    * 
+    * @param stack a clean stack frame
+    ****************************************************************************/
+   default public SSObject execute(final Stack stack, final List<SSObject> args) {
+
+      return invoke(stack, "execute", args);
+   }
+   /****************************************************************************
     * Returns an object which can accept method calls performing necessary
     * computations if needed.
     * 

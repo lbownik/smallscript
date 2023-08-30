@@ -42,7 +42,7 @@ public class SSBlock extends SSDynamicObject {
          final List<SSObject> args) {
 
       if (method.startsWith("execute")) {
-         return execute(stack, args);
+         return doExecute(stack, args);
       } else {
          return super.invoke(stack, method, args);
       }
@@ -64,7 +64,7 @@ public class SSBlock extends SSDynamicObject {
       final var block = args.get(1);
 
       for (;;) {
-         if (subject.execute(stack.pushNewFrame(), emptyList()).equals(stack.getTrue())) {
+         if (subject.doExecute(stack.pushNewFrame(), emptyList()).equals(stack.getTrue())) {
             result = block.invoke(stack.pushNewFrame(), "execute");
          } else {
             return result;
@@ -85,7 +85,7 @@ public class SSBlock extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSObject execute(Stack stack, final List<SSObject> args) {
+   private SSObject doExecute(Stack stack, final List<SSObject> args) {
 
       initiateLocalVariables(stack, args);
 

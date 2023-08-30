@@ -15,8 +15,6 @@
 //------------------------------------------------------------------------------
 package ss.runtime;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Test;
 
 public class BlockUseCases extends UseCaseBase {
@@ -27,8 +25,7 @@ public class BlockUseCases extends UseCaseBase {
    @Test
    public void emptyBlock_evaluatesToNull() throws Exception {
 
-      assertEquals(SSNull.instance(),
-            new Interpreter().exacute("{};", this.stack).invoke(stack, "execute"));
+      assertSSTrue("{} execute equals: null;");
    }
    /****************************************************************************
    * 

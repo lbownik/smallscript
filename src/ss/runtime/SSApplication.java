@@ -31,8 +31,10 @@ public final class SSApplication extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public SSApplication(final BufferedReader in, final PrintStream out,
-         final PrintStream err) {
+   public SSApplication(final Interpreter interpreter, final BufferedReader in,
+         final PrintStream out, final PrintStream err) {
+
+      this.interpreter = interpreter;
 
       setField("input", new SSInput(in));
       setField("output", new SSOutput(out));
@@ -45,10 +47,10 @@ public final class SSApplication extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public SSApplication() {
+   public SSApplication(final Interpreter interpreter) {
 
-      this(new BufferedReader(new InputStreamReader(System.in)), System.out,
-            System.err);
+      this(interpreter, new BufferedReader(new InputStreamReader(System.in)),
+            System.out, System.err);
    }
    /****************************************************************************
     * 
@@ -63,19 +65,16 @@ public final class SSApplication extends SSDynamicObject {
    private static SSObject exit(final Stack stack, final List<SSObject> args) {
 
       System.exit(((SSLong) args.get(1)).intValue());
-      return SSNull.instance();
+      return stack.getNull();
    }
    /****************************************************************************
     * 
    ****************************************************************************/
    private static SSObject load(final Stack stack, final List<SSObject> args) {
 
-      try (final var reader = new InputStreamReader(
-            SSApplication.class.getResourceAsStream(args.get(1).toString()),
-            "utf-8")) {
-
-         return new Parser().parse(reader).toSSObject().invoke(stack, "execute",
-               emptyList());
+      try {
+         final var app = (SSApplication) args.get(0);
+         return app.interpreter.load(stack, args.get(1));
 
       } catch (final Exception e) {
          return throwException(args.get(0), e.getMessage());
@@ -100,4 +99,5 @@ public final class SSApplication extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
+   private final Interpreter interpreter;
 }

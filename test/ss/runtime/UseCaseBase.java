@@ -28,21 +28,21 @@ public class UseCaseBase {
     ***************************************************************************/
    protected void assertSSNull(final String program) throws IOException {
 
-      assertResultEquals(SSNull.instance(), program);
+      assertResultEquals(this.interpreter.getStack().getNull(), program);
    }
    /****************************************************************************
     * 
     ***************************************************************************/
    protected void assertSSFalse(final String program) throws IOException {
 
-      assertResultEquals(new SSFalse(), program);
+      assertResultEquals(this.interpreter.getStack().getFalse(), program);
    }
    /****************************************************************************
     * 
     ***************************************************************************/
    protected void assertSSTrue(final String program) throws IOException {
 
-      assertResultEquals(new SSTrue(), program);
+      assertResultEquals(this.interpreter.getStack().getTrue(), program);
    }
    /****************************************************************************
     * 
@@ -50,7 +50,7 @@ public class UseCaseBase {
    protected void assertResultEquals(final SSObject o, final String program)
          throws IOException {
 
-      assertEquals(o, new Interpreter().exacute(program, this.stack));
+      assertEquals(o, this.interpreter.execute(program));
    }
    /****************************************************************************
     * 
@@ -58,10 +58,10 @@ public class UseCaseBase {
    protected SSObject execute(final String program)
          throws IOException {
 
-      return new Interpreter().exacute(program, this.stack);
+      return this.interpreter.execute(program);
    }
    /****************************************************************************
     * 
     ***************************************************************************/
-   protected Stack stack = Stack.create();
+   private final Interpreter interpreter = new Interpreter();
 }

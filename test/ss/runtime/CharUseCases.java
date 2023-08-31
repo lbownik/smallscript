@@ -30,6 +30,10 @@ public class CharUseCases extends UseCaseBase {
       assertSSTrue("'a' nature equals: \"character\";");
       assertSSTrue("'a' asString equals: \"a\";");
       assertResultEquals(new SSLong(97), "'a' hash;");
+      assertSSTrue("""
+            !o = 'a';
+            o orDefault: "a" equals: o;
+            """);
    }
    /****************************************************************************
     * 

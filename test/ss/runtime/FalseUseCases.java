@@ -31,6 +31,10 @@ public class FalseUseCases extends UseCaseBase {
       assertSSTrue("false nature equals: \"object\";");
       assertSSTrue("false asString equals: \"false\";");
       assertSSTrue("false hash equals: 1;");
+      assertSSTrue("""
+            !o = false;
+            o orDefault: "a" equals: false;
+            """);
    }
    /****************************************************************************
     * 

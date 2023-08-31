@@ -33,6 +33,10 @@ public class DoubleUseCases extends UseCaseBase {
       assertSSTrue("1.0 asLong equals: 1;");
       assertSSTrue("1.0 size equals: 1;");
       assertSSTrue("1.0 nature equals: \"number\";");
+      assertSSTrue("""
+            !o = 1.0;
+            o orDefault: "a" equals: o;
+            """);
    }
    /****************************************************************************
     * 

@@ -36,18 +36,19 @@ public final class SSNull implements SSObject {
 
       return switch (method) {
          case "asString" -> new SSString(toString());
-         case "nature" -> new SSString("null");
-         case "hash" -> new SSLong(hashCode());
-         case "size" -> new SSLong(0);
          case "equals:" -> stack.get(this.equals(args.get(0).evaluate(stack)));
+         case "hash" -> new SSLong(hashCode());
          case "isNotEqualTo:" ->
             stack.get(!this.equals(args.get(0).evaluate(stack)));
+         case "orDefault:" -> args.get(0);
+         case "nature" -> new SSString("null");
+         case "size" -> new SSLong(0);
          default -> this;
       };
    }
    /****************************************************************************
     * 
-   *********************************************at:*******************************/
+    ***************************************************************************/
    private SSNull() {
 
    }

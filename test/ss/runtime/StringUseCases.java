@@ -31,6 +31,10 @@ public class StringUseCases extends UseCaseBase {
       assertSSTrue("\"abc\" nature nature equals: \"string\";");
       assertSSTrue("\"abc\" asString equals: \"abc\";");
       assertResultEquals(new SSLong(96354), "\"abc\" hash;");
+      assertSSTrue("""
+            !o = "B";
+            o orDefault: "a" equals: o;
+            """);
    }
    /****************************************************************************
     * 

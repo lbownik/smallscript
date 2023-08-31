@@ -32,6 +32,10 @@ public class DynamicObjectUseCases extends UseCaseBase {
       assertSSTrue("Object newOfNature: \"xyz\" nature equals: \"xyz\";");
       assertSSTrue("Object new asString startsWith: \"object#\";");
       assertSSTrue("Object new hash isGreaterThan: 0;");
+      assertSSTrue("""
+            !o = Object new;
+            o orDefault: "a" equals: o;
+            """);
    }
    /****************************************************************************
     * 

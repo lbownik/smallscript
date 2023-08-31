@@ -44,6 +44,7 @@ public class SSDynamicObject implements SSObject {
       addBinaryMethod("method:", SSDynamicObject::getMethod);
       addBinaryMethod("hash", SSDynamicObject::hashCode);
       addBinaryMethod("isNotEqualTo:", SSDynamicObject::isNotEqualTo);
+      addBinaryMethod("orDefault:", SSDynamicObject::orDefault);
       addBinaryMethod("removeMethod:", SSDynamicObject::removeMethod);
       addBinaryMethod("size", (stack, args) -> new SSLong(1));
       addBinaryMethod("throw", SSDynamicObject::throwThis);
@@ -100,6 +101,13 @@ public class SSDynamicObject implements SSObject {
    private static SSObject evaluate(final Stack stack, final List<SSObject> args) {
 
       return args.get(0).evaluate(stack);
+   }
+   /****************************************************************************
+    * 
+    ****************************************************************************/
+   private static SSObject orDefault(final Stack stack, final List<SSObject> args) {
+
+      return args.get(0);
    }
    /****************************************************************************
     * 

@@ -31,6 +31,10 @@ public class TrueUseCases  extends UseCaseBase {
       assertSSTrue("true nature equals: \"object\";");
       assertSSTrue("true asString equals: \"true\";");
       assertSSTrue("true hash equals: 2;");
+      assertSSTrue("""
+            !o = true;
+            o orDefault: "a" equals: o;
+            """);
    }
    /****************************************************************************
     * 

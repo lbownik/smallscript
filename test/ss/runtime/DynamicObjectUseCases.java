@@ -29,6 +29,7 @@ public class DynamicObjectUseCases extends UseCaseBase {
 
       assertSSTrue("Object new size equals: 1;");
       assertSSTrue("Object new nature equals: \"object\";");
+      assertSSTrue("Object newOfNature: \"xyz\" nature equals: \"xyz\";");
       assertSSTrue("Object new asString startsWith: \"object#\";");
       assertSSTrue("Object new hash isGreaterThan: 0;");
    }
@@ -167,6 +168,28 @@ public class DynamicObjectUseCases extends UseCaseBase {
             object addField: "a" :withValue: 10;
             object a equals: 10;
             """);
+   }
+   /****************************************************************************
+   * 
+   ****************************************************************************/
+   @Test
+   public void addingImmutableFields_createsOnyGetterMethod() throws Exception {
+
+      assertSSTrue("""
+            !object = Object new;
+            object addImmutableField: "a" :withValue: 10;
+            object a equals: 10;
+            """);
+      assertSSTrue(
+            """
+                  !object = Object new;
+                  object addImmutableField: "a" :withValue: 10;
+                  object try: {
+                     object a: 20;
+                  } :catch: {!e |
+                     (e nature equals: "exception") and: (e message equals: "Method 'a:' is not defined.");
+                  };
+                  """);
    }
    /****************************************************************************
     * 

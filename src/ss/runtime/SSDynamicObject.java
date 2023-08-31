@@ -32,6 +32,7 @@ public class SSDynamicObject implements SSObject {
 
       addBinaryMethod("addField:", SSDynamicObject::addField);
       addBinaryMethod("addField::withValue:", SSDynamicObject::addFieldWithValue);
+      addBinaryMethod("addImmutableField::withValue:", SSDynamicObject::addImmutableFieldWithValue);
       addBinaryMethod("addMethod::using:", SSDynamicObject::addMethod);
       addBinaryMethod("asString", SSDynamicObject::toString);
       addBinaryMethod("at:", SSDynamicObject::at);
@@ -217,10 +218,28 @@ public class SSDynamicObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
+   private static SSObject addImmutableFieldWithValue(final Stack stack,
+         final List<SSObject> args) {
+
+      final var subject = (SSDynamicObject) args.get(0);
+      return subject.addImmutableField(args.get(1).toString(), args.get(2));
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
    SSObject addField(final String name, final SSObject value) {
 
       addBinaryMethod(name, (s, a) -> getField(s, name, a));
       addBinaryMethod(name + ":", (s, a) -> setField(s, name, a));
+
+      return setField(name, value);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   SSObject addImmutableField(final String name, final SSObject value) {
+
+      addBinaryMethod(name, (s, a) -> getField(s, name, a));
 
       return setField(name, value);
    }
@@ -305,6 +324,7 @@ public class SSDynamicObject implements SSObject {
       public Factory() {
 
          addBinaryMethod("new", SSDynamicObject.Factory::createNew);
+         addBinaryMethod("newOfNature:", SSDynamicObject.Factory::newOfNature);
       }
       /*************************************************************************
        * 
@@ -314,6 +334,16 @@ public class SSDynamicObject implements SSObject {
 
          final var result = new SSDynamicObject();
          result.addField("nature", nature);
+         return result;
+      }
+      /*************************************************************************
+       * 
+      *************************************************************************/
+      private static SSObject newOfNature(final Stack stack,
+            final List<SSObject> args) {
+
+         final var result = new SSDynamicObject();
+         result.addField("nature", args.get(1));
          return result;
       }
       /*************************************************************************

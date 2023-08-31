@@ -29,14 +29,6 @@ public class Interpreter {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public Interpreter() {
-      
-       var n = load(this.stack, "Null.ss");
-       this.stack.addVariable("null", n);
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
    public SSObject execute(final String program) throws IOException {
 
       return this.parser.parse(program).toSSObject().execute(this.stack);

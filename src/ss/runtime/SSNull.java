@@ -36,24 +36,15 @@ public final class SSNull implements SSObject {
 
       return switch (method) {
          case "asString" -> new SSString(toString());
+         case "nature" -> new SSString("null");
          case "hash" -> new SSLong(hashCode());
          case "size" -> new SSLong(0);
-         case "at:" -> throwOutOfBounds(stack, method, args);
+         case "at:" -> this;
          case "equals:" -> stack.get(this.equals(args.get(0).evaluate(stack)));
          case "isNotEqualTo:" ->
             stack.get(!this.equals(args.get(0).evaluate(stack)));
          default -> this;
       };
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private SSObject throwOutOfBounds(final Stack stack, final String method,
-         final List<SSObject> args) {
-
-      final var index = ((SSLong) args.get(0)).intValue();
-      return SSDynamicObject.throwException(args.get(0),
-            "Index " + index + " out of bounds.");
    }
    /****************************************************************************
     * 

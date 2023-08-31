@@ -82,6 +82,24 @@ public class MapUseCases extends UseCaseBase {
 
       assertSSTrue("Map at: 'A' :put: 'B' size equals: 1;");
       assertSSTrue("Map at: 'A' :put: 'B' at: 'C' :put: 'D' size equals: 2;");
+      
+      assertSSTrue("Map at: 'A' :put: 'B' at: 'A' equals: 'B';");
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void valuesAddedToMapCanBeRetireved() throws Exception {
+      
+      assertSSTrue("Map at: 'A' :put: 'B' at: 'A' equals: 'B';");
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void retrievingNonExistentValueReturnNull() throws Exception {
+      
+      assertSSTrue("Map new at: 'A' equals: null;");
    }
    /****************************************************************************
     * 

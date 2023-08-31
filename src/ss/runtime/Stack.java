@@ -90,6 +90,7 @@ public interface Stack {
 		stack.addVariable("List", new SSList.Factory());
 		stack.addVariable("Map", new SSMap.Factory());
 		stack.addVariable("Set", new SSSet.Factory());
+		stack.addVariable("Exception", new ExceptionFactory());
 		return stack;
 	}
 	/****************************************************************************

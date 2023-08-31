@@ -71,7 +71,9 @@ public final class SSMap extends SSDynamicObject {
       final var subject = (SSMap) args.get(0);
       final var key = args.get(1).evaluate(stack.pushNewFrame());
 
-      return subject.elements.put(key, args.get(2).evaluate(stack.pushNewFrame()));
+      final var previous = subject.elements.put(key,
+            args.get(2).evaluate(stack.pushNewFrame()));
+      return previous != null ? previous : stack.getNull();
    }
    /****************************************************************************
     * 
@@ -90,7 +92,8 @@ public final class SSMap extends SSDynamicObject {
       final var subject = (SSMap) args.get(0);
       final var key = args.get(1).evaluate(stack.pushNewFrame());
 
-      return subject.elements.remove(key);
+      final var previous = subject.elements.remove(key);
+      return previous != null ? previous : stack.getNull();
    }
    /****************************************************************************
     * 

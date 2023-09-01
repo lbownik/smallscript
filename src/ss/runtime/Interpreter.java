@@ -16,6 +16,7 @@
 package ss.runtime;
 
 import static java.lang.System.out;
+import static java.util.Collections.emptyList;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -26,6 +27,12 @@ import ss.parser.Parser;
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
 public class Interpreter {
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   public Interpreter() {
+
+   }
    /****************************************************************************
     * 
    ****************************************************************************/
@@ -45,9 +52,18 @@ public class Interpreter {
    ****************************************************************************/
    SSObject load(final Stack stack, final String resourceName) {
 
+      return loadUsingCurrentStackFrame(stack.pushNewFrame(), resourceName);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   SSObject loadUsingCurrentStackFrame(final Stack stack,
+         final String resourceName) {
+
       try (final var reader = getResource(resourceName)) {
 
-         return this.parser.parse(reader).toSSObject().execute(stack);
+         return this.parser.parse(reader).toSSObject().evaluate(stack).invoke(stack,
+               "execute", emptyList());
       } catch (final Exception e) {
          throw new RuntimeException(e);
       }
@@ -68,11 +84,14 @@ public class Interpreter {
       final var console = System.console();
       if (console != null) {
          stack.addVariable("application", new SSApplication(this));
-
          out.print(">");
          var line = console.readLine();
          while (line != null) {
-            out.println(this.parser.parse(line).toSSObject().execute(stack));
+            try {
+               out.println(this.parser.parse(line).toSSObject().execute(stack));
+            } catch (final Exception e) {
+               out.println(e.getMessage());
+            }
             out.print(">");
             line = console.readLine();
          }

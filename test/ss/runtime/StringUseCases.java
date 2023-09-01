@@ -82,6 +82,7 @@ public class StringUseCases extends UseCaseBase {
    public void stringsCanBeConcatenated() throws Exception {
       
       assertResultEquals(new SSString("abcd"), "\"abc\" concatenate: \"d\";");
+      assertResultEquals(new SSString("abcd"), "\"abc\" append: \"d\";");
    }
    /****************************************************************************
     * 

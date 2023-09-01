@@ -91,7 +91,7 @@ public class ListUseCases extends UseCaseBase {
          throws Exception {
 
       assertSSTrue("List append: 10 at: 0 equals: 10;");
-      assertSSTrue("List append: 10 append: 11 at: 1 equals: 11;");
+      assertSSTrue("List append: 10 add: 11 at: 1 equals: 11;");
    }
    /****************************************************************************
     * 
@@ -101,14 +101,12 @@ public class ListUseCases extends UseCaseBase {
          throws Exception {
 
       assertSSTrue("""
-            !counter = 0;
-            !innerItem = null;
+            !items = List new;
             !list = List append: 10 append: 11;
             !result = list forEach: {!item |
-               counter = counter incremented;
-               innerItem = item;
+               items add: item;
             };
-            (counter equals: 2) and: (innerItem equals: 11);
+            (items equals: list) and: (result equals: list);
             """);
    }
    /****************************************************************************

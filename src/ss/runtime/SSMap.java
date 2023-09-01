@@ -36,12 +36,12 @@ public final class SSMap extends SSDynamicObject {
       this.elements = new HashMap<>(elements);
       addBinaryMethod("at:", SSMap::at);
       addBinaryMethod("at::put:", SSMap::atPut);
-      addBinaryMethod("at::put::andReturnPreviousItem",
-            SSMap::atPutAndReturnPreviousItem);
+      addBinaryMethod("at::put::andReturnPreviousValue",
+            SSMap::atPutAndReturnPreviousValue);
       addBinaryMethod("forEach:", SSMap::forEach);
       addBinaryMethod("removeAt:", SSMap::removeAt);
-      addBinaryMethod("removeAt::andReturnRemovedItem",
-            SSMap::removeAtAndReturnRemovedItem);
+      addBinaryMethod("removeAt::andReturnRemovedValue",
+            SSMap::removeAtAndReturnRemovedValue);
       addBinaryMethod("size", SSMap::size);
    }
    /****************************************************************************
@@ -59,13 +59,13 @@ public final class SSMap extends SSDynamicObject {
    ****************************************************************************/
    private static SSObject atPut(final Stack stack, final List<SSObject> args) {
 
-      atPutAndReturnPreviousItem(stack, args);
+      atPutAndReturnPreviousValue(stack, args);
       return args.get(0);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject atPutAndReturnPreviousItem(final Stack stack,
+   private static SSObject atPutAndReturnPreviousValue(final Stack stack,
          final List<SSObject> args) {
 
       final var subject = (SSMap) args.get(0);
@@ -80,13 +80,13 @@ public final class SSMap extends SSDynamicObject {
    ****************************************************************************/
    private static SSObject removeAt(final Stack stack, final List<SSObject> args) {
 
-      removeAtAndReturnRemovedItem(stack, args);
+      removeAtAndReturnRemovedValue(stack, args);
       return args.get(0);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject removeAtAndReturnRemovedItem(final Stack stack,
+   private static SSObject removeAtAndReturnRemovedValue(final Stack stack,
          final List<SSObject> args) {
 
       final var subject = (SSMap) args.get(0);

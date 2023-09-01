@@ -64,9 +64,9 @@ public final class SSList extends SSDynamicObject {
       final var index = ((SSLong) args.get(1).evaluate(stack.pushNewFrame()))
             .intValue();
 
-      if (index > -1 & index < subject.elements.size()) {
+      try {
          return subject.elements.get(index);
-      } else {
+      } catch (final IndexOutOfBoundsException e) {
          return throwException(args.get(1), "Index " + index + " out of bounds.");
       }
    }
@@ -88,10 +88,10 @@ public final class SSList extends SSDynamicObject {
       final var index = ((SSLong) args.get(1).evaluate(stack.pushNewFrame()))
             .intValue();
 
-      if (index > -1 & index < subject.elements.size()) {
+      try {
          return subject.elements.set(index,
                args.get(2).evaluate(stack.pushNewFrame()));
-      } else {
+      } catch (final IndexOutOfBoundsException e) {
          return throwException(args.get(1), "Index " + index + " out of bounds.");
       }
    }
@@ -113,9 +113,9 @@ public final class SSList extends SSDynamicObject {
       final var index = ((SSLong) args.get(1).evaluate(stack.pushNewFrame()))
             .intValue();
 
-      if (index > -1 & index < subject.elements.size()) {
+      try {
          return subject.elements.remove(index);
-      } else {
+      } catch(final IndexOutOfBoundsException e) {
          return throwException(args.get(1), "Index " + index + " out of bounds.");
       }
    }

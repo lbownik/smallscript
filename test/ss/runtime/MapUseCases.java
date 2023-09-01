@@ -113,6 +113,36 @@ public class MapUseCases extends UseCaseBase {
     * 
     ***************************************************************************/
    @Test
+   public void addingMappingToMap_returnsNullOrPreviousValue() throws Exception {
+
+      assertSSTrue("""
+            !map = Map new;
+            map at: 'A' :put: 'B' :andReturnPreviousValue equals: null;
+            """);
+      assertSSTrue("""
+            !map = Map  at: 'A' :put: 'X';
+            map at: 'A' :put: 'B' :andReturnPreviousValue equals: 'X';
+            """);
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void removingMapping_returnsNullOrRemovedValue() throws Exception {
+
+      assertSSTrue("""
+            !map = Map new;
+            map removeAt: 'A' :andReturnRemovedValue equals: null;
+            """);
+      assertSSTrue("""
+            !map = Map  at: 'A' :put: 'X';
+            map removeAt: 'A' :andReturnRemovedValue equals: 'X';
+            """);
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
    public void forEachPerformsActionForEachElement() throws Exception {
 
       assertSSTrue("""

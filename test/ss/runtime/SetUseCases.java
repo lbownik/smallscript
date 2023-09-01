@@ -80,7 +80,8 @@ public class SetUseCases extends UseCaseBase {
    public void nonEmptySetGrows() throws Exception {
 
       assertSSTrue("Set append: 10 size equals: 1;");
-      assertSSTrue("Set append: 10 append: 11 size equals: 2;");
+      assertSSTrue("Set append: 10 size equals: 1;");
+      assertSSTrue("Set append: 10 add: 11 size equals: 2;");
    }
    /****************************************************************************
     * 
@@ -94,6 +95,14 @@ public class SetUseCases extends UseCaseBase {
     * 
     ***************************************************************************/
    @Test
+   public void removingElementsWorks() throws Exception {
+
+      assertSSTrue("Set append: 10 append: 11 remove: 10 size equals: 1;");
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
    public void forEachPerformsActionForEachElement() throws Exception {
 
       assertSSTrue("""
@@ -102,17 +111,6 @@ public class SetUseCases extends UseCaseBase {
                items append: item;
             } equals: items;
             """);
-   }
-   /****************************************************************************
-    * 
-    ***************************************************************************/
-   @Test
-   public void elementsCanBeRemovedFromNonEptySet() throws Exception {
-
-      assertSSTrue("Set append: 10 append: 11 remove: 11 equals: (Set append: 10);");
-      assertSSTrue(
-            "Set append: 10 append: 11 remove: 10 equals: (Set append: 11);");
-      assertSSTrue("Set append: 10 remove: 10 equals: (Set new);");
    }
    /****************************************************************************
     * 

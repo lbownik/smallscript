@@ -15,14 +15,10 @@
 //-----------------------------------------------------------------------------
 package ss.runtime;
 
-import static java.util.Collections.emptyList;
-
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.List;
-
-import ss.parser.Parser;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
  ******************************************************************************/
@@ -43,6 +39,8 @@ public final class SSApplication extends SSDynamicObject {
       addBinaryMethod("clone", SSApplication::clone);
       addBinaryMethod("exit:", SSApplication::exit);
       addBinaryMethod("load:", SSApplication::load);
+      addBinaryMethod("load::usingCurrentStackFrame",
+            SSApplication::loadUsingCurrentStackFrame);
    }
    /****************************************************************************
     * 
@@ -75,6 +73,21 @@ public final class SSApplication extends SSDynamicObject {
       try {
          final var app = (SSApplication) args.get(0);
          return app.interpreter.load(stack, args.get(1).toString());
+
+      } catch (final Exception e) {
+         return throwException(args.get(0), e.getMessage());
+      }
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject loadUsingCurrentStackFrame(final Stack stack,
+         final List<SSObject> args) {
+
+      try {
+         final var app = (SSApplication) args.get(0);
+         return app.interpreter.loadUsingCurrentStackFrame(stack,
+               args.get(1).toString());
 
       } catch (final Exception e) {
          return throwException(args.get(0), e.getMessage());

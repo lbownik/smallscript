@@ -83,7 +83,7 @@ public final class SSTrue extends SSDynamicObject {
    ****************************************************************************/
    private static SSObject xor(final Stack stack, final List<SSObject> args) {
 
-      return args.get(1).invoke(stack, "not");
+      return args.get(1).invoke(stack.pushNewFrame(), "not");
    }
    /****************************************************************************
     * 

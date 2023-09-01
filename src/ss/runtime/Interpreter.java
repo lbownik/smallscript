@@ -16,7 +16,6 @@
 package ss.runtime;
 
 import static java.lang.System.out;
-import static java.util.Collections.emptyList;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -32,6 +31,15 @@ public class Interpreter {
    ****************************************************************************/
    public Interpreter() {
 
+      stack.addVariable("null", SSNull.instance());
+      stack.addVariable("true", new SSTrue());
+      stack.addVariable("false", new SSFalse());
+      stack.addVariable("Object", new SSDynamicObject.Factory());
+      stack.addVariable("List", new SSList.Factory());
+      stack.addVariable("Map", new SSMap.Factory());
+      stack.addVariable("Set", new SSSet.Factory());
+      stack.addVariable("Exception", new ExceptionFactory());
+      stack.addVariable("application", new SSApplication(this));
    }
    /****************************************************************************
     * 
@@ -52,18 +60,9 @@ public class Interpreter {
    ****************************************************************************/
    SSObject load(final Stack stack, final String resourceName) {
 
-      return loadUsingCurrentStackFrame(stack.pushNewFrame(), resourceName);
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   SSObject loadUsingCurrentStackFrame(final Stack stack,
-         final String resourceName) {
-
       try (final var reader = getResource(resourceName)) {
 
-         return this.parser.parse(reader).toSSObject().evaluate(stack).invoke(stack,
-               "execute", emptyList());
+         return this.parser.parse(reader).toSSObject().execute(stack);
       } catch (final Exception e) {
          throw new RuntimeException(e);
       }
@@ -83,7 +82,6 @@ public class Interpreter {
 
       final var console = System.console();
       if (console != null) {
-         stack.addVariable("application", new SSApplication(this));
          out.print(">");
          var line = console.readLine();
          while (line != null) {

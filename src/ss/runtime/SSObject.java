@@ -15,8 +15,9 @@
 //------------------------------------------------------------------------------
 package ss.runtime;
 
-import java.util.List;
 import static java.util.Collections.emptyList;
+
+import java.util.List;
 
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com

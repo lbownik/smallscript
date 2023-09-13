@@ -46,21 +46,21 @@ public interface Stack {
    ****************************************************************************/
    default public SSObject getTrue() {
 
-      return getVariable(SSTrue.name);
+      return getVariable("true");
    }
    /****************************************************************************
     * 
    ****************************************************************************/
    default public SSObject getFalse() {
 
-      return getVariable(SSFalse.name);
+      return getVariable("false");
    }
    /****************************************************************************
     * 
    ****************************************************************************/
    default public SSObject get(final boolean bool) {
 
-      return bool ? getVariable(SSTrue.name) : getVariable(SSFalse.name);
+      return getVariable(bool ? "true" : "false");
    }
    /****************************************************************************
     * 

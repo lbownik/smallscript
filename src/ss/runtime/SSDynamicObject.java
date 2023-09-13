@@ -32,7 +32,8 @@ public class SSDynamicObject implements SSObject {
 
       addBinaryMethod("addField:", SSDynamicObject::addField);
       addBinaryMethod("addField::withValue:", SSDynamicObject::addFieldWithValue);
-      addBinaryMethod("addImmutableField::withValue:", SSDynamicObject::addImmutableFieldWithValue);
+      addBinaryMethod("addImmutableField::withValue:",
+            SSDynamicObject::addImmutableFieldWithValue);
       addBinaryMethod("addMethod::using:", SSDynamicObject::addMethod);
       addBinaryMethod("asString", SSDynamicObject::toString);
       addBinaryMethod("at:", SSDynamicObject::at);
@@ -200,7 +201,8 @@ public class SSDynamicObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject removeMethod(final Stack stack, final List<SSObject> args) {
+   private static SSObject removeMethod(final Stack stack,
+         final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
       subject.methods.remove(args.get(1).toString());
@@ -212,7 +214,8 @@ public class SSDynamicObject implements SSObject {
    private static SSObject addField(final Stack stack, final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
-      return subject.addField(args.get(1).toString(), stack.getNull());
+      return subject.addField(args.get(1).evaluate(stack).toString(),
+            stack.getNull());
    }
    /****************************************************************************
     * 
@@ -221,7 +224,8 @@ public class SSDynamicObject implements SSObject {
          final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
-      return subject.addField(args.get(1).toString(), args.get(2));
+      return subject.addField(args.get(1).evaluate(stack).toString(),
+            args.get(2).evaluate(stack));
    }
    /****************************************************************************
     * 
@@ -230,7 +234,8 @@ public class SSDynamicObject implements SSObject {
          final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
-      return subject.addImmutableField(args.get(1).toString(), args.get(2));
+      return subject.addImmutableField(args.get(1).evaluate(stack).toString(),
+            args.get(2).evaluate(stack));
    }
    /****************************************************************************
     * 
@@ -295,8 +300,7 @@ public class SSDynamicObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject doesNotUnderstand(final Stack stack,
-         final List<SSObject> args) {
+   static SSObject doesNotUnderstand(final Stack stack, final List<SSObject> args) {
 
       final var message = args.get(1);
       final var method = message.invoke(stack.pushNewFrame(), "method");
@@ -306,8 +310,7 @@ public class SSDynamicObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject throwException(final SSObject cause,
-         final String message) {
+   static SSObject throwException(final SSObject cause, final String message) {
 
       final var exception = new SSDynamicObject();
       exception.addField("nature", new SSString("exception"));
@@ -320,7 +323,7 @@ public class SSDynamicObject implements SSObject {
    ****************************************************************************/
    protected final Map<String, SSObject> methods = new HashMap<>();
    protected final Map<String, SSObject> fields = new HashMap<>();
-   
+
    public final static SSString nature = new SSString("object");
    /****************************************************************************
     * 

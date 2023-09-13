@@ -63,5 +63,5 @@ public class UseCaseBase {
    /****************************************************************************
     * 
     ***************************************************************************/
-   private final Interpreter interpreter = new Interpreter();
+   protected final Interpreter interpreter = new Interpreter();
 }

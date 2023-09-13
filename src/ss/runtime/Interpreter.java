@@ -31,14 +31,14 @@ public class Interpreter {
    ****************************************************************************/
    public Interpreter() {
 
-      stack.addVariable("null", SSNull.instance());
-      stack.addVariable("true", new SSTrue());
-      stack.addVariable("false", new SSFalse());
       stack.addVariable("Object", new SSDynamicObject.Factory());
+      stack.addVariable("null", SSNull.instance());
+      stack.addVariable("true", load(this.stack, "True.ss"));
+      stack.addVariable("false", load(this.stack, "False.ss"));
       stack.addVariable("List", new SSList.Factory());
       stack.addVariable("Map", new SSMap.Factory());
       stack.addVariable("Set", new SSSet.Factory());
-      stack.addVariable("Exception", new ExceptionFactory());
+      stack.addVariable("Exception", load(this.stack, "Exception.ss"));
       stack.addVariable("application", new SSApplication(this));
    }
    /****************************************************************************

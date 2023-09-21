@@ -68,7 +68,7 @@ public final class SSString extends SSDynamicObject {
       final var subject = (SSString) args.get(0);
       final var index = ((SSLong) args.get(1)).intValue();
       if (index > -1 & index < subject.value.length()) {
-         return new SSChar(subject.value.charAt(index));
+         return new SSString(subject.value.substring(index, index + 1));
       } else {
          return throwException(args.get(1), "Index " + index + " out of bounds.");
       }

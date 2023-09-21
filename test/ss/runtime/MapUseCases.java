@@ -43,10 +43,10 @@ public class MapUseCases extends UseCaseBase {
       assertSSFalse("Map new equals: null;");
       assertSSTrue("Map new isNotEqualTo: null;");
 
-      assertSSTrue("Map at: 'A' :put: 'B' equals: (Map at: 'A' :put: 'B');");
+      assertSSTrue("Map at: \"A\" :put: \"B\" equals: (Map at: \"A\" :put: \"B\");");
       assertSSFalse(
-            "Map at: 'A' :put: 'B' equals: (Map at: 'A' :put: 'B' at: 'C' :put: 'D');");
-      assertSSTrue("Map at: 'A' :put: 'B' isNotEqualTo: (Map at: 'A' :put: 'B' at: 'C' :put: 'D');");
+            "Map at: \"A\" :put: \"B\" equals: (Map at: \"A\" :put: \"B\" at: \"C\" :put: \"D\");");
+      assertSSTrue("Map at: \"A\" :put: \"B\" isNotEqualTo: (Map at: \"A\" :put: \"B\" at: \"C\" :put: \"D\");");
    }
    /****************************************************************************
     * 
@@ -56,7 +56,7 @@ public class MapUseCases extends UseCaseBase {
 
       assertSSTrue("Map execute equals: Map;");
       assertSSTrue("Map new execute equals: (Map new);");
-      assertSSTrue("Map at: 'A' :put: 'B' execute equals: (Map at: 'A' :put: 'B');");
+      assertSSTrue("Map at: \"A\" :put: \"B\" execute equals: (Map at: \"A\" :put: \"B\");");
    }
    /****************************************************************************
     * 
@@ -80,10 +80,10 @@ public class MapUseCases extends UseCaseBase {
    @Test
    public void nonEmptyMapGrows() throws Exception {
 
-      assertSSTrue("Map at: 'A' :put: 'B' size equals: 1;");
-      assertSSTrue("Map at: 'A' :put: 'B' at: 'C' :put: 'D' size equals: 2;");
+      assertSSTrue("Map at: \"A\" :put: \"B\" size equals: 1;");
+      assertSSTrue("Map at: \"A\" :put: \"B\" at: \"C\" :put: \"D\" size equals: 2;");
       
-      assertSSTrue("Map at: 'A' :put: 'B' at: 'A' equals: 'B';");
+      assertSSTrue("Map at: \"A\" :put: \"B\" at: \"A\" equals: \"B\";");
    }
    /****************************************************************************
     * 
@@ -91,7 +91,7 @@ public class MapUseCases extends UseCaseBase {
    @Test
    public void valuesAddedToMapCanBeRetireved() throws Exception {
       
-      assertSSTrue("Map at: 'A' :put: 'B' at: 'A' equals: 'B';");
+      assertSSTrue("Map at: \"A\" :put: \"B\" at: \"A\" equals: \"B\";");
    }
    /****************************************************************************
     * 
@@ -99,7 +99,7 @@ public class MapUseCases extends UseCaseBase {
    @Test
    public void retrievingNonExistentValueReturnNull() throws Exception {
       
-      assertSSTrue("Map new at: 'A' equals: null;");
+      assertSSTrue("Map new at: \"A\" equals: null;");
    }
    /****************************************************************************
     * 
@@ -107,7 +107,7 @@ public class MapUseCases extends UseCaseBase {
    @Test
    public void addingElementsIsIdempotent() throws Exception {
 
-      assertSSTrue("Map at: 'A' :put: 'B' at: 'A' :put: 'D' equals: (Map at: 'A' :put: 'D');");
+      assertSSTrue("Map at: \"A\" :put: \"B\" at: \"A\" :put: \"D\" equals: (Map at: \"A\" :put: \"D\");");
    }
    /****************************************************************************
     * 
@@ -117,11 +117,11 @@ public class MapUseCases extends UseCaseBase {
 
       assertSSTrue("""
             !map = Map new;
-            map at: 'A' :put: 'B' :andReturnPreviousValue equals: null;
+            map at: \"A\" :put: \"B\" :andReturnPreviousValue equals: null;
             """);
       assertSSTrue("""
-            !map = Map  at: 'A' :put: 'X';
-            map at: 'A' :put: 'B' :andReturnPreviousValue equals: 'X';
+            !map = Map  at: \"A\" :put: \"X\";
+            map at: \"A\" :put: \"B\" :andReturnPreviousValue equals: \"X\";
             """);
    }
    /****************************************************************************
@@ -132,11 +132,11 @@ public class MapUseCases extends UseCaseBase {
 
       assertSSTrue("""
             !map = Map new;
-            map removeAt: 'A' :andReturnRemovedValue equals: null;
+            map removeAt: \"A\" :andReturnRemovedValue equals: null;
             """);
       assertSSTrue("""
-            !map = Map  at: 'A' :put: 'X';
-            map removeAt: 'A' :andReturnRemovedValue equals: 'X';
+            !map = Map  at: \"A\" :put: \"X\";
+            map removeAt: \"A\" :andReturnRemovedValue equals: \"X\";
             """);
    }
    /****************************************************************************
@@ -147,7 +147,7 @@ public class MapUseCases extends UseCaseBase {
 
       assertSSTrue("""
             !items = Map new;
-            Map at: 'A' :put: 'B' at: 'A' :put: 'D' forEach: {!key !value |
+            Map at: \"A\" :put: \"B\" at: \"A\" :put: \"D\" forEach: {!key !value |
                items at: key :put: value;
             } equals: items;
             """);
@@ -158,8 +158,8 @@ public class MapUseCases extends UseCaseBase {
    @Test
    public void elementsCanBeRemovedFromNonEptyMap() throws Exception {
 
-      assertSSTrue("Map at: 'A' :put: 'B' at: 'C' :put: 'D' removeAt: 'C' equals: (Map at: 'A' :put: 'B');");
-      assertSSTrue("Map at: 'A' :put: 'B' removeAt: 'A' equals: (Map new);");
+      assertSSTrue("Map at: \"A\" :put: \"B\" at: \"C\" :put: \"D\" removeAt: \"C\" equals: (Map at: \"A\" :put: \"B\");");
+      assertSSTrue("Map at: \"A\" :put: \"B\" removeAt: \"A\" equals: (Map new);");
    }
    /****************************************************************************
     * 

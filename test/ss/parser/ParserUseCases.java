@@ -208,32 +208,6 @@ public class ParserUseCases {
    * 
    ****************************************************************************/
    @Test
-   public void returnsCharacter_ForProperInput() throws Exception {
-
-      assertCharacterEquals(' ', "' ';");
-      assertCharacterEquals('\b', "'\b\';");
-      assertCharacterEquals('\f', "'\f';");
-      assertCharacterEquals('\r', "'\r';");
-      assertCharacterEquals('\n', "'\n';");
-      assertCharacterEquals('\t', "'\t';");
-      assertCharacterEquals('\'', "'\'';");
-      assertCharacterEquals('ś', "'ś';");
-   }
-   /****************************************************************************
-   * 
-   ****************************************************************************/
-   @Test
-   public void throwsEOF_ForUnfinishedCharacter() throws Exception {
-
-      assertEOF("'");
-      assertEOF("' ");
-      assertEOF("'\b");
-      assertEOF("'ś");
-   }
-   /****************************************************************************
-   * 
-   ****************************************************************************/
-   @Test
    public void throwsEOF_ForUnfinishedString() throws Exception {
 
       assertEOF("\"");
@@ -740,21 +714,6 @@ public class ParserUseCases {
 
       assertEquals(1, expression.size());
       assertEquals(new StringConstant(expected), expression.get(0));
-   }
-   /****************************************************************************
-    * 
-    ***************************************************************************/
-   private void assertCharacterEquals(final Character expected, final String str)
-         throws Exception {
-
-      Block program = parse(str);
-
-      assertEquals(1, program.size());
-
-      Sentence expression = (Sentence) program.get(0);
-
-      assertEquals(1, expression.size());
-      assertEquals(new CharacterConstant(expected), expression.get(0));
    }
    /****************************************************************************
     * 

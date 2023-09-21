@@ -57,7 +57,6 @@ public class DynamicObjectUseCases extends UseCaseBase {
       assertSSTrue("Object new isNotEqualTo: false;");
       assertSSTrue("Object new isNotEqualTo: 1;");
       assertSSTrue("Object new isNotEqualTo: 1.0;");
-      assertSSTrue("Object new isNotEqualTo: 'a';");
       assertSSTrue("Object new isNotEqualTo: \"a\";");
    }
    /****************************************************************************

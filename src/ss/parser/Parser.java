@@ -101,7 +101,6 @@ public final class Parser {
          case '{' -> parseBlock();
          case '(' -> parseBrackets();
          case '"' -> parseString();
-         case '\'' -> parseCharacter();
          case '-', '1', '2', '3', '4', '5', '6', '7', '8', '9', '0' ->
             parseNumber(currentChar);
          default -> parseSymbol(currentChar);
@@ -211,24 +210,6 @@ public final class Parser {
       }
 
       return new StringConstant(new String(this.buffer, 0, this.bufIndex).intern());
-   }
-   /****************************************************************************
-   * 
-   ****************************************************************************/
-   private CharacterConstant parseCharacter() throws IOException {
-
-      final int currentChar = read();
-      if (currentChar == -1) {
-         throw new EOFException();
-      } else {
-         final int nextChar = read();
-         if (nextChar == -1) {
-            throw new EOFException();
-         } else if (nextChar != '\'') {
-            throwUnexpected(nextChar);
-         }
-         return new CharacterConstant((char) currentChar);
-      }
    }
    /****************************************************************************
    * 

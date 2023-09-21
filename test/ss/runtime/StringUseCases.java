@@ -55,7 +55,7 @@ public class StringUseCases extends UseCaseBase {
    @Test
    public void at_returnsCharacterAtPosition() throws Exception {
       
-      assertResultEquals(new SSChar('a'), "\"abc\" at: 0;");
+      assertResultEquals(new SSString("a"), "\"abc\" at: 0;");
       assertSSTrue("""
             true try: {
                \"abc\" at: -1;

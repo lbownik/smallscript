@@ -43,9 +43,9 @@ public class ExceptionFactoryUseCases extends UseCaseBase {
              and: (e method: "cause" equals: null);
             """);
       assertSSTrue("""
-            !e = Exception withCause: 'X' :andMessage: "abc";
+            !e = Exception withCause: "X" :andMessage: "abc";
             (e nature equals: "exception")  and: (e message equals: "abc")
-             and: (e cause equals: 'X');
+             and: (e cause equals: "X");
             """);
    }
    /****************************************************************************

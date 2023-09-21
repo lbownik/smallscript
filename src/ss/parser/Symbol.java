@@ -15,8 +15,6 @@
 //------------------------------------------------------------------------------
 package ss.parser;
 
-import java.util.regex.Pattern;
-
 import ss.runtime.SSObject;
 import ss.runtime.SSVariableReference;
 /*******************************************************************************

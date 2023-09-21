@@ -20,6 +20,8 @@ import static java.lang.System.out;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 import ss.parser.Parser;
 /*******************************************************************************
@@ -45,6 +47,13 @@ public class Interpreter {
     * 
    ****************************************************************************/
    public SSObject execute(final String program) throws IOException {
+
+      return this.parser.parse(program).toSSObject().execute(this.stack);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   public SSObject execute(final Reader program) throws IOException {
 
       return this.parser.parse(program).toSSObject().execute(this.stack);
    }
@@ -102,7 +111,11 @@ public class Interpreter {
    ****************************************************************************/
    public static void main(String[] args) throws Exception {
 
-      new Interpreter().repl();
+      if (args.length == 0) {
+         new Interpreter().repl();
+      } else {
+         new Interpreter().execute(Files.newBufferedReader(Paths.get(args[1])));
+      }
    }
    /****************************************************************************
     * 

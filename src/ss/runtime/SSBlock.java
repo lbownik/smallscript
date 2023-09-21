@@ -99,6 +99,17 @@ public class SSBlock extends SSDynamicObject {
       return result != null ? result : stack.getNull();
    }
    /****************************************************************************
+    * Returns an object which can accept method calls performing necessary
+    * computations if needed.
+    * 
+    * @param stack a clean stack frame
+    ****************************************************************************/
+   @Override
+   public SSObject evaluate(final Stack stack) {
+
+      return new SSClosure(stack, this);
+   }
+   /****************************************************************************
     * 
    ****************************************************************************/
    @Override

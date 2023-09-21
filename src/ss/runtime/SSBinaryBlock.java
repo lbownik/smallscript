@@ -63,6 +63,17 @@ public class SSBinaryBlock implements SSObject {
       return SSDynamicObject.doesNotUnderstand(stack, List.of(this, message));
    }
    /****************************************************************************
+    * Returns an object which can accept method calls performing necessary
+    * computations if needed.
+    * 
+    * @param stack a clean stack frame
+    ****************************************************************************/
+   @Override
+   public SSObject evaluate(final Stack stack) {
+
+      return new SSClosure(stack, this);
+   }
+   /****************************************************************************
     * 
    ****************************************************************************/
    @Override

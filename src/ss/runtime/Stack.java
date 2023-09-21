@@ -23,6 +23,18 @@ public interface Stack {
    /****************************************************************************
     * 
    ****************************************************************************/
+   public class VariableNotFoud extends RuntimeException {
+      /*************************************************************************
+       * 
+      *************************************************************************/
+      public VariableNotFoud(final String message) {
+         
+         super(message);
+      }
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
    default public Stack addVariable(final String name, final SSObject value) {
 
       throw new RuntimeException("Stack not initialized.");
@@ -32,14 +44,14 @@ public interface Stack {
    ****************************************************************************/
    default public Stack setVariable(final String name, final SSObject value) {
 
-      throw new RuntimeException("Variable '" + name + "' does not exist.");
+      throw new VariableNotFoud("Variable '" + name + "' does not exist.");
    }
    /****************************************************************************
     * 
    ****************************************************************************/
    default public SSObject getVariable(final String name) {
 
-      throw new RuntimeException("Variable '" + name + "' does not exist.");
+      throw new VariableNotFoud("Variable '" + name + "' does not exist.");
    }
    /****************************************************************************
     * 

@@ -32,7 +32,15 @@ public class Interpreter {
     * 
    ****************************************************************************/
    public Interpreter() {
+      
+      this(new String[0]);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   public Interpreter(final String[] args) {
 
+      this.args = args;
       stack.addVariable("Object", new SSDynamicObject.Factory());
       stack.addVariable("null", SSNull.instance());
       stack.addVariable("true", load(this.stack, "True.ss"));
@@ -112,9 +120,9 @@ public class Interpreter {
    public static void main(String[] args) throws Exception {
 
       if (args.length == 0) {
-         new Interpreter().repl();
+         new Interpreter(args).repl();
       } else {
-         new Interpreter().execute(Files.newBufferedReader(Paths.get(args[1])));
+         new Interpreter(args).execute(Files.newBufferedReader(Paths.get(args[1])));
       }
    }
    /****************************************************************************
@@ -122,4 +130,5 @@ public class Interpreter {
    ****************************************************************************/
    private final Parser parser = new Parser();
    private final Stack stack = Stack.create();
+   final String[] args;
 }

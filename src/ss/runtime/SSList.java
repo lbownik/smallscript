@@ -31,7 +31,7 @@ public final class SSList extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public SSList(final List<SSObject> elements) {
+   public SSList(final List<? extends SSObject> elements) {
 
       this.elements = new ArrayList<>(elements);
       addBinaryMethod("add:", SSList::append);
@@ -45,6 +45,7 @@ public final class SSList extends SSDynamicObject {
       addBinaryMethod("removeAt::andReturnRemovedItem",
             SSList::removeAtAndReturnRemovedItem);
       addBinaryMethod("size", SSList::size);
+      addBinaryMethod("transform:", SSList::transform);
       addBinaryMethod("where:", SSList::where);
    }
    /****************************************************************************
@@ -139,6 +140,18 @@ public final class SSList extends SSDynamicObject {
 
       final var subject = (SSList) args.get(0);
       return new SSLong(subject.elements.size());
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject transform(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSList) args.get(0);
+      final var newStream = subject.elements.stream().map(item -> 
+         args.get(1).invoke(stack.pushNewFrame(), "executeWith:",
+               List.of(item.evaluate(stack.pushNewFrame())))
+      );
+      return new SSStream(newStream);
    }
    /****************************************************************************
     * 

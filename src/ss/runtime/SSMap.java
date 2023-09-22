@@ -39,6 +39,7 @@ public final class SSMap extends SSDynamicObject {
       addBinaryMethod("at::put::andReturnPreviousValue",
             SSMap::atPutAndReturnPreviousValue);
       addBinaryMethod("forEach:", SSMap::forEach);
+      addBinaryMethod("keys", SSMap::keys);
       addBinaryMethod("removeAt:", SSMap::removeAt);
       addBinaryMethod("removeAt::andReturnRemovedValue",
             SSMap::removeAtAndReturnRemovedValue);
@@ -107,6 +108,14 @@ public final class SSMap extends SSDynamicObject {
                      item.getValue().evaluate(stack.pushNewFrame())));
       }
       return subject;
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject keys(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSMap) args.get(0);
+      return new SSSet(subject.elements.keySet());
    }
    /****************************************************************************
     * 

@@ -115,4 +115,36 @@ public class SetUseCases extends UseCaseBase {
    /****************************************************************************
     * 
     ****************************************************************************/
+   @Test
+   public void elementsCanBeFiltered_andTransformed()
+         throws Exception {
+
+      assertSSTrue("""
+            !source = Set append: "abc" append: "abcd" append: "xy";
+            !result = List new;
+            source where: { !item | item startsWith: "ab" }
+                   where: { !item | item equals: "abc" } 
+                   transform: { !item | item size }
+                   forEach: { !item | result append: item };
+            (result size equals: 1) and: (result at: 0 equals: 3);
+            """);
+   }
+   /****************************************************************************
+    * 
+    ****************************************************************************/
+   @Test
+   public void elementsCanBeCollectedToAnotherList()
+         throws Exception {
+
+      assertSSTrue("""
+            !source = Set append: "abc" append: "abcd" append: "xy";
+            !result = source where: { !item | item startsWith: "ab" }
+                             where: { !item | item equals: "abc" } 
+                             collectTo: Set;
+            (result size equals: 1);
+            """);
+   }
+   /****************************************************************************
+    * 
+    ****************************************************************************/
 }

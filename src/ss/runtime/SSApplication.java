@@ -19,6 +19,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.List;
+import java.util.stream.Stream;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
  ******************************************************************************/
@@ -32,13 +33,16 @@ public final class SSApplication extends SSDynamicObject {
 
       this.interpreter = interpreter;
 
-      setField("input", new SSInput(in));
-      setField("output", new SSOutput(out));
-      setField("error", new SSOutput(err));
+      addField("input", new SSInput(in));
+      addField("output", new SSOutput(out));
+      addField("error", new SSOutput(err));
 
       addBinaryMethod("clone", SSApplication::clone);
       addBinaryMethod("exit:", SSApplication::exit);
       addBinaryMethod("load:", SSApplication::load);
+
+      addImmutableField("arguments",
+            new SSList(Stream.of(interpreter.args).map(SSString::new).toList()));
    }
    /****************************************************************************
     * 

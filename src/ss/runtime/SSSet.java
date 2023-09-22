@@ -40,6 +40,8 @@ public final class SSSet extends SSDynamicObject {
       addBinaryMethod("forEach:", SSSet::forEach);
       addBinaryMethod("remove:", SSSet::remove);
       addBinaryMethod("size", SSSet::size);
+      addBinaryMethod("transform:", SSSet::transform);
+      addBinaryMethod("where:", SSSet::where);
    }
    /****************************************************************************
     * 
@@ -79,6 +81,31 @@ public final class SSSet extends SSDynamicObject {
 
       final var subject = (SSSet) args.get(0);
       return new SSLong(subject.elements.size());
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject transform(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSSet) args.get(0);
+      final var newStream = subject.elements.stream().map(item -> 
+         args.get(1).invoke(stack.pushNewFrame(), "executeWith:",
+               List.of(item.evaluate(stack.pushNewFrame())))
+      );
+      return new SSStream(newStream);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject where(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSSet) args.get(0);
+      final var newStream = subject.elements.stream().filter(item -> {
+         var result = args.get(1).invoke(stack.pushNewFrame(), "executeWith:",
+               List.of(item.evaluate(stack.pushNewFrame())));
+         return result == stack.getTrue();
+      });
+      return new SSStream(newStream);
    }
    /****************************************************************************
     * 

@@ -38,6 +38,7 @@ public class SSDynamicObject implements SSObject {
       addBinaryMethod("asString", SSDynamicObject::toString);
       addBinaryMethod("at:", SSDynamicObject::at);
       addBinaryMethod("clone", SSDynamicObject::clone);
+      addBinaryMethod("collectTo:", SSDynamicObject::collectTo);
       addBinaryMethod("doesNotUnderstand:", SSDynamicObject::doesNotUnderstand);
       addBinaryMethod("equals:", SSDynamicObject::equals);
       addBinaryMethod("execute", SSDynamicObject::evaluate);
@@ -48,7 +49,9 @@ public class SSDynamicObject implements SSObject {
       addBinaryMethod("orDefault:", SSDynamicObject::orDefault);
       addBinaryMethod("removeMethod:", SSDynamicObject::removeMethod);
       addBinaryMethod("size", (stack, args) -> new SSLong(1));
+      addBinaryMethod("selectIf:", SSDynamicObject::selectIf);
       addBinaryMethod("throw", SSDynamicObject::throwThis);
+      addBinaryMethod("transformUsing:", SSDynamicObject::transformUsing);
       addBinaryMethod("try::catch:", SSDynamicObject::tryCatch);
    }
    /****************************************************************************
@@ -306,6 +309,39 @@ public class SSDynamicObject implements SSObject {
       final var method = message.invoke(stack.pushNewFrame(), "method");
 
       return throwException(message, "Method '" + method + "' is not defined.");
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject selectIf(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSSet) args.get(0);
+
+      var result = args.get(1).invoke(stack.pushNewFrame(), "executeWith:",
+            List.of(subject.evaluate(stack.pushNewFrame())));
+
+      return result == stack.getTrue() ? subject : stack.getNull();
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject transformUsing(final Stack stack,
+         final List<SSObject> args) {
+
+      final var subject = (SSSet) args.get(0);
+
+      return args.get(1).invoke(stack.pushNewFrame(), "executeWith:",
+            List.of(subject.evaluate(stack.pushNewFrame())));
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject collectTo(final Stack stack, final List<SSObject> args) {
+
+      final var subject = (SSStream) args.get(0);
+
+      return args.get(1).invoke(stack.pushNewFrame(), "append:",
+            List.of(subject.evaluate(stack.pushNewFrame())));
    }
    /****************************************************************************
     * 

@@ -40,8 +40,8 @@ public final class SSSet extends SSDynamicObject {
       addBinaryMethod("forEach:", SSSet::forEach);
       addBinaryMethod("remove:", SSSet::remove);
       addBinaryMethod("size", SSSet::size);
-      addBinaryMethod("transform:", SSSet::transform);
-      addBinaryMethod("where:", SSSet::where);
+      addBinaryMethod("selectIf:", SSSet::selectIf);
+      addBinaryMethod("transformUsing:", SSSet::transformUsing);
    }
    /****************************************************************************
     * 
@@ -85,19 +85,7 @@ public final class SSSet extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject transform(final Stack stack, final List<SSObject> args) {
-
-      final var subject = (SSSet) args.get(0);
-      final var newStream = subject.elements.stream().map(item -> 
-         args.get(1).invoke(stack.pushNewFrame(), "executeWith:",
-               List.of(item.evaluate(stack.pushNewFrame())))
-      );
-      return new SSStream(newStream);
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject where(final Stack stack, final List<SSObject> args) {
+   private static SSObject selectIf(final Stack stack, final List<SSObject> args) {
 
       final var subject = (SSSet) args.get(0);
       final var newStream = subject.elements.stream().filter(item -> {
@@ -105,6 +93,18 @@ public final class SSSet extends SSDynamicObject {
                List.of(item.evaluate(stack.pushNewFrame())));
          return result == stack.getTrue();
       });
+      return new SSStream(newStream);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject transformUsing(final Stack stack,
+         final List<SSObject> args) {
+
+      final var subject = (SSSet) args.get(0);
+      final var newStream = subject.elements.stream()
+            .map(item -> args.get(1).invoke(stack.pushNewFrame(), "executeWith:",
+                  List.of(item.evaluate(stack.pushNewFrame()))));
       return new SSStream(newStream);
    }
    /****************************************************************************

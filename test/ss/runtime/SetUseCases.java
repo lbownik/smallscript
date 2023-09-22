@@ -122,9 +122,9 @@ public class SetUseCases extends UseCaseBase {
       assertSSTrue("""
             !source = Set append: "abc" append: "abcd" append: "xy";
             !result = List new;
-            source where: { !item | item startsWith: "ab" }
-                   where: { !item | item equals: "abc" } 
-                   transform: { !item | item size }
+            source selectIf: { !item | item startsWith: "ab" }
+                   selectIf: { !item | item equals: "abc" } 
+                   transformUsing: { !item | item size }
                    forEach: { !item | result append: item };
             (result size equals: 1) and: (result at: 0 equals: 3);
             """);
@@ -138,8 +138,8 @@ public class SetUseCases extends UseCaseBase {
 
       assertSSTrue("""
             !source = Set append: "abc" append: "abcd" append: "xy";
-            !result = source where: { !item | item startsWith: "ab" }
-                             where: { !item | item equals: "abc" } 
+            !result = source selectIf: { !item | item startsWith: "ab" }
+                             selectIf: { !item | item equals: "abc" } 
                              collectTo: Set;
             (result size equals: 1);
             """);

@@ -32,14 +32,6 @@ public final class DoubleConstant implements Expression {
     * 
    ****************************************************************************/
    @Override
-   public Double value() {
-
-      return this.value;
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   @Override
    public String toString() {
 
       return this.value.toString();

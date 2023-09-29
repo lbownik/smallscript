@@ -33,14 +33,6 @@ public class Sentence extends ArrayList<Expression> implements Expression {
    /****************************************************************************
     * 
    ****************************************************************************/
-   @Override
-   public Sentence value() {
-
-      return this;
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
    private OptionalInt findVariableBlockSaperator() {
 
       return range(0, size())
@@ -80,16 +72,16 @@ public class Sentence extends ArrayList<Expression> implements Expression {
             if (isAssignment()) {
                throw new RuntimeException("Syntax error. Missing assignment value.");
             } else {
-               return new SSExpression(get(0).toSSObject(), (String) get(1).value());
+               return new SSExpression(get(0).toSSObject(), get(1).toString());
             }
          default:
             if (isAssignment()) {
                if (((Symbol) get(0)).isVariableDeclaration()) {
                   return new SSNewVariableAssignment(
-                        get(0).value().toString().substring(1),
+                        get(0).toString().substring(1),
                         subSentence(2).toSSObject());
                } else {
-                  return new SSExistingVariableAssignment(get(0).value().toString(),
+                  return new SSExistingVariableAssignment(get(0).toString(),
                         subSentence(2).toSSObject());
                }
 
@@ -128,13 +120,13 @@ public class Sentence extends ArrayList<Expression> implements Expression {
             return createExpression(new SSExpression(subject, s.toString()),
                   index + 1);
          } else if (s.isMethodWithArgs()) {
-            final StringBuilder methodName = new StringBuilder(s.value());
+            final StringBuilder methodName = new StringBuilder(s.toString());
             final ArrayList<SSObject> args = new ArrayList<>();
             args.add(get(++index).toSSObject());
             while (++index < size()) {
                if (get(index) instanceof Symbol ns) {
                   if (ns.isMethodContinuation()) {
-                     methodName.append(ns.value());
+                     methodName.append(ns.toString());
                      if (ns.isMethodWithArgs()) {
                         if (++index < size()) {
                            args.add(get(index).toSSObject());

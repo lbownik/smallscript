@@ -21,6 +21,8 @@ import java.io.EOFException;
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
+
+import ss.runtime.SSString;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
@@ -195,7 +197,7 @@ public final class Parser {
    /****************************************************************************
    * 
    ****************************************************************************/
-   private StringConstant parseString() throws IOException {
+   private Expression parseString() throws IOException {
 
       this.bufIndex = 0;
       int currentChar = read();

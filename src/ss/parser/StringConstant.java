@@ -32,14 +32,6 @@ public final class StringConstant implements Expression {
     * 
    ****************************************************************************/
    @Override
-   public String value() {
-
-      return this.value;
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   @Override
    public String toString() {
 
       return this.value;
@@ -51,14 +43,6 @@ public final class StringConstant implements Expression {
    public int hashCode() {
 
       return this.value.hashCode();
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   @Override
-   public boolean equals(final Object o) {
-
-      return o instanceof StringConstant s && this.value.equals(s.value);
    }
    /****************************************************************************
     * 

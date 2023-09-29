@@ -15,9 +15,11 @@
 //-----------------------------------------------------------------------------
 package ss.parser;
 
+import static java.util.Collections.emptyList;
+
 import java.util.ArrayList;
 import java.util.List;
-import static java.util.Collections.emptyList;
+
 import ss.runtime.SSBlock;
 import ss.runtime.SSObject;
 /*******************************************************************************
@@ -27,23 +29,13 @@ public class Block extends ArrayList<Sentence> implements Expression {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public Object value() {
-
-      return isEmpty() ? "{}" : get(size() - 1).value();
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
    @Override
    public SSObject toSSObject() {
 
-      if (isEmpty()) {
-         return new SSBlock(stream().map(Expression::toSSObject).toList(),
-               emptyList());
-      } else {
-         final List<String> argNames = get(0).trimArgumentsDeclarations();
-         return new SSBlock(stream().map(Expression::toSSObject).toList(), argNames);
-      }
+      final List<String> argNames = isEmpty() ? emptyList()
+            : get(0).trimArgumentsDeclarations();
+
+      return new SSBlock(stream().map(Expression::toSSObject).toList(), argNames);
    }
    /****************************************************************************
     * 

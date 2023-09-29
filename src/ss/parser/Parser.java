@@ -22,6 +22,8 @@ import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
 
+import ss.runtime.SSDouble;
+import ss.runtime.SSLong;
 import ss.runtime.SSString;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
@@ -166,7 +168,9 @@ public final class Parser {
       if (isEndOfValue(currentChar)) {
          // integer - no exponent
          unread(currentChar);
-         return new LongConstant(integer * signum);
+         final long result = integer * signum;
+         return () -> new SSLong(result);
+         //return new LongConstant(integer * signum);
       } else if (currentChar == '.') {
          // floating point
          currentChar = read();
@@ -187,7 +191,8 @@ public final class Parser {
          // floating point without exponent
          if (isEndOfValue(currentChar)) {
             unread(currentChar);
-            return new DoubleConstant((integer + decimal) * signum);
+            final double result = (integer + decimal) * signum;
+            return () -> new SSDouble(result);
          }
          throwUnexpected(currentChar);
 
@@ -210,8 +215,9 @@ public final class Parser {
          });
          currentChar = read();
       }
-
-      return new StringConstant(new String(this.buffer, 0, this.bufIndex).intern());
+      
+      final var result = new String(this.buffer, 0, this.bufIndex).intern();
+      return () -> new SSString(result);
    }
    /****************************************************************************
    * 

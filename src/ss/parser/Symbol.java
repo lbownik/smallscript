@@ -26,29 +26,8 @@ public final class Symbol implements Expression {
    ****************************************************************************/
    public Symbol(final String value) {
 
-//      ensureProperSymbol(value);
       this.value = value;
    }
-//   /****************************************************************************
-//    * 
-//   ****************************************************************************/
-//   private static void ensureProperSymbol(final String value) {
-//
-//      if(varDeclaration.matcher(value).matches()) {
-//         return ; // proper variable declaration
-//      }else if(varReference.matcher(value).matches()) { 
-//         return ; // proper variable reference or no-arg method name
-//      } else {
-//         throw new SyntaxException(value);
-//      }
-//      
-////      final var index = value.indexOf(':');
-////      if (index == -1 | index == 0 | index == (value.length() - 1)) {
-////         return;
-////      } else {
-////         throw new RuntimeException("Invalid symbol '" + value + "'.");
-////      }
-//   }
    /****************************************************************************
     * 
    ****************************************************************************/
@@ -117,22 +96,6 @@ public final class Symbol implements Expression {
    /****************************************************************************
     * 
    ****************************************************************************/
-   @Override
-   public int hashCode() {
-
-      return this.value.hashCode();
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   @Override
-   public boolean equals(final Object o) {
-
-      return o instanceof Symbol s && this.value.equals(s.value);
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
    public SSObject toSSObject() {
 
       return new SSVariableReference(this.value);
@@ -141,7 +104,4 @@ public final class Symbol implements Expression {
     * 
    ****************************************************************************/
    private final String value;
-   
-//   private final static Pattern varDeclaration = Pattern.compile("![a-zA-Z][a-zA-Z0-9]*");
-//   private final static Pattern varReference = Pattern.compile("[a-zA-Z][a-zA-Z0-9]*");
 }

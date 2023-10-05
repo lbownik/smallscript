@@ -84,6 +84,7 @@ public final class Parser {
          }
          if (currentChar == '#') {
             skipComment();
+            currentChar = read();
          } else if (currentChar == '}' | currentChar == ')') {
             throwUnexpected(currentChar);
          } else if (currentChar != ';') {
@@ -241,12 +242,15 @@ public final class Parser {
    /****************************************************************************
    * 
    ****************************************************************************/
-   private void skipComment() throws IOException {
+   private int skipComment() throws IOException {
 
       int chr;
+      
       do {
          chr = read();
       } while (!isEndOfComment(chr));
+      
+      return chr;
    }
    /****************************************************************************
    * 

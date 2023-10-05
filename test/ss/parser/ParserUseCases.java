@@ -560,6 +560,29 @@ public class ParserUseCases {
    * 
    ****************************************************************************/
    @Test
+   public void returnsBlock_ForExpressionInBracesContainingComments() 
+         throws Exception {
+
+      Block program;
+      // -----------------------------------------------------------------------
+      program = parse("""
+            {
+                #comment
+            };
+            """);
+
+      assertEquals(1, program.size());
+      {
+         Sentence expression = (Sentence) program.get(0);
+
+         assertEquals(1, expression.size());
+         assertEquals(1, ((Block) expression.get(0)).size());
+      }
+   }
+   /****************************************************************************
+   * 
+   ****************************************************************************/
+   @Test
    public void returnsParseTree_forProperProgramWithComments() throws Exception {
 
       Block program = parse("""

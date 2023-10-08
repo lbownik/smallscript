@@ -15,29 +15,23 @@
 #-------------------------------------------------------------------------------
 
 #-------------------------------------------------------------------------------
-# Test result
-#-------------------------------------------------------------------------------
-!TestResult = Object new addMethod: "new" :using: {
-
-	Object new
-	 		 addImmutableField: "failures" :withValue: (List new)
-	       addImmutableField: "errors"   :withValue: (List new)
-	       addImmutableField: "passed"   :withValue: (List new);
-};
-#-------------------------------------------------------------------------------
 # TestCase
 #-------------------------------------------------------------------------------
-!TestCase = Object new addMethod: "new" :using: {
+!TestCase = Object new addMethod: "named::using:" :using: {!this !name !block |
 
-	!result = Object new 
-	          addImmutableField: "result" :withValue: (TestResult new);
-    
-	result addMethod: "assert:" :using: {!this !condition |
-	       
-	       condition  ifTrue:  { this logSuccess; }
-	                 :ifFalse: {
-	                 
-	                 };
+	!case = Object new 
+	        addField: "result" 
+	        addField: "name"   :withValue: name
+	        addField: "block"  :withValue: block;
+	#----------------------------------------------------------------------------
+	case addMethod: "runWith::and:" :using: {!this !assert !fail |
+	     
+	     this try: {
+	     		this block executeWith: assert :and: fail;
+	     		this result: "Passed";
+	     } catch: {!e |
+	     		this result: "Failed: " append: (e message);
+	     };
 	};
 };
 #-------------------------------------------------------------------------------
@@ -45,13 +39,48 @@
 #-------------------------------------------------------------------------------
 !TestSuite = Object new addMethod: "new" :using: {
 
-	!result = Object new
-	          addImmutableField: "tests" :using: (Map new);
-
-	result addMethod: "addTestNamed::using:" :using: {!this !name !block |
+	!suite = Object new
+	         addImmutableField: "$tests" :using: (List new);
+   #----------------------------------------------------------------------------
+	suite addMethod: "addTestNamed::using:" :using: {!this !name !block |
 	       
-	       this tests at: name :put: block;
-	       this;
+			this $tests append: (TestCase named: name :using: block);
+	      this;
+	};
+	#----------------------------------------------------------------------------
+	suite addMethod: "$createAssert" :using {!this |
+	
+	      Object new addMethod "that::equals:" :using {!this !expected !actual |
+	      		 
+	      		 expected equals: actual ifTrue: { 
+	      		    Object new addField: "nature"  :withValue: "assertionFailure"
+	      		               addField: "cause"   :withValue: this
+	      		               addField: "message" :withValue: 
+	      		                  ("Expected: " append: (expected asString) 
+	      		                               append: "but was: "
+	      		                               append:  (actual asString))
+	      		               throw;
+	      		 };
+	      };
+	};
+	#----------------------------------------------------------------------------
+	suite addMethod: "$createFail" :using {!this |
+	
+	      Object new addMethod "with:" :using {!this !message |
+	      		 
+	      		 Object new addField: "nature"  :withValue: "assertionFailure"
+	      		               addField: "cause"   :withValue: this
+	      		               addField: "message" :withValue: message
+	      		               throw;
+	      };
+	};
+	#----------------------------------------------------------------------------
+	suite addMethod: "run" :using: {!this |
+	
+		!assert = this $createAssert;
+		!fail   = this $createFail;
+	
+		this @tests forEach: {!test | test runWith: assert :and: fail };
 	};
 };
 #-------------------------------------------------------------------------------

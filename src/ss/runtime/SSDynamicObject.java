@@ -357,8 +357,8 @@ public class SSDynamicObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   protected final Map<String, SSObject> methods = new HashMap<>();
-   protected final Map<String, SSObject> fields = new HashMap<>();
+   final Map<String, SSObject> methods = new HashMap<>();
+   final Map<String, SSObject> fields = new HashMap<>();
 
    public final static SSString nature = new SSString("object");
    /****************************************************************************

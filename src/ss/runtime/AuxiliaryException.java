@@ -24,11 +24,22 @@ final class AuxiliaryException extends RuntimeException {
    ****************************************************************************/
    public AuxiliaryException(final SSObject object) {
 
-      super(object.toString());
       this.object = object;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   final SSObject object;
+   @Override
+   public String getMessage() {
+      
+      if(this.object instanceof SSDynamicObject o) {
+         return o.fields.get("message").toString();
+      } else {
+         return this.object.toString();
+      }
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   final SSObject object;  
 }

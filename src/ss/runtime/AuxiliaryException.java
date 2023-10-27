@@ -29,6 +29,14 @@ final class AuxiliaryException extends RuntimeException {
    /****************************************************************************
     * 
    ****************************************************************************/
+   public AuxiliaryException(final SSObject object, final Throwable cause) {
+      
+      super(cause);
+      this.object = object;
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
    @Override
    public String getMessage() {
       

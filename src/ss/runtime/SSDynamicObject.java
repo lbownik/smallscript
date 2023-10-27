@@ -308,7 +308,8 @@ public class SSDynamicObject implements SSObject {
       final var message = args.get(1);
       final var method = message.invoke(stack.pushNewFrame(), "method");
 
-      return throwException(message, "Method '" + method + "' is not defined.");
+      return throwException(message,
+            "Method '" + method + "' is not defined for " + args.get(0).toString());
    }
    /****************************************************************************
     * 
@@ -353,6 +354,17 @@ public class SSDynamicObject implements SSObject {
       exception.addField("cause", cause);
       exception.addField("message", new SSString(message));
       throw new AuxiliaryException(exception);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   static SSObject throwException(final SSObject cause, final Throwable root) {
+
+      final var exception = new SSDynamicObject();
+      exception.addField("nature", new SSString("exception"));
+      exception.addField("cause", cause);
+      exception.addField("message", new SSString(root.getMessage()));
+      throw new AuxiliaryException(exception, root);
    }
    /****************************************************************************
     * 

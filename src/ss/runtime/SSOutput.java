@@ -16,6 +16,7 @@
 package ss.runtime;
 
 import java.io.PrintStream;
+import static java.util.Collections.emptyList;
 import java.util.List;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
@@ -46,10 +47,10 @@ public final class SSOutput extends SSDynamicObject {
 
       final var subject = (SSOutput) args.get(0);
       try {
-         subject.out.println(args.get(1));
+         subject.out.println(args.get(1).invoke(stack, "asString", emptyList()));
          return subject;
       } catch (final Exception e) {
-         return throwException(subject, e.getMessage());
+         return throwException(subject, e);
       }
    }
    /****************************************************************************
@@ -59,10 +60,10 @@ public final class SSOutput extends SSDynamicObject {
 
       final var subject = (SSOutput) args.get(0);
       try {
-         subject.out.print(args.get(1));
+         subject.out.print(args.get(1).invoke(stack, "asString", emptyList()));
          return subject;
       } catch (final Exception e) {
-         return throwException(subject, e.getMessage());
+         return throwException(subject, e);
       }
    }
 

@@ -77,7 +77,7 @@ public final class SSApplication extends SSDynamicObject {
          return app.interpreter.load(stack, args.get(1).toString());
 
       } catch (final Exception e) {
-         return throwException(args.get(0), e.getMessage());
+         return throwException(args.get(0), e);
       }
    }
    /****************************************************************************

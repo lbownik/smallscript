@@ -17,7 +17,10 @@
 #-------------------------------------------------------------------------------
 # TestCase
 #-------------------------------------------------------------------------------
-!TestCase = Object new addMethod: "named::using:" :using: {!this !name !block |
+!TestCase = Object new;
+
+#-------------------------------------------------------------------------------
+TestCase addMethod: "named::using:" :using: {!this !name !block |
 
 	!case = Object new 
 	        addField: "result" 
@@ -29,30 +32,33 @@
 	     this try: {
 	     		this block executeWith: assert :and: fail;
 	     		this result: "Passed";
-	     } catch: {!e |
-	     		this result: "Failed: " append: (e message);
+	     } :catch: {!exception |
+	     		this result: ("Failed: " append: (exception message));
 	     };
 	};
 };
 #-------------------------------------------------------------------------------
 # TestSuite
 #-------------------------------------------------------------------------------
-!TestSuite = Object new addMethod: "new" :using: {
+!TestSuite = Object new;
+
+#-------------------------------------------------------------------------------
+TestSuite addMethod: "new" :using: {
 
 	!suite = Object new
-	         addImmutableField: "$tests" :using: (List new);
+	         addImmutableField: "tests" :withValue: (List new);
    #----------------------------------------------------------------------------
 	suite addMethod: "addTestNamed::using:" :using: {!this !name !block |
 	       
-			this $tests append: (TestCase named: name :using: block);
+			this tests add: (TestCase named: name :using: block);
 	      this;
-	};
+	};	 
 	#----------------------------------------------------------------------------
-	suite addMethod: "$createAssert" :using {!this |
+	suite addMethod: "$createAssert" :using: {!this |
 	
-	      Object new addMethod "that::equals:" :using {!this !expected !actual |
+	      Object new addMethod: "that::equals:" :using: {!this !expected !actual |
 	      		 
-	      		 expected equals: actual ifTrue: { 
+	      		 expected equals: actual ifFalse: { 
 	      		    Object new addField: "nature"  :withValue: "assertionFailure"
 	      		               addField: "cause"   :withValue: this
 	      		               addField: "message" :withValue: 
@@ -62,16 +68,16 @@
 	      		               throw;
 	      		 };
 	      };
-	};
+	};   
 	#----------------------------------------------------------------------------
-	suite addMethod: "$createFail" :using {!this |
+	suite addMethod: "$createFail" :using: {!this |
 	
-	      Object new addMethod "with:" :using {!this !message |
+	      Object new addMethod: "with:" :using: {!this !message |
 	      		 
 	      		 Object new addField: "nature"  :withValue: "assertionFailure"
-	      		               addField: "cause"   :withValue: this
-	      		               addField: "message" :withValue: message
-	      		               throw;
+	      		            addField: "cause"   :withValue: this
+	      		            addField: "message" :withValue: message
+	      		            throw;
 	      };
 	};
 	#----------------------------------------------------------------------------
@@ -80,10 +86,11 @@
 		!assert = this $createAssert;
 		!fail   = this $createFail;
 	
-		this @tests forEach: {!test | test runWith: assert :and: fail };
+		this tests forEach: {!test | test runWith: assert :and: fail };
 	};
 };
 #-------------------------------------------------------------------------------
 # ModuleObject
 #-------------------------------------------------------------------------------
-Object new addImmutableField: "Suite" :withValue: TestSuite;
+Object new addField: "Suite" :withValue: TestSuite;
+

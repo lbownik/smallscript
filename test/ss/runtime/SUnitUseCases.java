@@ -43,6 +43,7 @@ public class SUnitUseCases extends UseCaseBase {
             };
             
             suite run printResultsTo: (application output);
+            true;
             """);
    }
    /****************************************************************************

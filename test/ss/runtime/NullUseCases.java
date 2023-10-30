@@ -87,13 +87,13 @@ public class NullUseCases extends UseCaseBase {
             };
             (counter equals: 0) and: (result equals: null) and: (innerItem equals: null);
             """);
-//      assertSSTrue("""
-//            !source = List append: "abc";
-//            !result = source selectIf: {!item | item startsWith: "x"} 
-//                      transformUsing: {!item | item size }
-//                      collectTo: List;
-//            result asString;
-//            """);
+      assertSSTrue("""
+            !result = null selectIf: {!item | item startsWith: "x"} 
+                           transformUsing: {!item | item size }
+                           collectTo: List;
+                           
+            result equals: null;
+            """);
       
    }
    /****************************************************************************

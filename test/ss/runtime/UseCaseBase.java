@@ -50,7 +50,11 @@ public class UseCaseBase {
    protected void assertResultEquals(final SSObject o, final String program)
          throws IOException {
 
-      assertEquals(o, this.interpreter.execute(program));
+      var stack = this.interpreter.getStack();
+      var expectedStr = o.invoke(stack.pushNewFrame(), "asString");
+      var actual = this.interpreter.execute(program);
+      var actualStr = actual.invoke(stack.pushNewFrame(), "asString");
+      assertEquals("Expected: " + expectedStr + " but was: " + actualStr, o, actual);
    }
    /****************************************************************************
     * 

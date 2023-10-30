@@ -17,7 +17,7 @@
 #-------------------------------------------------------------------------------
 # TestCase
 #-------------------------------------------------------------------------------
-!TestCase = Object new;
+!TestCase = Object new addMethod: "asString" :using: "TestCase";
 
 #-------------------------------------------------------------------------------
 TestCase addMethod: "named::using:" :using: {!this !name !block |
@@ -40,7 +40,7 @@ TestCase addMethod: "named::using:" :using: {!this !name !block |
 #-------------------------------------------------------------------------------
 # TestSuite
 #-------------------------------------------------------------------------------
-!TestSuite = Object new;
+!TestSuite = Object new addMethod: "asString" :using: "TestSuite";
 
 #-------------------------------------------------------------------------------
 TestSuite addMethod: "new" :using: {

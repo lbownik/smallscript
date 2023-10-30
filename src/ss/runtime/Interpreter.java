@@ -32,7 +32,7 @@ public class Interpreter {
     * 
    ****************************************************************************/
    public Interpreter() {
-      
+
       this(new String[0]);
    }
    /****************************************************************************
@@ -122,7 +122,8 @@ public class Interpreter {
       if (args.length == 0) {
          new Interpreter(args).repl();
       } else {
-         new Interpreter(args).execute(Files.newBufferedReader(Paths.get(args[1])));
+         new Interpreter(args).execute(Files.newBufferedReader(
+               Paths.get(args[0]).toAbsolutePath()));
       }
    }
    /****************************************************************************

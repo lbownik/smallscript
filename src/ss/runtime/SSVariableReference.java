@@ -30,7 +30,7 @@ public class SSVariableReference implements SSObject {
    ****************************************************************************/
    @Override
    public SSObject evaluate(final Stack stack) {
-
+      
       return stack.getVariable(this.variableName);
    }
    /****************************************************************************

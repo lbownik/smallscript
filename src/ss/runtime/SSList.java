@@ -69,7 +69,7 @@ public final class SSList extends SSDynamicObject {
       try {
          return subject.elements.get(index);
       } catch (final IndexOutOfBoundsException e) {
-         return throwException(args.get(1), "Index " + index + " out of bounds.");
+         return throwException(stack, args.get(1), "Index " + index + " out of bounds.");
       }
    }
    /****************************************************************************
@@ -94,7 +94,7 @@ public final class SSList extends SSDynamicObject {
          return subject.elements.set(index,
                args.get(2).evaluate(stack.pushNewFrame()));
       } catch (final IndexOutOfBoundsException e) {
-         return throwException(args.get(1), "Index " + index + " out of bounds.");
+         return throwException(stack, args.get(1), "Index " + index + " out of bounds.");
       }
    }
    /****************************************************************************
@@ -118,7 +118,7 @@ public final class SSList extends SSDynamicObject {
       try {
          return subject.elements.remove(index);
       } catch(final IndexOutOfBoundsException e) {
-         return throwException(args.get(1), "Index " + index + " out of bounds.");
+         return throwException(stack, args.get(1), "Index " + index + " out of bounds.");
       }
    }
    /****************************************************************************
@@ -212,7 +212,7 @@ public final class SSList extends SSDynamicObject {
       private static SSList createNew(final Stack stack, final List<SSObject> args) {
 
          final var result = new SSList();
-         result.addField("nature", nature);
+         result.addField(stack, "nature", nature);
          return result;
       }
       /*************************************************************************

@@ -29,7 +29,7 @@ public final class SSLong extends SSDynamicObject {
    public SSLong(final long value) {
 
       this.value = value;
-      addField("nature", nature);
+      addField(null, "nature", nature);
       addBinaryMethod("asDouble", SSLong::asDouble);
       addBinaryMethod("asLong", SSLong::asLong);
       addBinaryMethod("clone", SSLong::clone);
@@ -73,7 +73,7 @@ public final class SSLong extends SSDynamicObject {
          return new SSDouble(opDouble.applyAsDouble(this.value, d.value));
       } else {
          final var n = arg.invoke(stack.pushNewFrame(), "nature").toString();
-         throwException(arg, "Cannot cast " + n + " to number.");
+         throwException(stack, arg, "Cannot cast " + n + " to number.");
          return stack.getNull(); // never happens
       }
    }

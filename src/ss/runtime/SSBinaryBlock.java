@@ -56,9 +56,9 @@ public class SSBinaryBlock implements SSObject {
          final List<SSObject> args) {
 
       final var message = new SSDynamicObject();
-      message.addField("nature", new SSString("message"));
-      message.addField("method", new SSString(method));
-      message.addField("args", new SSList(args));
+      message.addField(stack, "nature", new SSString("message"));
+      message.addField(stack, "method", new SSString(method));
+      message.addField(stack, "args", new SSList(args));
       
       return SSDynamicObject.doesNotUnderstand(stack, List.of(this, message));
    }

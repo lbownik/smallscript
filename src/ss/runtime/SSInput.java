@@ -55,7 +55,7 @@ public final class SSInput extends SSDynamicObject {
          final var line = subject.reader.readLine();
          return line != null ? new SSString(line) : stack.getNull();
       } catch (final Exception e) {
-         return throwException(subject, e.getMessage());
+         return throwException(stack, subject, e.getMessage());
       }
    }
    /****************************************************************************

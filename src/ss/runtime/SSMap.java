@@ -171,7 +171,7 @@ public final class SSMap extends SSDynamicObject {
       private static SSMap createNew(final Stack stack, final List<SSObject> args) {
 
          final var result = new SSMap();
-         result.addField("nature", nature);
+         result.addField(stack, "nature", nature);
          return result;
       }
       /*************************************************************************

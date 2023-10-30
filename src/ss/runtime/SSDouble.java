@@ -27,7 +27,7 @@ public final class SSDouble extends SSDynamicObject {
    public SSDouble(final double value) {
 
       this.value = value;
-      addField("nature", nature);
+      addField(null, "nature", nature);
       addBinaryMethod("asDouble", SSDouble::asDouble);
       addBinaryMethod("asLong", SSDouble::asLong);
       addBinaryMethod("clone", SSDouble::clone);
@@ -63,7 +63,7 @@ public final class SSDouble extends SSDynamicObject {
          return l.value;
       } else {
          final var n = first.invoke(stack.pushNewFrame(), "nature").toString();
-         throwException(first, "Cannot cast " + n + " to number.");
+         throwException(stack, first, "Cannot cast " + n + " to number.");
          return 0.0; //never happens
       }
    }

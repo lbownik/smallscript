@@ -30,7 +30,7 @@ public class SSBlock extends SSDynamicObject {
 
       this.statements = statements;
       this.argumentNames = argumentNames;
-      setField("nature", new SSString("block"));
+      setField(null, "nature", new SSString("block"));
       addBinaryMethod("clone", SSBlock::clone);
       addBinaryMethod("whileTrue:", SSBlock::whileTrue);
    }

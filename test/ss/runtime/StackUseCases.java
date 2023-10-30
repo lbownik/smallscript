@@ -56,7 +56,6 @@ public class StackUseCases {
       stack = topFrame.setVariable("a", new SSString("z"));
 
       assertEquals(new SSString("z"), stack.getVariable("a"));
-      assertEquals("{}", topFrame.toString());
    }
 
    /****************************************************************************

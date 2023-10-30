@@ -50,7 +50,7 @@ public final class SSOutput extends SSDynamicObject {
          subject.out.println(args.get(1).invoke(stack, "asString", emptyList()));
          return subject;
       } catch (final Exception e) {
-         return throwException(subject, e);
+         return throwException(stack, subject, e.getMessage());
       }
    }
    /****************************************************************************
@@ -63,7 +63,7 @@ public final class SSOutput extends SSDynamicObject {
          subject.out.print(args.get(1).invoke(stack, "asString", emptyList()));
          return subject;
       } catch (final Exception e) {
-         return throwException(subject, e);
+         return throwException(stack, subject, e.getMessage());
       }
    }
 

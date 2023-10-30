@@ -33,15 +33,15 @@ public final class SSApplication extends SSDynamicObject {
 
       this.interpreter = interpreter;
 
-      addField("input", new SSInput(in));
-      addField("output", new SSOutput(out));
-      addField("error", new SSOutput(err));
+      addField(null, "input", new SSInput(in));
+      addField(null, "output", new SSOutput(out));
+      addField(null, "error", new SSOutput(err));
 
       addBinaryMethod("clone", SSApplication::clone);
       addBinaryMethod("exit:", SSApplication::exit);
       addBinaryMethod("load:", SSApplication::load);
 
-      addImmutableField("arguments",
+      addImmutableField(null, "arguments",
             new SSList(Stream.of(interpreter.args).map(SSString::new).toList()));
    }
    /****************************************************************************
@@ -75,9 +75,8 @@ public final class SSApplication extends SSDynamicObject {
       try {
          final var app = (SSApplication) args.get(0);
          return app.interpreter.load(stack, args.get(1).toString());
-
       } catch (final Exception e) {
-         return throwException(args.get(0), e);
+         return throwException(stack, args.get(0), e.getMessage());
       }
    }
    /****************************************************************************

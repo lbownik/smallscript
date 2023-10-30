@@ -153,7 +153,7 @@ public final class SSSet extends SSDynamicObject {
       private static SSSet createNew(final Stack stack, final List<SSObject> args) {
 
          final var result = new SSSet();
-         result.addField("nature", nature);
+         result.addField(stack, "nature", nature);
          return result;
       }
       /*************************************************************************

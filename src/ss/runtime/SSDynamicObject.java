@@ -83,9 +83,9 @@ public class SSDynamicObject implements SSObject {
          return block.invoke(stack, "execute", prependThisTo(args));
       } else {
          final var message = new SSDynamicObject();
-         message.addField("nature", new SSString("message"));
-         message.addField("method", new SSString(method));
-         message.addField("args", new SSList(args));
+         message.addField(stack, "nature", new SSString("message"));
+         message.addField(stack, "method", new SSString(method));
+         message.addField(stack, "args", new SSList(args));
          return invoke(stack, "doesNotUnderstand:", List.of(message));
       }
    }
@@ -171,7 +171,8 @@ public class SSDynamicObject implements SSObject {
       if (index == 0) {
          return args.get(0);
       } else {
-         return throwException(args.get(1), "Index " + index + " out of bounds.");
+         return throwException(stack, args.get(1),
+               "Index " + index + " out of bounds.");
       }
    }
    /****************************************************************************
@@ -217,7 +218,7 @@ public class SSDynamicObject implements SSObject {
    private static SSObject addField(final Stack stack, final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
-      return subject.addField(args.get(1).evaluate(stack).toString(),
+      return subject.addField(stack, args.get(1).evaluate(stack).toString(),
             stack.getNull());
    }
    /****************************************************************************
@@ -227,7 +228,7 @@ public class SSDynamicObject implements SSObject {
          final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
-      return subject.addField(args.get(1).evaluate(stack).toString(),
+      return subject.addField(stack, args.get(1).evaluate(stack).toString(),
             args.get(2).evaluate(stack));
    }
    /****************************************************************************
@@ -237,27 +238,28 @@ public class SSDynamicObject implements SSObject {
          final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
-      return subject.addImmutableField(args.get(1).evaluate(stack).toString(),
+      return subject.addImmutableField(stack, args.get(1).evaluate(stack).toString(),
             args.get(2).evaluate(stack));
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   SSObject addField(final String name, final SSObject value) {
+   SSObject addField(final Stack stack, final String name, final SSObject value) {
 
       addBinaryMethod(name, (s, a) -> getField(s, name, a));
       addBinaryMethod(name + ":", (s, a) -> setField(s, name, a));
 
-      return setField(name, value);
+      return setField(stack, name, value);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   SSObject addImmutableField(final String name, final SSObject value) {
+   SSObject addImmutableField(final Stack stack, final String name,
+         final SSObject value) {
 
       addBinaryMethod(name, (s, a) -> getField(s, name, a));
 
-      return setField(name, value);
+      return setField(stack, name, value);
    }
    /****************************************************************************
     * 
@@ -275,14 +277,14 @@ public class SSDynamicObject implements SSObject {
          final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
-      return subject.setField(name, args.get(1));
+      return subject.setField(stack, name, args.get(1));
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   SSObject setField(final String name, final SSObject value) {
+   SSObject setField(final Stack stack, final String name, final SSObject value) {
 
-      this.fields.put(name, value);
+      this.fields.put(name, value.evaluate(stack));
       return this;
    }
    /****************************************************************************
@@ -307,9 +309,8 @@ public class SSDynamicObject implements SSObject {
 
       final var message = args.get(1);
       final var method = message.invoke(stack.pushNewFrame(), "method");
-
-      return throwException(message,
-            "Method '" + method + "' is not defined for " + args.get(0).toString());
+      return throwException(stack, message,
+            "Method '" + method + "' is not defined.");
    }
    /****************************************************************************
     * 
@@ -347,24 +348,14 @@ public class SSDynamicObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject throwException(final SSObject cause, final String message) {
+   static SSObject throwException(final Stack stack, final SSObject cause,
+         final String message) {
 
       final var exception = new SSDynamicObject();
-      exception.addField("nature", new SSString("exception"));
-      exception.addField("cause", cause);
-      exception.addField("message", new SSString(message));
+      exception.addField(stack, "nature", new SSString("exception"));
+      exception.addField(stack, "cause", cause);
+      exception.addField(stack, "message", new SSString(message));
       throw new AuxiliaryException(exception);
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   static SSObject throwException(final SSObject cause, final Throwable root) {
-
-      final var exception = new SSDynamicObject();
-      exception.addField("nature", new SSString("exception"));
-      exception.addField("cause", cause);
-      exception.addField("message", new SSString(root.getMessage()));
-      throw new AuxiliaryException(exception, root);
    }
    /****************************************************************************
     * 
@@ -392,7 +383,7 @@ public class SSDynamicObject implements SSObject {
             final List<SSObject> args) {
 
          final var result = new SSDynamicObject();
-         result.addField("nature", nature);
+         result.addField(stack, "nature", nature);
          return result;
       }
       /*************************************************************************
@@ -402,7 +393,7 @@ public class SSDynamicObject implements SSObject {
             final List<SSObject> args) {
 
          final var result = new SSDynamicObject();
-         result.addField("nature", args.get(1));
+         result.addField(stack, "nature", args.get(1));
          return result;
       }
       /*************************************************************************

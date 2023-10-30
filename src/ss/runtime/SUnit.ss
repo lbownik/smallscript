@@ -32,8 +32,8 @@ TestCase addMethod: "named::using:" :using: {!this !name !block |
 	     this try: {
 	     		this block executeWith: assert :and: fail;
 	     		this result: "Passed";
-	     } :catch: {!exception |
-	     		this result: ("Failed: " append: (exception message));
+	     } :catch: { !e |
+	     		this result: ("Failed: " append: (e message));
 	     };
 	};
 };
@@ -63,8 +63,8 @@ TestSuite addMethod: "new" :using: {
 	      		               addField: "cause"   :withValue: this
 	      		               addField: "message" :withValue: 
 	      		                  ("Expected: " append: (expected asString) 
-	      		                               append: "but was: "
-	      		                               append:  (actual asString))
+	      		                                append: " but was: "
+	      		                                append: (actual asString))
 	      		               throw;
 	      		 };
 	      };
@@ -87,6 +87,15 @@ TestSuite addMethod: "new" :using: {
 		!fail   = this $createFail;
 	
 		this tests forEach: {!test | test runWith: assert :and: fail };
+		this;
+	};
+	#----------------------------------------------------------------------------
+	suite addMethod: "printResultsTo:" :using: {!this !output |
+	
+		output append: "====== Results =======\n";
+		this tests forEach: { !test | output append: (test name) append: " - "
+		     append: (test result) append: "\n"; } ;
+		this;
 	};
 };
 #-------------------------------------------------------------------------------

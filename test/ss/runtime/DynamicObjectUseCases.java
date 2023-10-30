@@ -163,7 +163,8 @@ public class DynamicObjectUseCases extends UseCaseBase {
       assertSSTrue("""
             !object = Object new;
             object addField: "a";
-            object a: 10;
+            !ten = 10;
+            object a: ten;
             object a equals: 10;
             """);
       assertSSTrue("""
@@ -254,8 +255,9 @@ public class DynamicObjectUseCases extends UseCaseBase {
       assertSSTrue("""
             !old = Object new;
             !new = (old clone);
+            !ten = 10;
             old addField: "test" :withValue: "a";
-            new addField: "test" :withValue: 10;
+            new addField: "test" :withValue: ten;
             (old test) isNotEqualTo: (new test);
             """);
    }

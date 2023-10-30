@@ -27,7 +27,7 @@ public final class SSString extends SSDynamicObject {
    static {
 
       var n = new SSString("string", true);
-      n.addField("nature", n);
+      n.addField(null, "nature", n);
       nature = n;
    }
    /****************************************************************************
@@ -36,7 +36,7 @@ public final class SSString extends SSDynamicObject {
    public SSString(final String value) {
 
       this(value, true);
-      addField("nature", nature);
+      addField(null, "nature", nature);
    }
    /****************************************************************************
     * 
@@ -70,7 +70,7 @@ public final class SSString extends SSDynamicObject {
       if (index > -1 & index < subject.value.length()) {
          return new SSString(subject.value.substring(index, index + 1));
       } else {
-         return throwException(args.get(1), "Index " + index + " out of bounds.");
+         return throwException(stack, args.get(1), "Index " + index + " out of bounds.");
       }
    }
    /****************************************************************************

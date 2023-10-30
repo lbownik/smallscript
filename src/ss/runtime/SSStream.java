@@ -28,7 +28,7 @@ public final class SSStream extends SSDynamicObject {
    public SSStream(final Stream<SSObject> stream) {
 
       this.stream = stream;
-      addField("nature", nature);
+      addField(null, "nature", nature);
       addBinaryMethod("collectTo:", SSStream::collectTo);
       addBinaryMethod("forEach:", SSStream::forEach);
       addBinaryMethod("selectIf:", SSStream::selectIf);

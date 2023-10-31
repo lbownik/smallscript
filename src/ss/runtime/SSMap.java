@@ -44,6 +44,7 @@ public final class SSMap extends SSDynamicObject {
       addBinaryMethod("removeAt::andReturnRemovedValue",
             SSMap::removeAtAndReturnRemovedValue);
       addBinaryMethod("size", SSMap::size);
+      addField(null, "nature", SSMap.Factory.nature);
    }
    /****************************************************************************
     * 
@@ -170,9 +171,7 @@ public final class SSMap extends SSDynamicObject {
       *************************************************************************/
       private static SSMap createNew(final Stack stack, final List<SSObject> args) {
 
-         final var result = new SSMap();
-         result.addField(stack, "nature", nature);
-         return result;
+         return new SSMap();
       }
       /*************************************************************************
        * 

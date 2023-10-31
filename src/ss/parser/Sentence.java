@@ -145,7 +145,6 @@ public class Sentence extends ArrayList<Expression> implements Expression {
             }
             return createExpression(
                   new SSExpression(subject, methodName.toString(), args), index);
-
          } else {
             return null;
          }

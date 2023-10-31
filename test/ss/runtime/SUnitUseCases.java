@@ -42,8 +42,10 @@ public class SUnitUseCases extends UseCaseBase {
                fail with: "abc";
             };
             
-            suite run printResultsTo: (application output);
-            true;
+            suite run;
+            
+            (suite tests at: 0 result equals: "Passed") and:
+            (suite tests at: 1 result equals: "Failed: abc");
             """);
    }
    /****************************************************************************

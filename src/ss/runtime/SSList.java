@@ -47,6 +47,7 @@ public final class SSList extends SSDynamicObject {
       addBinaryMethod("size", SSList::size);
       addBinaryMethod("selectIf:", SSList::selectIf);
       addBinaryMethod("transformUsing:", SSList::transformUsing);
+      addField(null, "nature", SSList.Factory.nature);
    }
    /****************************************************************************
     * 
@@ -193,7 +194,7 @@ public final class SSList extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private final ArrayList<SSObject> elements;
+   final ArrayList<SSObject> elements;
    /****************************************************************************
     * 
     ***************************************************************************/
@@ -211,9 +212,7 @@ public final class SSList extends SSDynamicObject {
       *************************************************************************/
       private static SSList createNew(final Stack stack, final List<SSObject> args) {
 
-         final var result = new SSList();
-         result.addField(stack, "nature", nature);
-         return result;
+         return new SSList();
       }
       /*************************************************************************
        * 

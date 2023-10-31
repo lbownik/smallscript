@@ -42,6 +42,7 @@ public final class SSSet extends SSDynamicObject {
       addBinaryMethod("size", SSSet::size);
       addBinaryMethod("selectIf:", SSSet::selectIf);
       addBinaryMethod("transformUsing:", SSSet::transformUsing);
+      addField(null, "nature", SSSet.Factory.nature);
    }
    /****************************************************************************
     * 
@@ -152,9 +153,7 @@ public final class SSSet extends SSDynamicObject {
       *************************************************************************/
       private static SSSet createNew(final Stack stack, final List<SSObject> args) {
 
-         final var result = new SSSet();
-         result.addField(stack, "nature", nature);
-         return result;
+         return new SSSet();
       }
       /*************************************************************************
        * 

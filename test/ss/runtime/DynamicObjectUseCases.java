@@ -295,4 +295,36 @@ public class DynamicObjectUseCases extends UseCaseBase {
    /****************************************************************************
     * 
    ****************************************************************************/
+   @Test
+   public void methods_resturnsSetOfMethods() throws Exception {
+      
+      assertSSTrue("""
+               !methods = Object new methods;
+               (methods size isGreaterThan: 0) and: (methods nature equals: "set");
+            """);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   @Test
+   public void fields_resturnsSetOfFields() throws Exception {
+      
+      assertSSTrue("""
+               !fields = Object new fields;
+               (fields size equals: 1) and: (fields nature equals: "set");
+            """);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   @Test
+   public void invoke_invekesMethodByName() throws Exception {
+      
+      assertSSTrue("""
+               "abc" invoke: "size" :with: (List new) equals: 3;
+            """);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
 }

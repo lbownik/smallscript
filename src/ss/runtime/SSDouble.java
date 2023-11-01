@@ -43,7 +43,7 @@ public final class SSDouble extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSDouble(final Map<String, SSObject> methods,
+   private SSDouble(final FastMap methods,
          final Map<String, SSObject> fields, final double value) {
 
       super(methods, fields);

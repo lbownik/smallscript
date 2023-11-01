@@ -53,7 +53,7 @@ public final class SSLong extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSLong(final Map<String, SSObject> methods,
+   private SSLong(final FastMap methods,
          final Map<String, SSObject> fields, final long value) {
 
       super(methods, fields);

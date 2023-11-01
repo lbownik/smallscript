@@ -54,7 +54,7 @@ public final class SSString extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSString(final Map<String, SSObject> methods,
+   private SSString(final FastMap methods,
          final Map<String, SSObject> fields, final String value) {
 
       super(methods, fields);

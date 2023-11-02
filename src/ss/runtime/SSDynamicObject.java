@@ -32,7 +32,7 @@ public class SSDynamicObject implements SSObject {
    public SSDynamicObject() {
 
       this.methods = new FastMap();
-      
+
       addBinaryMethod("invoke::with:", SSDynamicObject::invokeWith);
       addBinaryMethod("addField:", SSDynamicObject::addField);
       addBinaryMethod("addField::withValue:", SSDynamicObject::addFieldWithValue);
@@ -134,8 +134,8 @@ public class SSDynamicObject implements SSObject {
 
       final var subject = (SSDynamicObject) args.get(0);
       final var method = args.get(1).evaluate(stack).toString();
-      final var mArgs = ((SSList)args.get(2).evaluate(stack)).elements;
-      
+      final var mArgs = ((SSList) args.get(2).evaluate(stack)).elements;
+
       return subject.invoke(stack, method, mArgs);
    }
    /****************************************************************************

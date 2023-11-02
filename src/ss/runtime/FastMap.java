@@ -15,8 +15,10 @@
 //------------------------------------------------------------------------------
 package ss.runtime;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeMap;
 
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
@@ -26,7 +28,7 @@ final class FastMap {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public FastMap() {
+   FastMap() {
 
       this.size = 0;
       this.table = new Node[initialCapacity];
@@ -35,13 +37,14 @@ final class FastMap {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public FastMap(final FastMap other) {
+   FastMap(final FastMap other) {
 
       this.size = other.size;
       this.table = new Node[other.table.length];
       this.threshold = other.threshold;
 
       final int length = other.table.length;
+
       for (int index = 0; index < length; ++index) {
          final Node node = other.table[index];
          if (node != null) {
@@ -52,24 +55,22 @@ final class FastMap {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public SSObject get(final String key) {
+   SSObject get(final String key) {
 
       return getOrDefault(key, null);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   public SSObject getOrDefault(final String key, final SSObject defaultValue) {
+   SSObject getOrDefault(final String key, final SSObject defaultValue) {
 
       final int hash = hash(key);
       Node node = this.table[(this.table.length - 1) & hash];
 
       while (node != null) {
-         // if (first.hash == hash) {
          if (key.equals(node.key)) {
             return node.value;
          }
-         //}
          node = node.next;
       }
       return defaultValue;
@@ -77,201 +78,131 @@ final class FastMap {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public void put(final String key, final SSObject value) {
+   void put(final String key, final SSObject value) {
 
-      int hash = hash(key);
-      Node[] tab = this.table;
+      final int hash = hash(key);
+      final Node[] tab = this.table;
+      final int index = (tab.length - 1) & hash;
+      Node node = tab[index];
 
-      int n;
-
-      if (tab == null || (n = tab.length) == 0) {
-         tab = resize();
-         n = tab.length;
-      }
-
-      Node p;
-      int i;
-      if ((p = tab[i = (n - 1) & hash]) == null)
-         tab[i] = new Node(hash, key, value, null);
-      else {
-         Node e;
-         String k;
-
-         if (p.hash == hash
-               && ((k = p.key) == key || (key != null && key.equals(k))))
-            e = p;
-         else {
-            for (int binCount = 0;; ++binCount) {
-               if ((e = p.next) == null) {
-                  p.next = new Node(hash, key, value, null);
+      if (node == null) {
+         tab[index] = new Node(key, value, null);
+         ++this.size;
+      } else {
+         if (key.equals(node.key)) {
+            node.value = value;
+         } else {
+            while (true) {
+               if (node.next == null) {
+                  node.next = new Node(key, value, null);
+                  ++this.size;
                   break;
+               } else {
+                  final Node next = node.next;
+                  if (key.equals(next.key)) {
+                     next.value = value;
+                     break;
+                  }
+                  node = next;
                }
-               if (e.hash == hash
-                     && ((k = e.key) == key || (key != null && key.equals(k))))
-                  break;
-               p = e;
             }
          }
-         if (e != null) { // existing mapping for key
-            e.value = value;
-         }
       }
-      if (++this.size > this.threshold) {
+      if (this.size > this.threshold) {
          resize();
       }
    }
    /****************************************************************************
     * 
    ****************************************************************************/
+   private void resize() {
 
-   /**
-    * Initializes or doubles table size. If null, allocates in accord with initial
-    * capacity target held in field threshold. Otherwise, because we are using
-    * power-of-two expansion, the elements from each bin must either stay at same
-    * index, or move with a power of two offset in the new table.
-    *
-    * @return the table
-    */
-   final Node[] resize() {
+      final Node[] oldTable = this.table;
+      final int oldLength = oldTable.length;
+      final int newLength = oldLength * 2;
 
-      Node[] oldTab = this.table;
-      int oldCap = (oldTab == null) ? 0 : oldTab.length;
-      int oldThr = this.threshold;
-      int newCap, newThr = 0;
-
-      if (oldCap > 0) {
-         if (oldCap >= maxXapacity) {
-            this.threshold = Integer.MAX_VALUE;
-            return oldTab;
-         } else if ((newCap = oldCap << 1) < maxXapacity
-               && oldCap >= initialCapacity)
-            newThr = oldThr << 1; // double threshold
-      } else if (oldThr > 0) // initial capacity was placed in threshold
-         newCap = oldThr;
-      else { // zero initial threshold signifies using defaults
-         newCap = initialCapacity;
-         newThr = (int) (loadFactor * initialCapacity);
+      if (oldLength >= maxXapacity) {
+         this.threshold = Integer.MAX_VALUE;
+      } else if (newLength < maxXapacity) {
+         this.threshold *= 2;
       }
 
-      if (newThr == 0) {
-         float ft = (float) newCap * loadFactor;
-         newThr = (newCap < maxXapacity && ft < (float) maxXapacity ? (int) ft
-               : Integer.MAX_VALUE);
-      }
-
-      this.threshold = newThr;
-      Node[] newTab = (Node[]) new Node[newCap];
-      this.table = newTab;
-      if (oldTab != null) {
-         copyNodes(oldTab, oldCap, newCap, newTab);
-      }
-      return newTab;
+      this.table = new Node[newLength];
+      copyNodes(oldTable, this.table);
    }
 
    /****************************************************************************
     * 
    ****************************************************************************/
-   private void copyNodes(Node[] oldTab, int oldCap, int newCap, Node[] newTab) {
+   private static void copyNodes(final Node[] oldTab, final Node[] newTab) {
 
-      for (int j = 0; j < oldCap; ++j) {
-         Node e;
-         if ((e = oldTab[j]) != null) {
-            oldTab[j] = null;
-            if (e.next == null)
-               newTab[e.hash & (newCap - 1)] = e;
+      final int oldLen = oldTab.length;
+      final int newLen = newTab.length;
+
+      for (int index = 0; index < oldLen; ++index) {
+         Node node = oldTab[index];
+         if (node != null) {
+            oldTab[index] = null;
+            if (node.next == null)
+               newTab[hash(node.key) & (newLen - 1)] = node;
             else { // preserve order
-               Node loHead = null, loTail = null;
-               Node hiHead = null, hiTail = null;
+               Node loHead = null;
+               Node loTail = null;
+               Node hiHead = null;
+               Node hiTail = null;
                Node next;
                do {
-                  next = e.next;
-                  if ((e.hash & oldCap) == 0) {
+                  next = node.next;
+                  if ((hash(node.key) & oldLen) == 0) {
                      if (loTail == null)
-                        loHead = e;
+                        loHead = node;
                      else
-                        loTail.next = e;
-                     loTail = e;
+                        loTail.next = node;
+                     loTail = node;
                   } else {
                      if (hiTail == null)
-                        hiHead = e;
+                        hiHead = node;
                      else
-                        hiTail.next = e;
-                     hiTail = e;
+                        hiTail.next = node;
+                     hiTail = node;
                   }
-               } while ((e = next) != null);
+               } while ((node = next) != null);
                if (loTail != null) {
                   loTail.next = null;
-                  newTab[j] = loHead;
+                  newTab[index] = loHead;
                }
                if (hiTail != null) {
                   hiTail.next = null;
-                  newTab[j + oldCap] = hiHead;
+                  newTab[index + oldLen] = hiHead;
                }
             }
          }
       }
    }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   void remove(final String key) {
 
-   /**
-    * Removes the mapping for the specified key from this map if present.
-    *
-    * @param key key whose mapping is to be removed from the map
-    * @return the previous value associated with {@code key}, or {@code null} if
-    *         there was no mapping for {@code key}. (A {@code null} return can also
-    *         indicate that the map previously associated {@code null} with
-    *         {@code key}.)
-    */
-   public SSObject remove(String key) {
-      Node e;
-      return (e = removeNode(hash(key), key, null, false, true)) == null ? null
-            : e.value;
-   }
+      final int hash = hash(key);
+      final int index = (this.table.length - 1) & hash;
+      Node node = this.table[index];
 
-   /**
-    * Implements Map.remove and related methods.
-    *
-    * @param hash       hash for key
-    * @param key        the key
-    * @param value      the value to match if matchValue, else ignored
-    * @param matchValue if true only remove if value is equal
-    * @param movable    if false do not move other nodes while removing
-    * @return the node, or null if none
-    */
-   final Node removeNode(int hash, Object key, Object value, boolean matchValue,
-         boolean movable) {
-      Node[] tab;
-      Node p;
-      int n, index;
-      if ((tab = table) != null && (n = tab.length) > 0
-            && (p = tab[index = (n - 1) & hash]) != null) {
-         Node node = null, e;
-         String k;
-         SSObject v;
-         if (p.hash == hash
-               && ((k = p.key) == key || (key != null && key.equals(k))))
-            node = p;
-         else if ((e = p.next) != null) {
-            do {
-               if (e.hash == hash
-                     && ((k = e.key) == key || (key != null && key.equals(k)))) {
-                  node = e;
-                  break;
+      if (node != null) {
+         if (node.key.equals(key)) {
+            this.table[index] = node.next;
+            --this.size;
+            return;
+         } else {
+            for (Node next = node.next; next != null; node = next, next = next.next) {
+               if (key.equals(node.key)) {
+                  node.next = next.next;
+                  --this.size;
+                  return;
                }
-               p = e;
-            } while ((e = e.next) != null);
-
-         }
-         if (node != null && (!matchValue || (v = node.value) == value
-               || (value != null && value.equals(v)))) {
-            if (node == p)
-               tab[index] = node.next;
-            else
-               p.next = node.next;
-            --size;
-            return node;
+            }
          }
       }
-      return null;
    }
 
    /****************************************************************************
@@ -292,18 +223,10 @@ final class FastMap {
    /****************************************************************************
     * 
    ****************************************************************************/
-   static final int hash(final String key) {
+   private static final int hash(final String key) {
 
       final int h = key.hashCode();
       return h ^ (h >>> 16);
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   static final int tableSizeFor(int cap) {
-
-      int n = -1 >>> Integer.numberOfLeadingZeros(cap - 1);
-      return (n < 0) ? 1 : (n >= maxXapacity) ? maxXapacity : n + 1;
    }
    /****************************************************************************
     * 
@@ -313,7 +236,7 @@ final class FastMap {
    private int size;
 
    private final static float loadFactor = 0.75f;
-   private final static int initialCapacity = 16;
+   private final static int initialCapacity = 32;
    private final static int maxXapacity = 1 << 30;
 
    /****************************************************************************
@@ -324,9 +247,8 @@ final class FastMap {
       /*************************************************************************
        * 
       *************************************************************************/
-      Node(final int hash, final String key, final SSObject value, final Node next) {
+      Node(final String key, final SSObject value, final Node next) {
 
-         this.hash = hash;
          this.key = key;
          this.value = value;
          this.next = next;
@@ -337,41 +259,184 @@ final class FastMap {
       @Override
       protected Node clone() {
 
-         final Node node = new Node(this.hash, this.key, this.value, null);
+         final Node node = new Node(this.key, this.value, null);
          if (this.next != null) {
             node.next = this.next.clone();
          }
          return node;
       }
-
       /*************************************************************************
        * 
       *************************************************************************/
-      public final String toString() {
-
-         return key + "=" + value;
-      }
-      /*************************************************************************
-       * 
-      *************************************************************************/
-      public final boolean equals(final Object o) {
-         if (o == this) {
-            System.err.println("Node equals this");
-            return true;
-         } else {
-            final Node n = (Node) o;
-            return this.key.equals(n.key) && this.value.equals(n.value);
-         }
-      }
-      /*************************************************************************
-       * 
-      *************************************************************************/
-      final int hash;
       final String key;
       SSObject value;
       Node next;
    }
+
    /****************************************************************************
     * 
    ****************************************************************************/
+
+   public static void main(String[] args) throws Exception {
+
+      testPutHashMap();
+      testPutFastMap();
+
+      testGetHashMap();
+      testGetFasthMap();
+
+   }
+
+   static int iterations = 10000000;
+
+   private static void testPutHashMap() {
+
+      long begin = System.currentTimeMillis();
+
+      for (int i = 0; i < iterations; ++i) {
+         putIntoHashMap();
+      }
+
+      long duration = System.currentTimeMillis() - begin;
+
+      System.out.println("putIntoHashMap: " + duration);
+   }
+
+   private static void testGetHashMap() {
+
+      var map = putIntoHashMap();
+      long begin = System.currentTimeMillis();
+
+      for (int i = 0; i < iterations; ++i) {
+         map.get("doesNotUnderstand:");
+      }
+
+      long duration = System.currentTimeMillis() - begin;
+
+      System.out.println("testGetHashMap: " + duration);
+   }
+
+   private static void testPutFastMap() {
+
+      long begin = System.currentTimeMillis();
+
+      for (int i = 0; i < iterations; ++i) {
+         putIntoFastMap();
+      }
+
+      long duration = System.currentTimeMillis() - begin;
+
+      System.out.println("putIntoFastMap: " + duration);
+   }
+
+   private static void testGetFasthMap() {
+
+      var map = putIntoFastMap();
+      long begin = System.currentTimeMillis();
+
+      for (int i = 0; i < iterations; ++i) {
+         map.get("doesNotUnderstand:");
+      }
+
+      long duration = System.currentTimeMillis() - begin;
+
+      System.out.println("testGetFastMap: " + duration);
+   }
+
+   private static HashMap<String, SSObject> putIntoHashMap() {
+
+      var hashMap = new HashMap<String, SSObject>(32);
+
+      hashMap.put("invoke::with:", SSNull.instance);
+      hashMap.put("addField:", SSNull.instance);
+      hashMap.put("addField::withValue:", SSNull.instance);
+      hashMap.put("addImmutableField::withValue:", SSNull.instance);
+      hashMap.put("addMethod::using:", SSNull.instance);
+      hashMap.put("asString", SSNull.instance);
+      hashMap.put("at:", SSNull.instance);
+      hashMap.put("clone", SSNull.instance);
+      hashMap.put("collectTo:", SSNull.instance);
+      hashMap.put("doesNotUnderstand:", SSNull.instance);
+      hashMap.put("equals:", SSNull.instance);
+      hashMap.put("execute", SSNull.instance);
+      hashMap.put("fields", SSNull.instance);
+      hashMap.put("forEach:", SSNull.instance);
+      hashMap.put("method:", SSNull.instance);
+      hashMap.put("methods", SSNull.instance);
+      hashMap.put("hash", SSNull.instance);
+      hashMap.put("isNotEqualTo:", SSNull.instance);
+      hashMap.put("orDefault:", SSNull.instance);
+      hashMap.put("removeMethod:", SSNull.instance);
+      hashMap.put("selectIf:", SSNull.instance);
+      hashMap.put("throw", SSNull.instance);
+      hashMap.put("transformUsing:", SSNull.instance);
+      hashMap.put("try::catch:", SSNull.instance);
+
+      return hashMap;
+   }
+
+   private static TreeMap<String, SSObject> putIntoTreeMap() {
+
+      var hashMap = new TreeMap<String, SSObject>();
+
+      hashMap.put("invoke::with:", SSNull.instance);
+      hashMap.put("addField:", SSNull.instance);
+      hashMap.put("addField::withValue:", SSNull.instance);
+      hashMap.put("addImmutableField::withValue:", SSNull.instance);
+      hashMap.put("addMethod::using:", SSNull.instance);
+      hashMap.put("asString", SSNull.instance);
+      hashMap.put("at:", SSNull.instance);
+      hashMap.put("clone", SSNull.instance);
+      hashMap.put("collectTo:", SSNull.instance);
+      hashMap.put("doesNotUnderstand:", SSNull.instance);
+      hashMap.put("equals:", SSNull.instance);
+      hashMap.put("execute", SSNull.instance);
+      hashMap.put("fields", SSNull.instance);
+      hashMap.put("forEach:", SSNull.instance);
+      hashMap.put("method:", SSNull.instance);
+      hashMap.put("methods", SSNull.instance);
+      hashMap.put("hash", SSNull.instance);
+      hashMap.put("isNotEqualTo:", SSNull.instance);
+      hashMap.put("orDefault:", SSNull.instance);
+      hashMap.put("removeMethod:", SSNull.instance);
+      hashMap.put("selectIf:", SSNull.instance);
+      hashMap.put("throw", SSNull.instance);
+      hashMap.put("transformUsing:", SSNull.instance);
+      hashMap.put("try::catch:", SSNull.instance);
+
+      return hashMap;
+   }
+
+   private static FastMap putIntoFastMap() {
+
+      var hashMap = new FastMap();
+
+      hashMap.put("invoke::with:", SSNull.instance);
+      hashMap.put("addField:", SSNull.instance);
+      hashMap.put("addField::withValue:", SSNull.instance);
+      hashMap.put("addImmutableField::withValue:", SSNull.instance);
+      hashMap.put("addMethod::using:", SSNull.instance);
+      hashMap.put("asString", SSNull.instance);
+      hashMap.put("at:", SSNull.instance);
+      hashMap.put("clone", SSNull.instance);
+      hashMap.put("collectTo:", SSNull.instance);
+      hashMap.put("doesNotUnderstand:", SSNull.instance);
+      hashMap.put("equals:", SSNull.instance);
+      hashMap.put("execute", SSNull.instance);
+      hashMap.put("fields", SSNull.instance);
+      hashMap.put("forEach:", SSNull.instance);
+      hashMap.put("method:", SSNull.instance);
+      hashMap.put("methods", SSNull.instance);
+      hashMap.put("hash", SSNull.instance);
+      hashMap.put("isNotEqualTo:", SSNull.instance);
+      hashMap.put("orDefault:", SSNull.instance);
+      hashMap.put("removeMethod:", SSNull.instance);
+      hashMap.put("selectIf:", SSNull.instance);
+      hashMap.put("throw", SSNull.instance);
+      hashMap.put("transformUsing:", SSNull.instance);
+      hashMap.put("try::catch:", SSNull.instance);
+
+      return hashMap;
+   }
+
 }

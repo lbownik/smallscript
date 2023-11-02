@@ -71,6 +71,6 @@ public final class SSNull implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private final static SSNull instance = new SSNull();
+   final static SSNull instance = new SSNull();
    public final static String name = "null";
 }

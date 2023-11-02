@@ -31,7 +31,7 @@ public class SSDynamicObject implements SSObject {
    ****************************************************************************/
    public SSDynamicObject() {
 
-      this.methods = new FastMap();
+      this.methods = new HashMap<>();
 
       addBinaryMethod("invoke::with:", SSDynamicObject::invokeWith);
       addBinaryMethod("addField:", SSDynamicObject::addField);
@@ -63,10 +63,10 @@ public class SSDynamicObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public SSDynamicObject(final FastMap methods,
+   public SSDynamicObject(final Map<String, SSObject> methods,
          final Map<String, SSObject> fields) {
 
-      this.methods = new FastMap(methods);
+      this.methods = new HashMap<>(methods);
       this.fields.putAll(fields);
    }
    /****************************************************************************
@@ -395,7 +395,7 @@ public class SSDynamicObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   final FastMap methods;
+   final Map<String, SSObject> methods;
    final Map<String, SSObject> fields = new HashMap<>();
 
    public final static SSString nature = new SSString("object");

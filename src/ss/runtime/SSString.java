@@ -16,7 +16,6 @@
 package ss.runtime;
 
 import java.util.List;
-import java.util.Map;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
  ******************************************************************************/
@@ -54,11 +53,10 @@ public final class SSString extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSString(final Map<String, SSObject> methods,
-         final Map<String, SSObject> fields, final String value) {
+   private SSString(final SSString other) {
 
-      super(methods, fields);
-      this.value = value;
+      super(other);
+      this.value = other.value;
    }
    /****************************************************************************
     * 
@@ -78,8 +76,7 @@ public final class SSString extends SSDynamicObject {
    ****************************************************************************/
    private static SSObject clone(final Stack stack, final List<SSObject> args) {
 
-      final var subject = (SSString) args.get(0);
-      return new SSString(subject.methods, subject.fields, subject.value);
+      return new SSString((SSString) args.get(0));
    }
    /****************************************************************************
     * 

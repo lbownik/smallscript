@@ -63,11 +63,10 @@ public class SSDynamicObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public SSDynamicObject(final Map<String, SSObject> methods,
-         final Map<String, SSObject> fields) {
+   public SSDynamicObject(final SSDynamicObject other) {
 
-      this.methods = new HashMap<>(methods);
-      this.fields.putAll(fields);
+      this.methods = new HashMap<>(other.methods);
+      this.fields.putAll(other.fields);
    }
    /****************************************************************************
     * 
@@ -158,7 +157,7 @@ public class SSDynamicObject implements SSObject {
    private static SSObject clone(final Stack stack, final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
-      return new SSDynamicObject(subject.methods, subject.fields);
+      return new SSDynamicObject(subject);
    }
    /****************************************************************************
     * 
@@ -207,8 +206,10 @@ public class SSDynamicObject implements SSObject {
    private static SSObject addMethod(final Stack stack, final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
-      subject.methods.put(args.get(1).toString(),
-            args.get(2).evaluate(stack.pushNewFrame()));
+      final var name = args.get(1).evaluate(stack.pushNewFrame()).toString();
+      final var block = args.get(2).evaluate(stack.pushNewFrame());
+
+      subject.methods.put(name, block);
       return subject;
    }
    /****************************************************************************
@@ -235,7 +236,8 @@ public class SSDynamicObject implements SSObject {
          final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
-      subject.methods.remove(args.get(1).toString());
+      final var name = args.get(1).evaluate(stack.pushNewFrame()).toString();
+      subject.methods.remove(name);
       return subject;
    }
    /****************************************************************************
@@ -244,8 +246,8 @@ public class SSDynamicObject implements SSObject {
    private static SSObject addField(final Stack stack, final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
-      return subject.addField(stack, args.get(1).evaluate(stack).toString(),
-            stack.getNull());
+      final var name = args.get(1).evaluate(stack.pushNewFrame()).toString();
+      return subject.addField(stack, name, stack.getNull());
    }
    /****************************************************************************
     * 
@@ -254,8 +256,9 @@ public class SSDynamicObject implements SSObject {
          final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
-      return subject.addField(stack, args.get(1).evaluate(stack).toString(),
-            args.get(2).evaluate(stack));
+      final var name = args.get(1).evaluate(stack.pushNewFrame()).toString();
+      final var value = args.get(2).evaluate(stack.pushNewFrame());
+      return subject.addField(stack, name, value);
    }
    /****************************************************************************
     * 
@@ -264,8 +267,9 @@ public class SSDynamicObject implements SSObject {
          final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
-      return subject.addImmutableField(stack, args.get(1).evaluate(stack).toString(),
-            args.get(2).evaluate(stack));
+      final var name = args.get(1).evaluate(stack.pushNewFrame()).toString();
+      final var value = args.get(2).evaluate(stack.pushNewFrame());
+      return subject.addImmutableField(stack, name, value);
    }
    /****************************************************************************
     * 
@@ -312,6 +316,7 @@ public class SSDynamicObject implements SSObject {
          final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
+      
       return subject.setField(stack, name, args.get(1));
    }
    /****************************************************************************

@@ -16,7 +16,6 @@
 package ss.runtime;
 
 import java.util.List;
-import java.util.Map;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.LongBinaryOperator;
 /*******************************************************************************
@@ -53,11 +52,10 @@ public final class SSLong extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSLong(final Map<String, SSObject> methods,
-         final Map<String, SSObject> fields, final long value) {
+   private SSLong(final SSLong other) {
 
-      super(methods, fields);
-      this.value = value;
+      super(other);
+      this.value = other.value;
    }
    /****************************************************************************
     * 
@@ -97,8 +95,7 @@ public final class SSLong extends SSDynamicObject {
    ****************************************************************************/
    private static SSObject clone(final Stack stack, final List<SSObject> args) {
 
-      final var subject = (SSLong) args.get(0);
-      return new SSLong(subject.methods, subject.fields, subject.value);
+      return new SSLong((SSLong) args.get(0));
    }
    /****************************************************************************
     * 

@@ -70,7 +70,8 @@ public final class SSList extends SSDynamicObject {
       try {
          return subject.elements.get(index);
       } catch (final IndexOutOfBoundsException e) {
-         return throwException(stack, args.get(1), "Index " + index + " out of bounds.");
+         return throwException(stack, args.get(1),
+               "Index " + index + " out of bounds.");
       }
    }
    /****************************************************************************
@@ -90,12 +91,13 @@ public final class SSList extends SSDynamicObject {
       final var subject = (SSList) args.get(0);
       final var index = ((SSLong) args.get(1).evaluate(stack.pushNewFrame()))
             .intValue();
+      final var value = args.get(2).evaluate(stack.pushNewFrame());
 
       try {
-         return subject.elements.set(index,
-               args.get(2).evaluate(stack.pushNewFrame()));
+         return subject.elements.set(index, value);
       } catch (final IndexOutOfBoundsException e) {
-         return throwException(stack, args.get(1), "Index " + index + " out of bounds.");
+         return throwException(stack, args.get(1),
+               "Index " + index + " out of bounds.");
       }
    }
    /****************************************************************************
@@ -118,8 +120,9 @@ public final class SSList extends SSDynamicObject {
 
       try {
          return subject.elements.remove(index);
-      } catch(final IndexOutOfBoundsException e) {
-         return throwException(stack, args.get(1), "Index " + index + " out of bounds.");
+      } catch (final IndexOutOfBoundsException e) {
+         return throwException(stack, args.get(1),
+               "Index " + index + " out of bounds.");
       }
    }
    /****************************************************************************
@@ -158,13 +161,13 @@ public final class SSList extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject transformUsing(final Stack stack, final List<SSObject> args) {
+   private static SSObject transformUsing(final Stack stack,
+         final List<SSObject> args) {
 
       final var subject = (SSList) args.get(0);
-      final var newStream = subject.elements.stream().map(item -> 
-         args.get(1).invoke(stack.pushNewFrame(), "executeWith:",
-               List.of(item.evaluate(stack.pushNewFrame())))
-      );
+      final var newStream = subject.elements.stream()
+            .map(item -> args.get(1).invoke(stack.pushNewFrame(), "executeWith:",
+                  List.of(item.evaluate(stack.pushNewFrame()))));
       return new SSStream(newStream);
    }
    /****************************************************************************

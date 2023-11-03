@@ -16,7 +16,6 @@
 package ss.runtime;
 
 import java.util.List;
-import java.util.Map;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
  ******************************************************************************/
@@ -43,11 +42,10 @@ public final class SSDouble extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSDouble(final Map<String, SSObject> methods,
-         final Map<String, SSObject> fields, final double value) {
+   private SSDouble(final SSDouble other) {
 
-      super(methods, fields);
-      this.value = value;
+      super(other);
+      this.value = other.value;
    }
    /****************************************************************************
     * 
@@ -87,8 +85,7 @@ public final class SSDouble extends SSDynamicObject {
    ****************************************************************************/
    private static SSObject clone(final Stack stack, final List<SSObject> args) {
 
-      final var subject = (SSDouble) args.get(0);
-      return new SSDouble(subject.methods, subject.fields, subject.value);
+      return new SSDouble((SSDouble) args.get(0));
    }
    /****************************************************************************
     * 

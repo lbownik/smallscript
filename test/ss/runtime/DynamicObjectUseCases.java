@@ -131,6 +131,13 @@ public class DynamicObjectUseCases extends UseCaseBase {
             object addMethod: "a" :using: { 1;};
             object a equals: 1;
             """);
+      assertSSTrue("""
+            !object = Object new;
+            !methodName = "a";
+            !block = { 1;};
+            object addMethod: methodName :using: block;
+            object a equals: 1;
+            """);
    }
    /****************************************************************************
     * 
@@ -148,6 +155,17 @@ public class DynamicObjectUseCases extends UseCaseBase {
                      (e nature equals: "exception") and: (e message equals: "Method 'size' is not defined.");
                   };
                   """);
+      assertSSTrue(
+            """
+                  !old = Object new;
+                  !methodName = "size";
+                  old removeMethod: methodName;
+                  old try: {
+                     old size;
+                  } :catch: {!e |
+                     (e nature equals: "exception") and: (e message equals: "Method 'size' is not defined.");
+                  };
+                  """);
    }
    /****************************************************************************
    * 
@@ -157,7 +175,8 @@ public class DynamicObjectUseCases extends UseCaseBase {
 
       assertSSNull("""
             !object = Object new;
-            object addField: "a";
+            !fieldName = "a";
+            object addField: fieldName;
             object a;
             """);
       assertSSTrue("""
@@ -169,7 +188,9 @@ public class DynamicObjectUseCases extends UseCaseBase {
             """);
       assertSSTrue("""
             !object = Object new;
-            object addField: "a" :withValue: 10;
+            !fieldName = "a";
+            !value = 10;
+            object addField: fieldName :withValue: value;
             object a equals: 10;
             """);
    }
@@ -181,7 +202,9 @@ public class DynamicObjectUseCases extends UseCaseBase {
 
       assertSSTrue("""
             !object = Object new;
-            object addImmutableField: "a" :withValue: 10;
+            !fieldName = "a";
+            !value = 10;
+            object addImmutableField: fieldName :withValue: value;
             object a equals: 10;
             """);
       assertSSTrue(

@@ -31,6 +31,13 @@ public class SSBinaryBlock implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
+   public SSBinaryBlock(final SSBinaryBlock other) {
+      
+      this.code = other.code;
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
    @Override
    public SSObject invoke(final Stack stack, final String method,
          final List<SSObject> args) {

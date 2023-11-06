@@ -33,7 +33,7 @@ public class SSExistingVariableAssignment implements SSObject {
    @Override
    public SSObject evaluate(final Stack stack) {
 
-      var value = this.arg.evaluate(stack.pushNewFrame());
+      var value = this.arg.evaluate(stack);
       stack.setVariable(this.variableName, value);
       return value;
    }

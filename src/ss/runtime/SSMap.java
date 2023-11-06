@@ -52,7 +52,7 @@ public final class SSMap extends SSDynamicObject {
    private static SSObject at(final Stack stack, final List<SSObject> args) {
 
       final var subject = (SSMap) args.get(0);
-      final var key = args.get(1).evaluate(stack.pushNewFrame());
+      final var key = args.get(1).evaluate(stack);
 
       return subject.elements.getOrDefault(key, stack.getNull());
    }
@@ -71,8 +71,8 @@ public final class SSMap extends SSDynamicObject {
          final List<SSObject> args) {
 
       final var subject = (SSMap) args.get(0);
-      final var key = args.get(1).evaluate(stack.pushNewFrame());
-      final var value = args.get(2).evaluate(stack.pushNewFrame());
+      final var key = args.get(1).evaluate(stack);
+      final var value = args.get(2).evaluate(stack);
 
       final var previous = subject.elements.put(key, value);
       return previous != null ? previous : stack.getNull();
@@ -92,7 +92,7 @@ public final class SSMap extends SSDynamicObject {
          final List<SSObject> args) {
 
       final var subject = (SSMap) args.get(0);
-      final var key = args.get(1).evaluate(stack.pushNewFrame());
+      final var key = args.get(1).evaluate(stack);
 
       final var previous = subject.elements.remove(key);
       return previous != null ? previous : stack.getNull();
@@ -104,9 +104,9 @@ public final class SSMap extends SSDynamicObject {
 
       final var subject = (SSMap) args.get(0);
       for (var item : subject.elements.entrySet()) {
-         args.get(1).invoke(stack.pushNewFrame(), "executeWith::and:",
-               List.of(item.getKey().evaluate(stack.pushNewFrame()),
-                     item.getValue().evaluate(stack.pushNewFrame())));
+         args.get(1).invoke(stack, "executeWith::and:",
+               List.of(item.getKey().evaluate(stack),
+                     item.getValue().evaluate(stack)));
       }
       return subject;
    }
@@ -179,8 +179,8 @@ public final class SSMap extends SSDynamicObject {
       private static SSObject atPut(final Stack stack, final List<SSObject> args) {
 
          final var result = createNew(stack, args);
-         final var key = args.get(1).evaluate(stack.pushNewFrame());
-         final var value = args.get(2).evaluate(stack.pushNewFrame());
+         final var key = args.get(1).evaluate(stack);
+         final var value = args.get(2).evaluate(stack);
 
          result.elements.put(key, value);
          return result;

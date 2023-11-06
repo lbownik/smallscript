@@ -41,8 +41,8 @@ public final class SSStream extends SSDynamicObject {
 
       final var subject = (SSStream) args.get(0);
       subject.stream.forEach(item -> {
-         var newTarget = args.get(1).invoke(stack.pushNewFrame(), "append:",
-               List.of(item.evaluate(stack.pushNewFrame())));
+         var newTarget = args.get(1).invoke(stack, "append:",
+               List.of(item.evaluate(stack)));
          args.set(1, newTarget);
       });
       return args.get(1);
@@ -55,8 +55,8 @@ public final class SSStream extends SSDynamicObject {
       final var subject = (SSStream) args.get(0);
       final var target = args.get(1);
       subject.stream.forEach(item -> {
-         target.invoke(stack.pushNewFrame(), "executeWith:",
-               List.of(item.evaluate(stack.pushNewFrame())));
+         target.invoke(stack, "executeWith:",
+               List.of(item.evaluate(stack)));
       });
       return stack.getNull();
    }
@@ -68,8 +68,8 @@ public final class SSStream extends SSDynamicObject {
       final var subject = (SSStream) args.get(0);
       final var target = args.get(1);
       final var newStream = subject.stream.filter(item -> {
-         var result = target.invoke(stack.pushNewFrame(), "executeWith:",
-               List.of(item.evaluate(stack.pushNewFrame())));
+         var result = target.invoke(stack, "executeWith:",
+               List.of(item.evaluate(stack)));
          return result == stack.getTrue();
       });
       return new SSStream(newStream);
@@ -83,8 +83,8 @@ public final class SSStream extends SSDynamicObject {
       final var subject = (SSStream) args.get(0);
       final var target = args.get(1);
       final var newStream = subject.stream
-            .map(item -> target.invoke(stack.pushNewFrame(), "executeWith:",
-                  List.of(item.evaluate(stack.pushNewFrame()))));
+            .map(item -> target.invoke(stack, "executeWith:",
+                  List.of(item.evaluate(stack))));
       return new SSStream(newStream);
    }
    /****************************************************************************

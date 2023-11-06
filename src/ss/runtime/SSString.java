@@ -86,7 +86,7 @@ public final class SSString extends SSDynamicObject {
 
       final var subject = (SSString) args.get(0);
       return new SSString(subject.value
-            .concat(args.get(1).evaluate(stack.pushNewFrame()).toString()));
+            .concat(args.get(1).evaluate(stack).toString()));
    }
    /****************************************************************************
     * 

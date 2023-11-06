@@ -172,10 +172,9 @@ public class SSDynamicObject implements SSObject {
    private static SSObject tryCatch(final Stack stack, final List<SSObject> args) {
 
       try {
-         return args.get(1).invoke(stack.pushNewFrame(), "execute");
+         return args.get(1).invoke(stack, "execute");
       } catch (final AuxiliaryException e) {
-         return args.get(2).invoke(stack.pushNewFrame(), "execute",
-               List.of(e.object));
+         return args.get(2).invoke(stack, "execute", List.of(e.object));
       }
    }
    /****************************************************************************
@@ -197,7 +196,7 @@ public class SSDynamicObject implements SSObject {
    private static SSObject forEach(final Stack stack, final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
-      args.get(1).invoke(stack.pushNewFrame(), "executeWith:", List.of(subject));
+      args.get(1).invoke(stack, "executeWith:", List.of(subject));
       return subject;
    }
    /****************************************************************************
@@ -206,8 +205,8 @@ public class SSDynamicObject implements SSObject {
    private static SSObject addMethod(final Stack stack, final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
-      final var name = args.get(1).evaluate(stack.pushNewFrame()).toString();
-      final var block = args.get(2).evaluate(stack.pushNewFrame());
+      final var name = args.get(1).evaluate(stack).toString();
+      final var block = args.get(2).evaluate(stack);
 
       subject.methods.put(name, block);
       return subject;
@@ -236,7 +235,7 @@ public class SSDynamicObject implements SSObject {
          final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
-      final var name = args.get(1).evaluate(stack.pushNewFrame()).toString();
+      final var name = args.get(1).evaluate(stack).toString();
       subject.methods.remove(name);
       return subject;
    }
@@ -246,7 +245,7 @@ public class SSDynamicObject implements SSObject {
    private static SSObject addField(final Stack stack, final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
-      final var name = args.get(1).evaluate(stack.pushNewFrame()).toString();
+      final var name = args.get(1).evaluate(stack).toString();
       return subject.addField(stack, name, stack.getNull());
    }
    /****************************************************************************
@@ -256,8 +255,8 @@ public class SSDynamicObject implements SSObject {
          final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
-      final var name = args.get(1).evaluate(stack.pushNewFrame()).toString();
-      final var value = args.get(2).evaluate(stack.pushNewFrame());
+      final var name = args.get(1).evaluate(stack).toString();
+      final var value = args.get(2).evaluate(stack);
       return subject.addField(stack, name, value);
    }
    /****************************************************************************
@@ -267,8 +266,8 @@ public class SSDynamicObject implements SSObject {
          final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
-      final var name = args.get(1).evaluate(stack.pushNewFrame()).toString();
-      final var value = args.get(2).evaluate(stack.pushNewFrame());
+      final var name = args.get(1).evaluate(stack).toString();
+      final var value = args.get(2).evaluate(stack);
       return subject.addImmutableField(stack, name, value);
    }
    /****************************************************************************
@@ -316,7 +315,7 @@ public class SSDynamicObject implements SSObject {
          final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
-      
+
       return subject.setField(stack, name, args.get(1));
    }
    /****************************************************************************
@@ -348,7 +347,7 @@ public class SSDynamicObject implements SSObject {
    static SSObject doesNotUnderstand(final Stack stack, final List<SSObject> args) {
 
       final var message = args.get(1);
-      final var method = message.invoke(stack.pushNewFrame(), "method");
+      final var method = message.invoke(stack, "method");
       return throwException(stack, message,
             "Method '" + method + "' is not defined.");
    }
@@ -359,8 +358,8 @@ public class SSDynamicObject implements SSObject {
 
       final var subject = (SSSet) args.get(0);
 
-      var result = args.get(1).invoke(stack.pushNewFrame(), "executeWith:",
-            List.of(subject.evaluate(stack.pushNewFrame())));
+      var result = args.get(1).invoke(stack, "executeWith:",
+            List.of(subject.evaluate(stack)));
 
       return result == stack.getTrue() ? subject : stack.getNull();
    }
@@ -372,8 +371,8 @@ public class SSDynamicObject implements SSObject {
 
       final var subject = (SSSet) args.get(0);
 
-      return args.get(1).invoke(stack.pushNewFrame(), "executeWith:",
-            List.of(subject.evaluate(stack.pushNewFrame())));
+      return args.get(1).invoke(stack, "executeWith:",
+            List.of(subject.evaluate(stack)));
    }
    /****************************************************************************
     * 
@@ -382,8 +381,7 @@ public class SSDynamicObject implements SSObject {
 
       final var subject = (SSStream) args.get(0);
 
-      return args.get(1).invoke(stack.pushNewFrame(), "append:",
-            List.of(subject.evaluate(stack.pushNewFrame())));
+      return args.get(1).invoke(stack, "append:", List.of(subject.evaluate(stack)));
    }
    /****************************************************************************
     * 

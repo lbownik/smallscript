@@ -63,14 +63,14 @@ public final class SSLong extends SSDynamicObject {
    private SSObject calc(final Stack stack, final List<SSObject> args,
          final LongBinaryOperator opLong, final DoubleBinaryOperator opDouble) {
 
-      final var arg = args.get(1).evaluate(stack.pushNewFrame());
+      final var arg = args.get(1).evaluate(stack);
 
       if (arg instanceof SSLong l) {
          return new SSLong(opLong.applyAsLong(this.value, l.value));
       } else if (arg instanceof SSDouble d) {
          return new SSDouble(opDouble.applyAsDouble(this.value, d.value));
       } else {
-         final var n = arg.invoke(stack.pushNewFrame(), "nature").toString();
+         final var n = arg.invoke(stack, "nature").toString();
          throwException(stack, arg, "Cannot cast " + n + " to number.");
          return stack.getNull(); // never happens
       }
@@ -80,7 +80,7 @@ public final class SSLong extends SSDynamicObject {
    ****************************************************************************/
    private static long evaluateSecond(final List<SSObject> args, final Stack stack) {
 
-      return ((SSLong) args.get(1).evaluate(stack.pushNewFrame())).value;
+      return ((SSLong) args.get(1).evaluate(stack)).value;
    }
    /****************************************************************************
     * 

@@ -53,16 +53,16 @@ public final class SSDouble extends SSDynamicObject {
    private static double evaluateSecond(final List<SSObject> args,
          final Stack stack) {
 
-      var first = args.get(1).evaluate(stack.pushNewFrame());
+      var first = args.get(1).evaluate(stack);
 
       if (first instanceof SSDouble d) {
          return d.value;
       } else if (first instanceof SSLong l) {
          return l.value;
       } else {
-         final var n = first.invoke(stack.pushNewFrame(), "nature").toString();
+         final var n = first.invoke(stack, "nature").toString();
          throwException(stack, first, "Cannot cast " + n + " to number.");
-         return 0.0; //never happens
+         return 0.0; // never happens
       }
    }
    /****************************************************************************
@@ -98,7 +98,8 @@ public final class SSDouble extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject isGreaterThan(final Stack stack, final List<SSObject> args) {
+   private static SSObject isGreaterThan(final Stack stack,
+         final List<SSObject> args) {
 
       final var subject = (SSDouble) args.get(0);
       return stack.get(subject.value > evaluateSecond(args, stack));
@@ -106,7 +107,8 @@ public final class SSDouble extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject isGreaterOrEqualTo(final Stack stack, final List<SSObject> args) {
+   private static SSObject isGreaterOrEqualTo(final Stack stack,
+         final List<SSObject> args) {
 
       final var subject = (SSDouble) args.get(0);
       return stack.get(subject.value >= evaluateSecond(args, stack));
@@ -122,7 +124,8 @@ public final class SSDouble extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject isLessOrEqualTo(final Stack stack, final List<SSObject> args) {
+   private static SSObject isLessOrEqualTo(final Stack stack,
+         final List<SSObject> args) {
 
       final var subject = (SSDouble) args.get(0);
       return stack.get(subject.value <= evaluateSecond(args, stack));
@@ -138,7 +141,8 @@ public final class SSDouble extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject multipliedBy(final Stack stack, final List<SSObject> args) {
+   private static SSObject multipliedBy(final Stack stack,
+         final List<SSObject> args) {
 
       final var subject = (SSDouble) args.get(0);
       return new SSDouble(subject.value * evaluateSecond(args, stack));
@@ -181,6 +185,6 @@ public final class SSDouble extends SSDynamicObject {
     * 
    ****************************************************************************/
    public final double value;
-   
+
    private final static SSString nature = new SSString("number");
 }

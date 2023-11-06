@@ -64,9 +64,8 @@ public class SSBlock extends SSDynamicObject {
       final var block = args.get(1);
 
       for (;;) {
-         if (subject.doExecute(stack.pushNewFrame(), emptyList())
-               .equals(stack.getTrue())) {
-            result = block.invoke(stack.pushNewFrame(), "execute");
+         if (subject.doExecute(stack, emptyList()).equals(stack.getTrue())) {
+            result = block.invoke(stack, "execute");
          } else {
             return result;
          }
@@ -87,6 +86,8 @@ public class SSBlock extends SSDynamicObject {
     * 
    ****************************************************************************/
    private SSObject doExecute(Stack stack, final List<SSObject> args) {
+
+      stack = stack.pushNewFrame();
 
       initiateLocalVariables(stack, args);
 
@@ -126,6 +127,6 @@ public class SSBlock extends SSDynamicObject {
    ****************************************************************************/
    private final List<SSObject> statements;
    private final List<String> argumentNames;
-   
+
    private final static SSString nature = new SSString("block");
 }

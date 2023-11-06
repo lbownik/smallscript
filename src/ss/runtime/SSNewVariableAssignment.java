@@ -33,7 +33,7 @@ public class SSNewVariableAssignment implements SSObject {
    @Override
    public SSObject evaluate(final Stack stack) {
 
-      var value = this.arg.evaluate(stack.pushNewFrame());
+      var value = this.arg.evaluate(stack);
       stack.addVariable(this.variableName, value);
       return value;
    }

@@ -50,7 +50,7 @@ public final class SSSet extends SSDynamicObject {
    private static SSObject append(final Stack stack, final List<SSObject> args) {
 
       final var subject = (SSSet) args.get(0);
-      subject.elements.add(args.get(1).evaluate(stack.pushNewFrame()));
+      subject.elements.add(args.get(1).evaluate(stack));
       return subject;
    }
    /****************************************************************************
@@ -60,7 +60,7 @@ public final class SSSet extends SSDynamicObject {
 
       final var subject = (SSSet) args.get(0);
 
-      subject.elements.remove(args.get(1).evaluate(stack.pushNewFrame()));
+      subject.elements.remove(args.get(1).evaluate(stack));
       return subject;
    }
    /****************************************************************************
@@ -70,8 +70,8 @@ public final class SSSet extends SSDynamicObject {
 
       final var subject = (SSSet) args.get(0);
       for (var item : subject.elements) {
-         args.get(1).invoke(stack.pushNewFrame(), "executeWith:",
-               List.of(item.evaluate(stack.pushNewFrame())));
+         args.get(1).invoke(stack, "executeWith:",
+               List.of(item.evaluate(stack)));
       }
       return subject;
    }
@@ -90,8 +90,8 @@ public final class SSSet extends SSDynamicObject {
 
       final var subject = (SSSet) args.get(0);
       final var newStream = subject.elements.stream().filter(item -> {
-         var result = args.get(1).invoke(stack.pushNewFrame(), "executeWith:",
-               List.of(item.evaluate(stack.pushNewFrame())));
+         var result = args.get(1).invoke(stack, "executeWith:",
+               List.of(item.evaluate(stack)));
          return result == stack.getTrue();
       });
       return new SSStream(newStream);
@@ -104,8 +104,8 @@ public final class SSSet extends SSDynamicObject {
 
       final var subject = (SSSet) args.get(0);
       final var newStream = subject.elements.stream()
-            .map(item -> args.get(1).invoke(stack.pushNewFrame(), "executeWith:",
-                  List.of(item.evaluate(stack.pushNewFrame()))));
+            .map(item -> args.get(1).invoke(stack, "executeWith:",
+                  List.of(item.evaluate(stack))));
       return new SSStream(newStream);
    }
    /****************************************************************************
@@ -161,7 +161,7 @@ public final class SSSet extends SSDynamicObject {
       private static SSObject append(final Stack stack, final List<SSObject> args) {
 
          final var result = createNew(stack, args);
-         result.elements.add(args.get(1).evaluate(stack.pushNewFrame()));
+         result.elements.add(args.get(1).evaluate(stack));
          return result;
       }
       /*************************************************************************

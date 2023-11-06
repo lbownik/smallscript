@@ -32,8 +32,7 @@ public interface SSObject {
    default public SSObject invoke(final Stack stack, final String method,
          final List<SSObject> args) {
 
-      return evaluate(stack.pushNewFrame()).invoke(stack.pushNewFrame(), method,
-            args);
+      return evaluate(stack).invoke(stack, method, args);
    }
    /****************************************************************************
     * Calls method of the encompassed object performing necessary computations if
@@ -43,8 +42,7 @@ public interface SSObject {
     ****************************************************************************/
    default public SSObject invoke(final Stack stack, final String method) {
 
-      return evaluate(stack.pushNewFrame()).invoke(stack.pushNewFrame(), method,
-            emptyList());
+      return evaluate(stack).invoke(stack, method, emptyList());
    }
    /****************************************************************************
     * Executes encompassed object performing necessary computations if needed.

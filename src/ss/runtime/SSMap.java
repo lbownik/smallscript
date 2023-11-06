@@ -104,9 +104,8 @@ public final class SSMap extends SSDynamicObject {
 
       final var subject = (SSMap) args.get(0);
       for (var item : subject.elements.entrySet()) {
-         args.get(1).invoke(stack, "executeWith::and:",
-               List.of(item.getKey().evaluate(stack),
-                     item.getValue().evaluate(stack)));
+         args.get(1).invoke(stack, "executeWith::and:", List
+               .of(item.getKey().evaluate(stack), item.getValue().evaluate(stack)));
       }
       return subject;
    }

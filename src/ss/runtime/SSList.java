@@ -64,8 +64,7 @@ public final class SSList extends SSDynamicObject {
    private static SSObject at(final Stack stack, final List<SSObject> args) {
 
       final var subject = (SSList) args.get(0);
-      final var index = ((SSLong) args.get(1).evaluate(stack))
-            .intValue();
+      final var index = ((SSLong) args.get(1).evaluate(stack)).intValue();
 
       try {
          return subject.elements.get(index);
@@ -89,8 +88,7 @@ public final class SSList extends SSDynamicObject {
          final List<SSObject> args) {
 
       final var subject = (SSList) args.get(0);
-      final var index = ((SSLong) args.get(1).evaluate(stack))
-            .intValue();
+      final var index = ((SSLong) args.get(1).evaluate(stack)).intValue();
       final var value = args.get(2).evaluate(stack);
 
       try {
@@ -115,8 +113,7 @@ public final class SSList extends SSDynamicObject {
          final List<SSObject> args) {
 
       final var subject = (SSList) args.get(0);
-      final var index = ((SSLong) args.get(1).evaluate(stack))
-            .intValue();
+      final var index = ((SSLong) args.get(1).evaluate(stack)).intValue();
 
       try {
          return subject.elements.remove(index);
@@ -132,8 +129,7 @@ public final class SSList extends SSDynamicObject {
 
       final var subject = (SSList) args.get(0);
       for (var item : subject.elements) {
-         args.get(1).invoke(stack, "executeWith:",
-               List.of(item.evaluate(stack)));
+         args.get(1).invoke(stack, "executeWith:", List.of(item.evaluate(stack)));
       }
       return subject;
    }
@@ -165,9 +161,8 @@ public final class SSList extends SSDynamicObject {
          final List<SSObject> args) {
 
       final var subject = (SSList) args.get(0);
-      final var newStream = subject.elements.stream()
-            .map(item -> args.get(1).invoke(stack, "executeWith:",
-                  List.of(item.evaluate(stack))));
+      final var newStream = subject.elements.stream().map(item -> args.get(1)
+            .invoke(stack, "executeWith:", List.of(item.evaluate(stack))));
       return new SSStream(newStream);
    }
    /****************************************************************************

@@ -100,7 +100,8 @@ public final class SSLong extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject incremented(final Stack stack, final List<SSObject> args) {
+   private static SSObject incremented(final Stack stack,
+         final List<SSObject> args) {
 
       final var subject = (SSLong) args.get(0);
       return new SSLong(subject.value + 1);

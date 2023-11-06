@@ -70,8 +70,7 @@ public final class SSSet extends SSDynamicObject {
 
       final var subject = (SSSet) args.get(0);
       for (var item : subject.elements) {
-         args.get(1).invoke(stack, "executeWith:",
-               List.of(item.evaluate(stack)));
+         args.get(1).invoke(stack, "executeWith:", List.of(item.evaluate(stack)));
       }
       return subject;
    }
@@ -103,9 +102,8 @@ public final class SSSet extends SSDynamicObject {
          final List<SSObject> args) {
 
       final var subject = (SSSet) args.get(0);
-      final var newStream = subject.elements.stream()
-            .map(item -> args.get(1).invoke(stack, "executeWith:",
-                  List.of(item.evaluate(stack))));
+      final var newStream = subject.elements.stream().map(item -> args.get(1)
+            .invoke(stack, "executeWith:", List.of(item.evaluate(stack))));
       return new SSStream(newStream);
    }
    /****************************************************************************

@@ -106,6 +106,19 @@ public class BlockUseCases extends UseCaseBase {
 
             closure execute equals: "abc";
             """);
+      
+      assertSSTrue("""
+            !closure = {
+               !val = "abc";
+               {
+                  {
+                     val;
+                  };
+               };
+            } execute;
+
+            closure execute execute equals: "abc";
+            """);
    }
    /****************************************************************************
     * 

@@ -32,7 +32,7 @@ public class SSBinaryBlock implements SSObject {
     * 
    ****************************************************************************/
    public SSBinaryBlock(final SSBinaryBlock other) {
-      
+
       this.code = other.code;
    }
    /****************************************************************************
@@ -46,12 +46,16 @@ public class SSBinaryBlock implements SSObject {
          return this.code.apply(stack, args);
       } else {
          return switch (method) {
-            case "nature" -> new SSString("binaryBlock");
             case "asString" -> new SSString(toString());
+            case "clone" -> new SSBinaryBlock(this);
             case "hash" -> new SSLong(hashCode());
             case "equals:" -> stack.get(this.equals(args.get(0).evaluate(stack)));
             case "isNotEqualTo:" ->
                stack.get(!this.equals(args.get(0).evaluate(stack)));
+            case "nature" -> new SSString("binaryBlock");
+            case "size" -> new SSLong(1);
+            case "throw" -> throw new AuxiliaryException(this);
+            case "try::catch:" -> tryCatch(stack, args);
             default -> doesNotUnderstand(stack, method, args);
          };
       }
@@ -66,8 +70,19 @@ public class SSBinaryBlock implements SSObject {
       message.addField(stack, "nature", new SSString("message"));
       message.addField(stack, "method", new SSString(method));
       message.addField(stack, "args", new SSList(args));
-      
+
       return SSDynamicObject.doesNotUnderstand(stack, List.of(this, message));
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private SSObject tryCatch(final Stack stack, final List<SSObject> args) {
+
+      try {
+         return args.get(0).invoke(stack, "execute");
+      } catch (final AuxiliaryException e) {
+         return args.get(1).invoke(stack, "execute", List.of(e.object));
+      }
    }
    /****************************************************************************
     * Returns an object which can accept method calls performing necessary

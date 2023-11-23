@@ -137,4 +137,34 @@ public class LongUseCases extends UseCaseBase {
    /****************************************************************************
     * 
     ***************************************************************************/
+   @Test
+   public void longCanProduceStreams() throws Exception {
+
+      assertSSTrue("""
+            !list = List new;
+            
+            1 to: 3 forEach: {!item | list append: item};
+            
+            (list size equals: 2) and: (list at: 0 equals: 1) and:
+            (list at: 1 equals: 2);
+            """);
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void longCanRepeatActionNTimes() throws Exception {
+
+      assertSSTrue("""
+            !list = List new;
+            
+            !result = 2 times: {list append: 0};
+            
+            (list size equals: 2) and: (list at: 0 equals: 0) and:
+            (list at: 1 equals: 0) and: (result nature equals: "list");
+            """);
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
 }

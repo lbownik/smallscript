@@ -54,6 +54,7 @@ public final class SSStream extends SSDynamicObject {
 
       final var subject = (SSStream) args.get(0);
       final var target = args.get(1);
+
       subject.stream.forEach(item -> {
          target.invoke(stack, "executeWith:",
                List.of(item.evaluate(stack)));

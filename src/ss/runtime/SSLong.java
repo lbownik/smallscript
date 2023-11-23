@@ -18,6 +18,7 @@ package ss.runtime;
 import java.util.List;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.LongBinaryOperator;
+import java.util.stream.LongStream;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
  ******************************************************************************/
@@ -41,6 +42,8 @@ public final class SSLong extends SSDynamicObject {
       addBinaryMethod("minus:", SSLong::minus);
       addBinaryMethod("multipliedBy:", SSLong::multipliedBy);
       addBinaryMethod("plus:", SSLong::plus);
+      addBinaryMethod("times:", SSLong::times);
+      addBinaryMethod("to:", SSLong::to);
    }
    /****************************************************************************
     * 
@@ -180,6 +183,30 @@ public final class SSLong extends SSDynamicObject {
 
       final var subject = (SSLong) args.get(0);
       return subject.calc(stack, args, (x, y) -> x + y, (x, y) -> x + y);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject times(final Stack stack, final List<SSObject> args) {
+
+      var value = ((SSLong) args.get(0)).value;
+      final var block = args.get(1);
+      SSObject result = stack.getNull();
+      
+      while(value-- > 0) {
+         result = block.execute(stack);
+      }
+      return result;
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject to(final Stack stack, final List<SSObject> args) {
+
+      final var startInclusive = ((SSLong) args.get(0)).value;
+      final var endExclusive = ((SSLong) args.get(1)).value;
+      return new SSStream(
+            LongStream.range(startInclusive, endExclusive).mapToObj(SSLong::new));
    }
    /****************************************************************************
     * 

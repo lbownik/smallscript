@@ -16,11 +16,14 @@
 package ss.parser;
 
 import static java.util.Arrays.copyOf;
+import static java.util.Collections.emptyList;
 
 import java.io.EOFException;
 import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
+import java.util.ArrayList;
+import java.util.List;
 
 import ss.runtime.SSBlock;
 import ss.runtime.SSDouble;
@@ -53,7 +56,7 @@ public final class Parser {
       this.reader = new PushbackReader(reader);
       try {
          this.position = -1;
-         final Block result = new Block();
+         final ArrayList<Sentence> sentences = new ArrayList<>();
          int currentChar;
 
          do {
@@ -63,11 +66,16 @@ public final class Parser {
             } else if (currentChar == '#') {
                skipComment();
             } else if (currentChar != ';') {
-               result.add(parseExpression(currentChar));
+               sentences.add(parseExpression(currentChar));
             }
          } while (currentChar != -1);
 
-         return (SSBlock)result.toSSObject();
+         final List<String> argNames = sentences.isEmpty() ? emptyList()
+               : sentences.get(0).trimArgumentsDeclarations();
+
+         return new SSBlock(sentences.stream().map(Expression::toSSObject).toList(),
+               argNames);
+
       } finally {
          this.reader = null;
       }
@@ -115,18 +123,23 @@ public final class Parser {
    /****************************************************************************
    * 
    ****************************************************************************/
-   private Block parseBlock() throws IOException {
+   private Expression parseBlock() throws IOException {
 
-      final Block result = new Block();
+      final ArrayList<Sentence> sentences = new ArrayList<>();
 
       int currentChar = consumeWhitespace(read());
       while (currentChar != '}') {
-         result.add(parseExpression(currentChar));
+         sentences.add(parseExpression(currentChar));
 
          currentChar = consumeWhitespace(read());
       }
 
-      return result;
+      final List<String> argNames = sentences.isEmpty() ? emptyList()
+            : sentences.get(0).trimArgumentsDeclarations();
+      return () -> {
+         return new SSBlock(sentences.stream().map(Expression::toSSObject).toList(),
+               argNames);
+      };
    }
    /****************************************************************************
    * 
@@ -172,7 +185,7 @@ public final class Parser {
          unread(currentChar);
          final long result = integer * signum;
          return () -> new SSLong(result);
-         //return new LongConstant(integer * signum);
+         // return new LongConstant(integer * signum);
       } else if (currentChar == '.') {
          // floating point
          currentChar = read();
@@ -217,7 +230,7 @@ public final class Parser {
          });
          currentChar = read();
       }
-      
+
       final var result = new String(this.buffer, 0, this.bufIndex).intern();
       return () -> new SSString(result);
    }
@@ -246,11 +259,11 @@ public final class Parser {
    private int skipComment() throws IOException {
 
       int chr;
-      
+
       do {
          chr = read();
       } while (!isEndOfComment(chr));
-      
+
       return chr;
    }
    /****************************************************************************

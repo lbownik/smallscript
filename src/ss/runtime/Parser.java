@@ -26,6 +26,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.OptionalInt;
+import java.util.function.Supplier;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
@@ -70,7 +71,7 @@ public final class Parser {
          final List<String> argNames = sentences.isEmpty() ? emptyList()
                : sentences.get(0).trimArgumentsDeclarations();
 
-         return new SSBlock(sentences.stream().map(Expression::toSSObject).toList(),
+         return new SSBlock(sentences.stream().map(Supplier::get).toList(),
                argNames);
 
       } finally {
@@ -106,7 +107,7 @@ public final class Parser {
    /****************************************************************************
    * 
    ****************************************************************************/
-   private Expression parseValue(int currentChar) throws IOException {
+   private Supplier<SSObject> parseValue(int currentChar) throws IOException {
 
       return switch (currentChar) {
          case '{' -> parseBlock();
@@ -120,7 +121,7 @@ public final class Parser {
    /****************************************************************************
    * 
    ****************************************************************************/
-   private Expression parseBlock() throws IOException {
+   private Supplier<SSObject> parseBlock() throws IOException {
 
       final ArrayList<Sentence> sentences = new ArrayList<>();
 
@@ -134,7 +135,7 @@ public final class Parser {
       final List<String> argNames = sentences.isEmpty() ? emptyList()
             : sentences.get(0).trimArgumentsDeclarations();
       return () -> {
-         return new SSBlock(sentences.stream().map(Expression::toSSObject).toList(),
+         return new SSBlock(sentences.stream().map(Supplier::get).toList(),
                argNames);
       };
    }
@@ -156,7 +157,7 @@ public final class Parser {
    /****************************************************************************
    * 
    ****************************************************************************/
-   private Expression parseNumber(int currentChar) throws IOException {
+   private Supplier<SSObject> parseNumber(int currentChar) throws IOException {
 
       int signum = 1;
       long integer = 0;
@@ -214,7 +215,7 @@ public final class Parser {
    /****************************************************************************
    * 
    ****************************************************************************/
-   private Expression parseString() throws IOException {
+   private Supplier<SSObject> parseString() throws IOException {
 
       this.bufIndex = 0;
       int currentChar = read();
@@ -455,19 +456,9 @@ public final class Parser {
 }
 
 /*******************************************************************************
- * @author lukasz.bownik@gmail.com
- ******************************************************************************/
-interface Expression {
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   SSObject toSSObject();
-}
-
-/*******************************************************************************
  * 
  ******************************************************************************/
-final class Symbol implements Expression {
+final class Symbol implements Supplier<SSObject> {
    /****************************************************************************
     * 
    ****************************************************************************/
@@ -543,7 +534,7 @@ final class Symbol implements Expression {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public SSObject toSSObject() {
+   public SSObject get() {
 
       return new SSVariableReference(this.value);
    }
@@ -556,7 +547,8 @@ final class Symbol implements Expression {
 /*******************************************************************************
  * 
  ******************************************************************************/
-final class Sentence extends ArrayList<Expression> implements Expression {
+final class Sentence extends ArrayList<Supplier<SSObject>>
+      implements Supplier<SSObject> {
    /****************************************************************************
     * 
    ****************************************************************************/
@@ -590,32 +582,32 @@ final class Sentence extends ArrayList<Expression> implements Expression {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public SSObject toSSObject() {
+   @Override
+   public SSObject get() {
 
       switch (size()) {
          case 0:
             return SSNull.instance();
          case 1:
-            return get(0).toSSObject();
+            return get(0).get();
          case 2:
             if (isAssignment()) {
                throw new RuntimeException("Syntax error. Missing assignment value.");
             } else {
-               return new SSExpression(get(0).toSSObject(), get(1).toString());
+               return new SSExpression(get(0).get(), get(1).toString());
             }
          default:
             if (isAssignment()) {
                if (((Symbol) get(0)).isVariableDeclaration()) {
-                  return new SSNewVariableAssignment(
-                        get(0).toString().substring(1),
-                        subSentence(2).toSSObject());
+                  return new SSNewVariableAssignment(get(0).toString().substring(1),
+                        subSentence(2).get());
                } else {
                   return new SSExistingVariableAssignment(get(0).toString(),
-                        subSentence(2).toSSObject());
+                        subSentence(2).get());
                }
 
             } else {
-               return createExpression(get(0).toSSObject(), 1);
+               return createExpression(get(0).get(), 1);
             }
       }
    }
@@ -651,14 +643,14 @@ final class Sentence extends ArrayList<Expression> implements Expression {
          } else if (s.isMethodWithArgs()) {
             final StringBuilder methodName = new StringBuilder(s.toString());
             final ArrayList<SSObject> args = new ArrayList<>();
-            args.add(get(++index).toSSObject());
+            args.add(get(++index).get());
             while (++index < size()) {
                if (get(index) instanceof Symbol ns) {
                   if (ns.isMethodContinuation()) {
                      methodName.append(ns.toString());
                      if (ns.isMethodWithArgs()) {
                         if (++index < size()) {
-                           args.add(get(index).toSSObject());
+                           args.add(get(index).get());
                         } else {
                            throw new RuntimeException(
                                  "Syntax error: unfinished expression.");
@@ -686,4 +678,3 @@ final class Sentence extends ArrayList<Expression> implements Expression {
     * 
    ****************************************************************************/
 }
-

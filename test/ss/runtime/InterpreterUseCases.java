@@ -126,26 +126,4 @@ public class InterpreterUseCases extends UseCaseBase {
    /****************************************************************************
     * 
     ***************************************************************************/
-   @Test
-   public void lists_workProperly() throws Exception {
-      
-      assertResultEquals(new SSString("a"),"""
-            List new append: "a" append: null append: true at: 0;
-            """);
-   }
-   /****************************************************************************
-    * 
-    ***************************************************************************/
-   @Ignore
-   @Test
-   public void map_workProperly() throws Exception {
-      
-      assertResultEquals(new SSString("a"),"""
-            !m = Map new at: "x" :put: "a";
-            m = at: "x";
-            """);
-   }
-   /****************************************************************************
-    * 
-    ***************************************************************************/
 }

@@ -163,5 +163,23 @@ public class MapUseCases extends UseCaseBase {
    }
    /****************************************************************************
     * 
+    ***************************************************************************/
+   @Test
+   public void mepReturnsListOfKeayAsSet() throws Exception {
+
+      assertSSTrue("""
+            !keys = Map new keys;
+            (keys nature equals: "set") and: (keys size equals: 0);
+            """);
+      assertSSTrue("""
+            !keys = Map at: "a" :put: "b" keys;
+            !list = List new;
+            keys forEach: {!key | list append: key;};
+            (keys nature equals: "set") and: (keys size equals: 1)
+            and: (list at: 0 equals: "a");
+            """);
+   }
+   /****************************************************************************
+    * 
     ****************************************************************************/
 }

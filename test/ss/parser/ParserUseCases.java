@@ -323,17 +323,6 @@ public class ParserUseCases {
    ****************************************************************************/
    @Ignore
    @Test
-   public void throwsRuntimeException_forMalformedSymbol() throws Exception {
-
-      assertSyntaxException("!!;", "!!");
-      assertSyntaxException("!1;", "!1");
-      assertSyntaxException("1a;", "1a");
-   }
-   /****************************************************************************
-   * 
-   ****************************************************************************/
-   @Ignore
-   @Test
    public void returnsSequence_ForExpressionInBrackets() throws Exception {
 
       Block program;
@@ -663,19 +652,6 @@ public class ParserUseCases {
          fail("EOF failed. Result: ".concat(result.toString()));
       } catch (final EOFException e) {
          assertTrue(true);
-      }
-   }
-   /****************************************************************************
-    * 
-    ***************************************************************************/
-   private void assertSyntaxException(final String str, final String symbol)
-         throws IOException {
-
-      try {
-         Object result = parse(str);
-         fail("EOF failed. Result: ".concat(result.toString()));
-      } catch (final SyntaxException e) {
-         assertEquals(symbol, e.symbol);
       }
    }
    /****************************************************************************

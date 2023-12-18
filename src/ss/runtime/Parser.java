@@ -587,7 +587,7 @@ final class Sentence extends ArrayList<Supplier<SSObject>>
 
       switch (size()) {
          case 0:
-            return SSNull.instance();
+            return new SSVariableReference("null");
          case 1:
             return get(0).get();
          case 2:
@@ -605,7 +605,6 @@ final class Sentence extends ArrayList<Supplier<SSObject>>
                   return new SSExistingVariableAssignment(get(0).toString(),
                         subSentence(2).get());
                }
-
             } else {
                return createExpression(get(0).get(), 1);
             }

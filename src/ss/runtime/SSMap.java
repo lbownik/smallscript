@@ -36,12 +36,12 @@ public final class SSMap extends SSDynamicObject {
       this.elements = new HashMap<>(elements);
       addBinaryMethod("at:", SSMap::at);
       addBinaryMethod("at::put:", SSMap::atPut);
-      addBinaryMethod("at::put::andReturnPreviousValue",
+      addBinaryMethod("at::put::andGetPreviousValue",
             SSMap::atPutAndReturnPreviousValue);
       addBinaryMethod("forEach:", SSMap::forEach);
       addBinaryMethod("keys", SSMap::keys);
       addBinaryMethod("removeAt:", SSMap::removeAt);
-      addBinaryMethod("removeAt::andReturnRemovedValue",
+      addBinaryMethod("removeAt::andGetRemovedValue",
             SSMap::removeAtAndReturnRemovedValue);
       addBinaryMethod("size", SSMap::size);
       addField(null, "nature", SSMap.Factory.nature);

@@ -117,11 +117,11 @@ public class MapUseCases extends UseCaseBase {
 
       assertSSTrue("""
             !map = Map new;
-            map at: \"A\" :put: \"B\" :andReturnPreviousValue equals: null;
+            map at: \"A\" :put: \"B\" :andGetPreviousValue equals: null;
             """);
       assertSSTrue("""
             !map = Map  at: \"A\" :put: \"X\";
-            map at: \"A\" :put: \"B\" :andReturnPreviousValue equals: \"X\";
+            map at: \"A\" :put: \"B\" :andGetPreviousValue equals: \"X\";
             """);
    }
    /****************************************************************************
@@ -132,11 +132,11 @@ public class MapUseCases extends UseCaseBase {
 
       assertSSTrue("""
             !map = Map new;
-            map removeAt: \"A\" :andReturnRemovedValue equals: null;
+            map removeAt: \"A\" :andGetRemovedValue equals: null;
             """);
       assertSSTrue("""
             !map = Map  at: \"A\" :put: \"X\";
-            map removeAt: \"A\" :andReturnRemovedValue equals: \"X\";
+            map removeAt: \"A\" :andGetRemovedValue equals: \"X\";
             """);
    }
    /****************************************************************************

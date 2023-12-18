@@ -25,13 +25,6 @@ import java.io.Reader;
 
 import org.junit.Test;
 
-import ss.runtime.Parser;
-import ss.runtime.SSBlock;
-import ss.runtime.SSDouble;
-import ss.runtime.SSLong;
-import ss.runtime.SSString;
-import ss.runtime.Stack;
-
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/

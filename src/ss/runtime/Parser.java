@@ -13,10 +13,11 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 //-----------------------------------------------------------------------------
-package ss.parser;
+package ss.runtime;
 
 import static java.util.Arrays.copyOf;
 import static java.util.Collections.emptyList;
+import static java.util.stream.IntStream.range;
 
 import java.io.EOFException;
 import java.io.IOException;
@@ -24,11 +25,7 @@ import java.io.PushbackReader;
 import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
-
-import ss.runtime.SSBlock;
-import ss.runtime.SSDouble;
-import ss.runtime.SSLong;
-import ss.runtime.SSString;
+import java.util.OptionalInt;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
@@ -456,3 +453,237 @@ public final class Parser {
       private final int length;
    }
 }
+
+/*******************************************************************************
+ * @author lukasz.bownik@gmail.com
+ ******************************************************************************/
+interface Expression {
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   SSObject toSSObject();
+}
+
+/*******************************************************************************
+ * 
+ ******************************************************************************/
+final class Symbol implements Expression {
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   public Symbol(final String value) {
+
+      this.value = value;
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   public boolean isVariableDeclaration() {
+
+      return this.value.charAt(0) == '!' && !this.value.contains(":");
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   public boolean isVariableReference() {
+
+      return this.value.charAt(0) != '!' && !this.value.contains(":");
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   public boolean isVariable() {
+
+      return isVariableDeclaration() || isVariableReference();
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   public boolean isMethodWithNoArgs() {
+
+      return this.value.charAt(0) != '!' && !this.value.contains(":");
+   }
+
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   public boolean isMethodContinuation() {
+
+      return this.value.startsWith(":");
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   public boolean isMethodWithArgs() {
+
+      return this.value.charAt(0) != '!' && this.value.endsWith(":");
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   public boolean isAssignment() {
+
+      return this.value.equals("=");
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   public boolean isVariableBlockSaperator() {
+
+      return this.value.equals("|");
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   @Override
+   public String toString() {
+
+      return this.value;
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   public SSObject toSSObject() {
+
+      return new SSVariableReference(this.value);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private final String value;
+}
+
+/*******************************************************************************
+ * 
+ ******************************************************************************/
+final class Sentence extends ArrayList<Expression> implements Expression {
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private OptionalInt findVariableBlockSaperator() {
+
+      return range(0, size())
+            .filter(i -> get(i) instanceof Symbol s && s.isVariableBlockSaperator())
+            .findFirst();
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   List<String> trimArgumentsDeclarations() {
+
+      final var index = findVariableBlockSaperator();
+      if (index.isPresent()) {
+         final var result = getArgumentsNames(index.getAsInt());
+         removeRange(0, index.getAsInt() + 1);
+         return result;
+      } else {
+         return emptyList();
+      }
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private List<String> getArgumentsNames(final int size) {
+
+      return stream().limit(size).map(e -> e.toString().substring(1)).toList();
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   public SSObject toSSObject() {
+
+      switch (size()) {
+         case 0:
+            return SSNull.instance();
+         case 1:
+            return get(0).toSSObject();
+         case 2:
+            if (isAssignment()) {
+               throw new RuntimeException("Syntax error. Missing assignment value.");
+            } else {
+               return new SSExpression(get(0).toSSObject(), get(1).toString());
+            }
+         default:
+            if (isAssignment()) {
+               if (((Symbol) get(0)).isVariableDeclaration()) {
+                  return new SSNewVariableAssignment(
+                        get(0).toString().substring(1),
+                        subSentence(2).toSSObject());
+               } else {
+                  return new SSExistingVariableAssignment(get(0).toString(),
+                        subSentence(2).toSSObject());
+               }
+
+            } else {
+               return createExpression(get(0).toSSObject(), 1);
+            }
+      }
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private boolean isAssignment() {
+
+      return get(0) instanceof Symbol s0 && s0.isVariable()
+            && get(1) instanceof Symbol s1 && s1.isAssignment();
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private Sentence subSentence(final int from) {
+
+      final var sentence = new Sentence();
+      stream().skip(from).forEach(sentence::add);
+
+      return sentence;
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private SSObject createExpression(final SSObject subject, int index) {
+
+      if (index == size()) {
+         return subject;
+      } else if (get(index) instanceof Symbol s) {
+         if (s.isMethodWithNoArgs()) {
+            return createExpression(new SSExpression(subject, s.toString()),
+                  index + 1);
+         } else if (s.isMethodWithArgs()) {
+            final StringBuilder methodName = new StringBuilder(s.toString());
+            final ArrayList<SSObject> args = new ArrayList<>();
+            args.add(get(++index).toSSObject());
+            while (++index < size()) {
+               if (get(index) instanceof Symbol ns) {
+                  if (ns.isMethodContinuation()) {
+                     methodName.append(ns.toString());
+                     if (ns.isMethodWithArgs()) {
+                        if (++index < size()) {
+                           args.add(get(index).toSSObject());
+                        } else {
+                           throw new RuntimeException(
+                                 "Syntax error: unfinished expression.");
+                        }
+                     }
+                  } else {
+                     break;
+                  }
+               } else {
+                  throw new RuntimeException(
+                        "Syntax error: " + subject + "[" + get(index) + "]");
+               }
+            }
+            return createExpression(
+                  new SSExpression(subject, methodName.toString(), args), index);
+         } else {
+            return null;
+         }
+      } else {
+         throw new RuntimeException(
+               "Syntax error: " + subject + "[" + get(index) + "]");
+      }
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+}
+

@@ -13,7 +13,7 @@
 //See the License for the specific language governing permissions and
 //limitations under the License.
 //------------------------------------------------------------------------------
-package ss.parser;
+package ss.runtime;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -25,6 +25,7 @@ import java.io.Reader;
 
 import org.junit.Test;
 
+import ss.runtime.Parser;
 import ss.runtime.SSBlock;
 import ss.runtime.SSDouble;
 import ss.runtime.SSLong;

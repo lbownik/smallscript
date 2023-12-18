@@ -34,7 +34,7 @@ public class Block extends ArrayList<Sentence> implements Expression {
 
       final List<String> argNames = isEmpty() ? emptyList()
             : get(0).trimArgumentsDeclarations();
-
+      
       return new SSBlock(stream().map(Expression::toSSObject).toList(), argNames);
    }
    /****************************************************************************

@@ -56,14 +56,14 @@ public class Interpreter {
    ****************************************************************************/
    public SSObject execute(final String program) throws IOException {
 
-      return this.parser.parse(program).toSSObject().execute(this.stack);
+      return this.parser.parse(program).execute(this.stack);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
    public SSObject execute(final Reader program) throws IOException {
 
-      return this.parser.parse(program).toSSObject().execute(this.stack);
+      return this.parser.parse(program).execute(this.stack);
    }
    /****************************************************************************
     * 
@@ -79,7 +79,7 @@ public class Interpreter {
 
       try (final var reader = getResource(resourceName)) {
 
-         return this.parser.parse(reader).toSSObject().execute(stack);
+         return this.parser.parse(reader).execute(stack);
       } catch (final Exception e) {
          throw new RuntimeException(e);
       }
@@ -103,7 +103,7 @@ public class Interpreter {
          var line = console.readLine();
          while (line != null) {
             try {
-               out.println(this.parser.parse(line).toSSObject().execute(stack));
+               out.println(this.parser.parse(line).execute(stack));
             } catch (final Exception e) {
                out.println(e.getMessage());
             }

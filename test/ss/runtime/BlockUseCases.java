@@ -25,7 +25,20 @@ public class BlockUseCases extends UseCaseBase {
    @Test
    public void emptyBlock_evaluatesToNull() throws Exception {
 
-      assertSSTrue("{} execute equals: null;");
+      //assertSSTrue("{} execute equals: null;");
+      assertSSTrue("""
+            {
+               #comment
+            } execute equals: null;
+            """);
+   }
+   /****************************************************************************
+    * 
+    ****************************************************************************/
+   @Test
+   public void blockWithAVariableName_evaluatesToTheVariableValue() throws Exception {
+
+      assertSSTrue("{true } execute equals: true;");
    }
    /****************************************************************************
    * 

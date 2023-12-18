@@ -26,6 +26,7 @@ import java.io.Reader;
 import org.junit.Ignore;
 import org.junit.Test;
 
+import ss.runtime.SSBlock;
 import ss.runtime.SSDouble;
 import ss.runtime.SSLong;
 import ss.runtime.SSString;
@@ -265,336 +266,6 @@ public class ParserUseCases {
    /****************************************************************************
    * 
    ****************************************************************************/
-   @Test
-   public void returnsSymbol_ForProperInput() throws Exception {
-
-      Block program;
-      // -----------------------------------------------------------------------
-      program = parse("bfnrt;");
-
-      assertEquals(1, program.size());
-      {
-         Sentence expresson = (Sentence) program.get(0);
-
-         assertEquals(1, expresson.size());
-         assertEquals("bfnrt", ((Symbol) expresson.get(0)).toString());
-      }
-      // -----------------------------------------------------------------------
-      program = parse("!bfnrt;");
-
-      assertEquals(1, program.size());
-      {
-         Sentence expresson = (Sentence) program.get(0);
-
-         assertEquals(1, expresson.size());
-         assertEquals("!bfnrt", ((Symbol) expresson.get(0)).toString());
-      }
-      // -----------------------------------------------------------------------
-      program = parse("abcśżą123!@#$%&*+=;<>?/:;");
-
-      assertEquals(2, program.size());
-      {
-         Sentence expression = (Sentence) program.get(0);
-
-         assertEquals(1, expression.size());
-         assertEquals("abcśżą123!@#$%&*+=", ((Symbol) expression.get(0)).toString());
-      }
-      {
-         Sentence expression = (Sentence) program.get(1);
-
-         assertEquals(1, expression.size());
-         assertEquals("<>?/:", ((Symbol) expression.get(0)).toString());
-      }
-      // -----------------------------------------------------------------------
-      program = parse(":abcśżą123!@#$%&*+= <>?/:;");
-
-      assertEquals(1, program.size());
-      {
-         Sentence expression = (Sentence) program.get(0);
-
-         assertEquals(2, expression.size());
-         assertEquals(":abcśżą123!@#$%&*+=",
-               ((Symbol) expression.get(0)).toString());
-         assertEquals("<>?/:", ((Symbol) expression.get(1)).toString());
-      }
-   }
-   /****************************************************************************
-   * 
-   ****************************************************************************/
-   @Ignore
-   @Test
-   public void returnsSequence_ForExpressionInBrackets() throws Exception {
-
-      Block program;
-      // -----------------------------------------------------------------------
-      program = parse("();");
-
-      assertEquals(1, program.size());
-      {
-         Sentence expression = (Sentence) program.get(0);
-
-         assertEquals(0, ((Sentence) expression.get(0)).size());
-      }
-      // -----------------------------------------------------------------------
-      program = parse("(set add: \"abc\" or: 1);");
-
-      assertEquals(1, program.size());
-      {
-         Sentence expression = (Sentence) program.get(0);
-
-         assertEquals(1, expression.size());
-         {
-            Sentence bracketExpr = (Sentence) expression.get(0);
-
-            assertEquals(5, bracketExpr.size());
-            assertEquals("set", bracketExpr.get(0).toString());
-            assertEquals("add:", bracketExpr.get(1).toString());
-            assertEquals("abc", bracketExpr.get(2).toString());
-            assertEquals("or:", bracketExpr.get(3).toString());
-            assertEquals("1", bracketExpr.get(4).toString());
-         }
-      }
-      // -----------------------------------------------------------------------
-      program = parse("set add: (2 + 3 round) or: 1;#comment");
-
-      assertEquals(1, program.size());
-      {
-         Sentence expression = (Sentence) program.get(0);
-
-         assertEquals(5, expression.size());
-         assertEquals("set", expression.get(0).toString());
-         assertEquals("add:", expression.get(1).toString());
-         assertEquals("or:", expression.get(3).toString());
-         assertEquals("1", expression.get(4).toString());
-         {
-            Sentence bracketExp = (Sentence) expression.get(2);
-
-            assertEquals(4, bracketExp.size());
-            assertEquals("2", bracketExp.get(0).toString());
-            assertEquals("+", bracketExp.get(1).toString());
-            assertEquals("3", bracketExp.get(2).toString());
-            assertEquals("round", bracketExp.get(3).toString());
-         }
-      }
-      // -----------------------------------------------------------------------
-      program = parse("set (2)or: 1;");
-
-      assertEquals(1, program.size());
-      {
-         Sentence expression = (Sentence) program.get(0);
-
-         assertEquals(4, expression.size());
-         assertEquals("set", expression.get(0).toString());
-         {
-            Sentence bracketExp = (Sentence) expression.get(1);
-
-            assertEquals(1, bracketExp.size());
-            assertEquals("2", bracketExp.get(0).toString());
-         }
-         assertEquals("or:", expression.get(2).toString());
-         assertEquals("1", expression.get(3).toString());
-      }
-   }
-   /****************************************************************************
-   * 
-   ****************************************************************************/
-   @Test
-   public void returnsBlock_ForExpressionInBraces() throws Exception {
-
-      Block program;
-      // -----------------------------------------------------------------------
-      program = parse("{};");
-
-      assertEquals(1, program.size());
-      {
-         Sentence expression = (Sentence) program.get(0);
-
-         assertEquals(1, expression.size());
-         assertEquals(0, ((Block) expression.get(0)).size());
-      }
-      // -----------------------------------------------------------------------
-      program = parse("{true ;};");
-
-      assertEquals(1, program.size());
-      {
-         Sentence expression = (Sentence) program.get(0);
-
-         assertEquals(1, expression.size());
-         {
-            Block block = (Block) expression.get(0);
-
-            assertEquals(1, block.size());
-            {
-               Sentence blkExpression = (Sentence) block.get(0);
-
-               assertEquals(1, blkExpression.size());
-               assertEquals("true", blkExpression.get(0).toString());
-            }
-         }
-      }
-      // -----------------------------------------------------------------------
-      program = parse("{true};");
-
-      assertEquals(1, program.size());
-      {
-         Sentence expression = (Sentence) program.get(0);
-
-         assertEquals(1, expression.size());
-         {
-            Block block = (Block) expression.get(0);
-
-            assertEquals(1, block.size());
-            {
-               Sentence blkExpression = (Sentence) block.get(0);
-
-               assertEquals(1, blkExpression.size());
-               assertEquals("true", blkExpression.get(0).toString());
-            }
-         }
-      }
-      program = parse("{true   };");
-
-      assertEquals(1, program.size());
-      {
-         Sentence expression = (Sentence) program.get(0);
-
-         assertEquals(1, expression.size());
-         {
-            Block block = (Block) expression.get(0);
-
-            assertEquals(1, block.size());
-            {
-               Sentence blkExpression = (Sentence) block.get(0);
-
-               assertEquals(1, blkExpression.size());
-               assertEquals("true", blkExpression.get(0).toString());
-            }
-         }
-      }
-      // -----------------------------------------------------------------------
-      program = parse("{set add: \"abc\" or: 1;};");
-
-      assertEquals(1, program.size());
-      {
-         Sentence expression = (Sentence) program.get(0);
-
-         assertEquals(1, expression.size());
-         {
-            Block block = (Block) expression.get(0);
-
-            assertEquals(1, block.size());
-            {
-               Sentence blkExpression = (Sentence) block.get(0);
-
-               assertEquals(5, blkExpression.size());
-               assertEquals("set", blkExpression.get(0).toString());
-               assertEquals("add:", blkExpression.get(1).toString());
-               assertEquals("abc", blkExpression.get(2).toSSObject().toString());
-               assertEquals("or:", blkExpression.get(3).toString());
-               assertEquals("1", blkExpression.get(4).toSSObject().toString());
-            }
-         }
-      }
-      // -----------------------------------------------------------------------
-      program = parse("set add: {:a | a round } or: 1;");
-
-      assertEquals(1, program.size());
-      {
-         Sentence expression = (Sentence) program.get(0);
-         assertEquals(5, expression.size());
-         assertEquals("set", expression.get(0).toString());
-         assertEquals("add:", expression.get(1).toString());
-         {
-            Block block = (Block) expression.get(2);
-
-            assertEquals(1, block.size());
-            {
-               Sentence blkExpression = (Sentence) block.get(0);
-
-               assertEquals(4, blkExpression.size());
-               assertEquals(":a", blkExpression.get(0).toString());
-               assertEquals("|", blkExpression.get(1).toString());
-               assertEquals("a", blkExpression.get(2).toString());
-               assertEquals("round", blkExpression.get(3).toString());
-            }
-         }
-         assertEquals("or:", expression.get(3).toString());
-         assertEquals("1", expression.get(4).toSSObject().toString());
-
-      }
-      // -----------------------------------------------------------------------
-      program = parse("set {2;}or: 1;");
-
-      assertEquals(1, program.size());
-      {
-         Sentence expression = (Sentence) program.get(0);
-         assertEquals(4, expression.size());
-         assertEquals("set", expression.get(0).toString());
-         {
-            Block block = (Block) expression.get(1);
-
-            assertEquals(1, block.size());
-            {
-               Sentence blkSequence = (Sentence) block.get(0);
-
-               assertEquals(1, blkSequence.size());
-               assertEquals("2", blkSequence.get(0).toSSObject().toString());
-            }
-         }
-         assertEquals("or:", expression.get(2).toString());
-         assertEquals("1", expression.get(3).toSSObject().toString());
-      }
-   }
-   /****************************************************************************
-   * 
-   ****************************************************************************/
-   @Test
-   public void returnsBlock_ForExpressionInBracesContainingComments() 
-         throws Exception {
-
-      Block program;
-      // -----------------------------------------------------------------------
-      program = parse("""
-            {
-                #comment
-            };
-            """);
-
-      assertEquals(1, program.size());
-      {
-         Sentence expression = (Sentence) program.get(0);
-
-         assertEquals(1, expression.size());
-         assertEquals(1, ((Block) expression.get(0)).size());
-      }
-   }
-   /****************************************************************************
-   * 
-   ****************************************************************************/
-   @Test
-   public void returnsParseTree_forProperProgramWithComments() throws Exception {
-
-      Block program = parse("""
-            true; # comment
-            false;
-            """);
-
-      assertEquals(2, program.size());
-      {
-         Sentence expression = (Sentence) program.get(0);
-
-         assertEquals(1, expression.size());
-         assertEquals("true", expression.get(0).toString());
-
-         expression = (Sentence) program.get(1);
-
-         assertEquals(1, expression.size());
-         assertEquals("false", expression.get(0).toString());
-      }
-   }
-   /****************************************************************************
-   * 
-   ****************************************************************************/
 
    private void assertUnexpected(final String str, final char unexpectedChar)
          throws IOException {
@@ -612,7 +283,7 @@ public class ParserUseCases {
    private void assertLongEquals(final long expected, final String str)
          throws Exception {
 
-      var number = parse(str).toSSObject().execute(Stack.create());
+      var number = parse(str).execute(Stack.create());
       assertEquals(new SSLong(expected), number);
    }
    /****************************************************************************
@@ -621,7 +292,7 @@ public class ParserUseCases {
    private void assertDoubleEquals(final double expected, final String str)
          throws Exception {
 
-      final var number = parse(str).toSSObject().execute(Stack.create());
+      final var number = parse(str).execute(Stack.create());
 
       assertEquals(new SSDouble(expected), number);
    }
@@ -631,7 +302,7 @@ public class ParserUseCases {
    private void assertStringEquals(final String expected, final String str)
          throws Exception {
 
-      final var number = parse(str).toSSObject().execute(Stack.create());
+      final var number = parse(str).execute(Stack.create());
 
       assertEquals(new SSString(expected), number);
    }
@@ -640,7 +311,7 @@ public class ParserUseCases {
     ***************************************************************************/
    private void assertEmptySequence(final String str) throws Exception {
 
-      assertTrue(((Block) parse(str)).isEmpty());
+      assertTrue(((SSBlock) parse(str)).isEmpty());
    }
    /****************************************************************************
     * 
@@ -657,7 +328,7 @@ public class ParserUseCases {
    /****************************************************************************
     * 
     ***************************************************************************/
-   private Block parse(final String str) throws IOException {
+   private SSBlock parse(final String str) throws IOException {
 
       return new Parser().parse(str);
    }

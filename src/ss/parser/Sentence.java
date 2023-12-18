@@ -25,6 +25,7 @@ import java.util.OptionalInt;
 import ss.runtime.SSExistingVariableAssignment;
 import ss.runtime.SSExpression;
 import ss.runtime.SSNewVariableAssignment;
+import ss.runtime.SSNull;
 import ss.runtime.SSObject;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
@@ -66,6 +67,8 @@ public class Sentence extends ArrayList<Expression> implements Expression {
    public SSObject toSSObject() {
 
       switch (size()) {
+         case 0:
+            return SSNull.instance();
          case 1:
             return get(0).toSSObject();
          case 2:

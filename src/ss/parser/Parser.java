@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.PushbackReader;
 import java.io.Reader;
 
+import ss.runtime.SSBlock;
 import ss.runtime.SSDouble;
 import ss.runtime.SSLong;
 import ss.runtime.SSString;
@@ -40,14 +41,14 @@ public final class Parser {
    /****************************************************************************
    * 
    ****************************************************************************/
-   public Block parse(final String str) throws IOException {
+   public SSBlock parse(final String str) throws IOException {
 
       return parse(new StringReader(str));
    }
    /****************************************************************************
    * 
    ****************************************************************************/
-   public Block parse(final Reader reader) throws IOException {
+   public SSBlock parse(final Reader reader) throws IOException {
 
       this.reader = new PushbackReader(reader);
       try {
@@ -66,7 +67,7 @@ public final class Parser {
             }
          } while (currentChar != -1);
 
-         return result;
+         return (SSBlock)result.toSSObject();
       } finally {
          this.reader = null;
       }

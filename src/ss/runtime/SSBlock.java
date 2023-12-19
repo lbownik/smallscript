@@ -32,6 +32,8 @@ public class SSBlock extends SSDynamicObject {
       this.argumentNames = argumentNames;
       setField(null, "nature", nature);
       addBinaryMethod("clone", SSBlock::clone);
+      addBinaryMethod("equals:", SSBlock::equals);
+      addBinaryMethod("isNotEqualTo:", SSBlock::isNotEqualTo);
       addBinaryMethod("whileTrue:", SSBlock::whileTrue);
    }
    /****************************************************************************
@@ -53,6 +55,34 @@ public class SSBlock extends SSDynamicObject {
    private static SSObject clone(final Stack stack, final List<SSObject> args) {
 
       return args.get(0);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject equals(final Stack stack, final List<SSObject> args) {
+
+      var subject = args.get(0);
+      var arg = args.get(1).evaluate(stack);
+      
+      if (arg instanceof SSClosure c) {
+         return stack.get(subject.equals(c.target));
+      } else {
+         return stack.get(subject.equals(arg));
+      }
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject isNotEqualTo(final Stack stack, final List<SSObject> args) {
+
+      var subject = args.get(0);
+      var arg = args.get(1).evaluate(stack);
+      
+      if (arg instanceof SSClosure c) {
+         return stack.get(! subject.equals(c.target));
+      } else {
+         return stack.get(! subject.equals(arg));
+      }
    }
    /****************************************************************************
     * 
@@ -126,14 +156,14 @@ public class SSBlock extends SSDynamicObject {
     * 
    ****************************************************************************/
    public boolean isEmpty() {
-      
+
       return this.statements.isEmpty();
    }
    /****************************************************************************
     * 
    ****************************************************************************/
    public int size() {
-      
+
       return this.statements.size();
    }
    /****************************************************************************

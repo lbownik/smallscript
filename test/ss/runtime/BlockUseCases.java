@@ -37,6 +37,26 @@ public class BlockUseCases extends UseCaseBase {
     * 
     ****************************************************************************/
    @Test
+   public void block_equalsOnlyToItself() throws Exception {
+   
+      assertSSTrue("""
+            !block = {};
+            block equals: block;
+            """);
+      assertSSFalse("{} equals: null;");
+      assertSSFalse("{} equals: {};");
+      
+      assertSSFalse("""
+            !block = {};
+            block isNotEqualTo: block;
+            """);
+      assertSSTrue("{} isNotEqualTo: {};");
+      
+   }
+   /****************************************************************************
+    * 
+    ****************************************************************************/
+   @Test
    public void blockWithAVariableName_evaluatesToTheVariableValue() throws Exception {
 
       assertSSTrue("{true } execute equals: true;");

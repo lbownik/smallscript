@@ -47,7 +47,7 @@ public final class SSClosure implements SSObject {
     * 
    ****************************************************************************/
    private final Stack enclosedStack;
-   private final SSObject target;
+   final SSObject target;
    /****************************************************************************
     * 
    ****************************************************************************/

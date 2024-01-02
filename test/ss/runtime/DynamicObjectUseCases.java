@@ -104,6 +104,22 @@ public class DynamicObjectUseCases extends UseCaseBase {
             };
             (counter equals: 1) and: (result equals: o) and: (innerItem equals: o);
             """);
+      assertSSTrue("""
+            !o = Object new;
+            !list = o collectTo: List;
+            (list size equals: 1) and: (list at: 0 equals: o);
+            """);
+      assertSSTrue("""
+            !o = Object new;
+            !list = o selectIf: {!item | item equals: o} collectTo: List;
+            (list size equals: 1) and: (list at: 0 equals: o);
+            """);
+      assertSSTrue("""
+            !o = Object new;
+            !list = o transformUsing: {!item | item } collectTo: List;
+            (list size equals: 1) and: (list at: 0 equals: o);
+            """);
+      
    }
    /****************************************************************************
     * 

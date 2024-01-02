@@ -356,7 +356,7 @@ public class SSDynamicObject implements SSObject {
    ****************************************************************************/
    private static SSObject selectIf(final Stack stack, final List<SSObject> args) {
 
-      final var subject = (SSSet) args.get(0);
+      final var subject = args.get(0);
 
       var result = args.get(1).invoke(stack, "executeWith:",
             List.of(subject.evaluate(stack)));
@@ -369,7 +369,7 @@ public class SSDynamicObject implements SSObject {
    private static SSObject transformUsing(final Stack stack,
          final List<SSObject> args) {
 
-      final var subject = (SSSet) args.get(0);
+      final var subject = args.get(0);
 
       return args.get(1).invoke(stack, "executeWith:",
             List.of(subject.evaluate(stack)));
@@ -379,9 +379,7 @@ public class SSDynamicObject implements SSObject {
    ****************************************************************************/
    private static SSObject collectTo(final Stack stack, final List<SSObject> args) {
 
-      final var subject = (SSStream) args.get(0);
-
-      return args.get(1).invoke(stack, "append:", List.of(subject.evaluate(stack)));
+      return args.get(1).invoke(stack, "append:", List.of(args.get(0).evaluate(stack)));
    }
    /****************************************************************************
     * 

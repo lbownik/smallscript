@@ -24,6 +24,13 @@ public class SSBinaryBlock implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
+   static SSBinaryBlock bb(final BiFunction<Stack, List<SSObject>, SSObject> code) {
+      
+      return new SSBinaryBlock(code);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
    public SSBinaryBlock(final BiFunction<Stack, List<SSObject>, SSObject> code) {
 
       this.code = code;

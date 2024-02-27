@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
 import static java.util.stream.Collectors.toSet;
+import static ss.runtime.SSBinaryBlock.bb;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
@@ -33,32 +34,7 @@ public class SSDynamicObject implements SSObject {
 
       this.methods = new HashMap<>(30);
 
-      this.methods.put("invoke::with:", invokeWith);
-      this.methods.put("addField:", addField);
-      this.methods.put("addField::withValue:", addFieldWithValue);
-      this.methods.put("addImmutableField::withValue:",
-            addImmutableFieldWithValue);
-      this.methods.put("addMethod::using:", addMethod);
-      this.methods.put("asString", asString);
-      this.methods.put("at:", at);
-      this.methods.put("clone", clone);
-      this.methods.put("collectTo:", collectTo);
-      this.methods.put("doesNotUnderstand:", doesNotUnderstand);
-      addBinaryMethod("equals:", SSDynamicObject::equals);
-      this.methods.put("execute", evaluate);
-      this.methods.put("fields", getFields);
-      this.methods.put("forEach:", forEach);
-      this.methods.put("method:", getMethod);
-      this.methods.put("methods", getMethods);
-      this.methods.put("hash", hashCode);
-      this.methods.put("isNotEqualTo:", isNotEqualTo);
-      this.methods.put("orDefault:", orDefault);
-      this.methods.put("removeMethod:", removeMethod);
-      this.methods.put("size", size);
-      this.methods.put("selectIf:", selectIf);
-      this.methods.put("throw", throwThis);
-      this.methods.put("transformUsing:", transformUsing);
-      this.methods.put("try::catch:", tryCatch);
+      putMethods(this.methods);
    }
    /****************************************************************************
     * 
@@ -67,6 +43,45 @@ public class SSDynamicObject implements SSObject {
 
       this.methods = new HashMap<>(other.methods);
       this.fields.putAll(other.fields);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   static Map<String, SSObject> putMethods(final Map<String, SSObject> methods) {
+
+      methods.put("invoke::with:", bb(SSDynamicObject::invokeWith));
+      methods.put("addField:", bb(SSDynamicObject::addField));
+      methods.put("addField::withValue:", bb(
+            SSDynamicObject::addFieldWithValue));
+      methods.put("addImmutableField::withValue:", bb(
+            SSDynamicObject::addImmutableFieldWithValue));
+      methods.put("addMethod::using:", bb(SSDynamicObject::addMethod));
+      methods.put("asString", bb(SSDynamicObject::asString));
+      methods.put("at:", bb(SSDynamicObject::at));
+      methods.put("clone", bb(SSDynamicObject::clone));
+      methods.put("collectTo:", bb(SSDynamicObject::collectTo));
+      methods.put("doesNotUnderstand:", bb(
+            SSDynamicObject::doesNotUnderstand));
+      methods.put("equals:", bb(SSDynamicObject::equals));
+      methods.put("execute", bb(SSDynamicObject::evaluate));
+      methods.put("fields", bb(SSDynamicObject::getFields));
+      methods.put("forEach:", bb(SSDynamicObject::forEach));
+      methods.put("method:", bb(SSDynamicObject::getMethod));
+      methods.put("methods", bb(SSDynamicObject::getMethods));
+      methods.put("hash", bb(SSDynamicObject::hashCode));
+      methods.put("isNotEqualTo:", bb(
+            SSDynamicObject::isNotEqualTo));
+      methods.put("orDefault:", bb(SSDynamicObject::orDefault));
+      methods.put("removeMethod:", bb(
+            SSDynamicObject::removeMethod));
+      methods.put("size", bb((stack, args) -> new SSLong(1)));
+      methods.put("selectIf:", bb(SSDynamicObject::selectIf));
+      methods.put("throw", bb(SSDynamicObject::throwThis));
+      methods.put("transformUsing:", bb(
+            SSDynamicObject::transformUsing));
+      methods.put("try::catch:", bb(SSDynamicObject::tryCatch));
+
+      return methods;
    }
    /****************************************************************************
     * 
@@ -401,58 +416,6 @@ public class SSDynamicObject implements SSObject {
    final Map<String, SSObject> fields = new HashMap<>();
 
    public final static SSString nature = new SSString("object");
-
-   private final static SSBinaryBlock invokeWith = new SSBinaryBlock(
-         SSDynamicObject::invokeWith);
-   private final static SSBinaryBlock addField = new SSBinaryBlock(
-         SSDynamicObject::addField);
-   private final static SSBinaryBlock addFieldWithValue = new SSBinaryBlock(
-         SSDynamicObject::addFieldWithValue);
-   private final static SSBinaryBlock addImmutableFieldWithValue = new SSBinaryBlock(
-         SSDynamicObject::addImmutableFieldWithValue);
-   private final static SSBinaryBlock addMethod = new SSBinaryBlock(
-         SSDynamicObject::addMethod);
-   private final static SSBinaryBlock asString = new SSBinaryBlock(
-         SSDynamicObject::asString);
-   private final static SSBinaryBlock at = new SSBinaryBlock(
-         SSDynamicObject::at);
-   private final static SSBinaryBlock clone = new SSBinaryBlock(
-         SSDynamicObject::clone);
-   private final static SSBinaryBlock collectTo = new SSBinaryBlock(
-         SSDynamicObject::collectTo);
-   
-   private final static SSBinaryBlock doesNotUnderstand = new SSBinaryBlock(
-         SSDynamicObject::doesNotUnderstand);
-   private final static SSBinaryBlock equals = new SSBinaryBlock(
-         SSDynamicObject::equals);
-   private final static SSBinaryBlock evaluate = new SSBinaryBlock(
-         SSDynamicObject::evaluate);
-   private final static SSBinaryBlock getFields = new SSBinaryBlock(
-         SSDynamicObject::getFields);
-   private final static SSBinaryBlock forEach = new SSBinaryBlock(
-         SSDynamicObject::forEach);
-   private final static SSBinaryBlock getMethod = new SSBinaryBlock(
-         SSDynamicObject::getMethod);
-   private final static SSBinaryBlock getMethods = new SSBinaryBlock(
-         SSDynamicObject::getMethods);
-   private final static SSBinaryBlock hashCode = new SSBinaryBlock(
-         SSDynamicObject::hashCode);
-   private final static SSBinaryBlock isNotEqualTo = new SSBinaryBlock(
-         SSDynamicObject::isNotEqualTo);
-   private final static SSBinaryBlock tryCatch = new SSBinaryBlock(
-         SSDynamicObject::tryCatch);
-   private final static SSBinaryBlock transformUsing = new SSBinaryBlock(
-         SSDynamicObject::transformUsing);
-   private final static SSBinaryBlock throwThis = new SSBinaryBlock(
-         SSDynamicObject::throwThis);
-   private final static SSBinaryBlock selectIf = new SSBinaryBlock(
-         SSDynamicObject::selectIf);
-   private final static SSBinaryBlock size = new SSBinaryBlock(
-         (stack, args) -> new SSLong(1));
-   private final static SSBinaryBlock removeMethod = new SSBinaryBlock(
-         SSDynamicObject::removeMethod);
-   private final static SSBinaryBlock orDefault = new SSBinaryBlock(
-         SSDynamicObject::orDefault);
    /****************************************************************************
     * 
     ***************************************************************************/

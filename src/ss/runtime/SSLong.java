@@ -30,20 +30,20 @@ public final class SSLong extends SSDynamicObject {
 
       this.value = value;
       addField(null, "nature", nature);
-      addBinaryMethod("asDouble", SSLong::asDouble);
-      addBinaryMethod("asLong", SSLong::asLong);
+      this.methods.put("asDouble", asDouble);
+      this.methods.put("asLong", asLong);
       addBinaryMethod("clone", SSLong::clone);
-      addBinaryMethod("incremented", SSLong::incremented);
-      addBinaryMethod("isGreaterThan:", SSLong::isGreaterThan);
-      addBinaryMethod("isGreaterOrEqualTo:", SSLong::isGreaterOrEqualTo);
-      addBinaryMethod("isLessThan:", SSLong::isLessThan);
-      addBinaryMethod("isLessOrEqualTo:", SSLong::isLessOrEqualTo);
-      addBinaryMethod("dividedBy:", SSLong::dividedBy);
-      addBinaryMethod("minus:", SSLong::minus);
-      addBinaryMethod("multipliedBy:", SSLong::multipliedBy);
-      addBinaryMethod("plus:", SSLong::plus);
-      addBinaryMethod("times:", SSLong::times);
-      addBinaryMethod("to:", SSLong::to);
+      this.methods.put("incremented", incremented);
+      this.methods.put("isGreaterThan:", isGreaterThan);
+      this.methods.put("isGreaterOrEqualTo:", isGreaterOrEqualTo);
+      this.methods.put("isLessThan:", isLessThan);
+      this.methods.put("isLessOrEqualTo:", isLessOrEqualTo);
+      this.methods.put("dividedBy:", dividedBy);
+      this.methods.put("minus:", minus);
+      this.methods.put("multipliedBy:", multipliedBy);
+      this.methods.put("plus:", plus);
+      this.methods.put("times:", times);
+      this.methods.put("to:", to);
    }
    /****************************************************************************
     * 
@@ -245,4 +245,31 @@ public final class SSLong extends SSDynamicObject {
    public final long value;
 
    private final static SSString nature = new SSString("number");
+   
+   private final static SSBinaryBlock asDouble = new SSBinaryBlock(
+         SSLong::asDouble);
+   private final static SSBinaryBlock asLong = new SSBinaryBlock(
+         SSLong::asLong);
+   private final static SSBinaryBlock incremented = new SSBinaryBlock(
+         SSLong::incremented);
+   private final static SSBinaryBlock isGreaterThan = new SSBinaryBlock(
+         SSLong::isGreaterThan);
+   private final static SSBinaryBlock isGreaterOrEqualTo = new SSBinaryBlock(
+         SSLong::isGreaterOrEqualTo);
+   private final static SSBinaryBlock isLessThan = new SSBinaryBlock(
+         SSLong::isLessThan);
+   private final static SSBinaryBlock isLessOrEqualTo = new SSBinaryBlock(
+         SSLong::isLessOrEqualTo);
+   private final static SSBinaryBlock dividedBy = new SSBinaryBlock(
+         SSLong::dividedBy);
+   private final static SSBinaryBlock minus = new SSBinaryBlock(
+         SSLong::minus);
+   private final static SSBinaryBlock multipliedBy = new SSBinaryBlock(
+         SSLong::multipliedBy);
+   private final static SSBinaryBlock plus = new SSBinaryBlock(
+         SSLong::plus);
+   private final static SSBinaryBlock times = new SSBinaryBlock(
+         SSLong::times);
+   private final static SSBinaryBlock to = new SSBinaryBlock(
+         SSLong::to);
 }

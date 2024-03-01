@@ -156,34 +156,6 @@ public class DynamicObjectUseCases extends UseCaseBase {
             """);
    }
    /****************************************************************************
-    * 
-    ****************************************************************************/
-   @Test
-   public void removeMethod_removedMethod() throws Exception {
-
-      assertSSTrue(
-            """
-                  !old = Object new;
-                  old removeMethod: "size";
-                  old try: {
-                     old size;
-                  } :catch: {!e |
-                     (e nature equals: "exception") and: (e message equals: "Method 'size' is not defined.");
-                  };
-                  """);
-      assertSSTrue(
-            """
-                  !old = Object new;
-                  !methodName = "size";
-                  old removeMethod: methodName;
-                  old try: {
-                     old size;
-                  } :catch: {!e |
-                     (e nature equals: "exception") and: (e message equals: "Method 'size' is not defined.");
-                  };
-                  """);
-   }
-   /****************************************************************************
    * 
    ****************************************************************************/
    @Test

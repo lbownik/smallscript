@@ -15,13 +15,14 @@
 //------------------------------------------------------------------------------
 package ss.runtime;
 
+import static java.util.stream.Collectors.toSet;
+import static ss.runtime.SSBinaryBlock.bb;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiFunction;
-import static java.util.stream.Collectors.toSet;
-import static ss.runtime.SSBinaryBlock.bb;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
@@ -32,54 +33,57 @@ public class SSDynamicObject implements SSObject {
    ****************************************************************************/
    public SSDynamicObject() {
 
-      this.methods = new HashMap<>(30);
+      this(new MethodMap(sharedMethods));
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   public SSDynamicObject(final Methods methods) {
 
-      putMethods(this.methods);
+      this.methods = methods;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
    public SSDynamicObject(final SSDynamicObject other) {
 
-      this.methods = new HashMap<>(other.methods);
+      this.methods = new MethodMap(other.methods);
       this.fields.putAll(other.fields);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   static Map<String, SSObject> putMethods(final Map<String, SSObject> methods) {
+   static Methods putMethods(final Methods methods) {
 
-      methods.put("invoke::with:", bb(SSDynamicObject::invokeWith));
-      methods.put("addField:", bb(SSDynamicObject::addField));
-      methods.put("addField::withValue:", bb(
+      methods.add("invoke::with:", bb(SSDynamicObject::invokeWith));
+      methods.add("addField:", bb(SSDynamicObject::addField));
+      methods.add("addField::withValue:", bb(
             SSDynamicObject::addFieldWithValue));
-      methods.put("addImmutableField::withValue:", bb(
+      methods.add("addImmutableField::withValue:", bb(
             SSDynamicObject::addImmutableFieldWithValue));
-      methods.put("addMethod::using:", bb(SSDynamicObject::addMethod));
-      methods.put("asString", bb(SSDynamicObject::asString));
-      methods.put("at:", bb(SSDynamicObject::at));
-      methods.put("clone", bb(SSDynamicObject::clone));
-      methods.put("collectTo:", bb(SSDynamicObject::collectTo));
-      methods.put("doesNotUnderstand:", bb(
+      methods.add("addMethod::using:", bb(SSDynamicObject::addMethod));
+      methods.add("asString", bb(SSDynamicObject::asString));
+      methods.add("at:", bb(SSDynamicObject::at));
+      methods.add("clone", bb(SSDynamicObject::clone));
+      methods.add("collectTo:", bb(SSDynamicObject::collectTo));
+      methods.add("doesNotUnderstand:", bb(
             SSDynamicObject::doesNotUnderstand));
-      methods.put("equals:", bb(SSDynamicObject::equals));
-      methods.put("execute", bb(SSDynamicObject::evaluate));
-      methods.put("fields", bb(SSDynamicObject::getFields));
-      methods.put("forEach:", bb(SSDynamicObject::forEach));
-      methods.put("method:", bb(SSDynamicObject::getMethod));
-      methods.put("methods", bb(SSDynamicObject::getMethods));
-      methods.put("hash", bb(SSDynamicObject::hashCode));
-      methods.put("isNotEqualTo:", bb(
+      methods.add("equals:", bb(SSDynamicObject::isEqualTo));
+      methods.add("execute", bb(SSDynamicObject::evaluate));
+      methods.add("fields", bb(SSDynamicObject::getFields));
+      methods.add("forEach:", bb(SSDynamicObject::forEach));
+      methods.add("method:", bb(SSDynamicObject::getMethod));
+      methods.add("methods", bb(SSDynamicObject::getMethods));
+      methods.add("hash", bb(SSDynamicObject::hashCode));
+      methods.add("isNotEqualTo:", bb(
             SSDynamicObject::isNotEqualTo));
-      methods.put("orDefault:", bb(SSDynamicObject::orDefault));
-      methods.put("removeMethod:", bb(
-            SSDynamicObject::removeMethod));
-      methods.put("size", bb((stack, args) -> new SSLong(1)));
-      methods.put("selectIf:", bb(SSDynamicObject::selectIf));
-      methods.put("throw", bb(SSDynamicObject::throwThis));
-      methods.put("transformUsing:", bb(
+      methods.add("orDefault:", bb(SSDynamicObject::orDefault));
+      methods.add("size", bb((stack, args) -> new SSLong(1)));
+      methods.add("selectIf:", bb(SSDynamicObject::selectIf));
+      methods.add("throw", bb(SSDynamicObject::throwThis));
+      methods.add("transformUsing:", bb(
             SSDynamicObject::transformUsing));
-      methods.put("try::catch:", bb(SSDynamicObject::tryCatch));
+      methods.add("try::catch:", bb(SSDynamicObject::tryCatch));
 
       return methods;
    }
@@ -89,7 +93,7 @@ public class SSDynamicObject implements SSObject {
    protected void addBinaryMethod(final String name,
          final BiFunction<Stack, List<SSObject>, SSObject> code) {
 
-      this.methods.put(name, new SSBinaryBlock(code));
+      this.methods.add(name, new SSBinaryBlock(code));
    }
    /****************************************************************************
     * 
@@ -223,7 +227,7 @@ public class SSDynamicObject implements SSObject {
       final var name = args.get(1).evaluate(stack).toString();
       final var block = args.get(2).evaluate(stack);
 
-      subject.methods.put(name, block);
+      subject.methods.add(name, block);
       return subject;
    }
    /****************************************************************************
@@ -240,19 +244,9 @@ public class SSDynamicObject implements SSObject {
    private static SSObject getMethods(final Stack stack, final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
-      return new SSSet(
-            subject.methods.keySet().stream().map(SSString::new).collect(toSet()));
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject removeMethod(final Stack stack,
-         final List<SSObject> args) {
-
-      final var subject = (SSDynamicObject) args.get(0);
-      final var name = args.get(1).evaluate(stack).toString();
-      subject.methods.remove(name);
-      return subject;
+//      return new SSSet(
+//            subject.methods.keySet().stream().map(SSString::new).collect(toSet()));
+      return new SSSet();
    }
    /****************************************************************************
     * 
@@ -352,7 +346,7 @@ public class SSDynamicObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject equals(final Stack stack, final List<SSObject> args) {
+   private static SSObject isEqualTo(final Stack stack, final List<SSObject> args) {
 
       return stack.get(args.get(0).equals(args.get(1).evaluate(stack)));
    }
@@ -412,9 +406,10 @@ public class SSDynamicObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   final Map<String, SSObject> methods;
+   final Methods methods;
    final Map<String, SSObject> fields = new HashMap<>();
-
+   
+   final static Methods sharedMethods = putMethods(new Methods.HMap());
    public final static SSString nature = new SSString("object");
    /****************************************************************************
     * 

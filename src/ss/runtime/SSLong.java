@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.LongBinaryOperator;
 import java.util.stream.LongStream;
+import static ss.runtime.SSBinaryBlock.bb;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
  ******************************************************************************/
@@ -28,22 +29,31 @@ public final class SSLong extends SSDynamicObject {
    ****************************************************************************/
    public SSLong(final long value) {
 
+      super(new MethodMap(sharedMethods));
       this.value = value;
       addField(null, "nature", nature);
-      this.methods.put("asDouble", asDouble);
-      this.methods.put("asLong", asLong);
-      addBinaryMethod("clone", SSLong::clone);
-      this.methods.put("incremented", incremented);
-      this.methods.put("isGreaterThan:", isGreaterThan);
-      this.methods.put("isGreaterOrEqualTo:", isGreaterOrEqualTo);
-      this.methods.put("isLessThan:", isLessThan);
-      this.methods.put("isLessOrEqualTo:", isLessOrEqualTo);
-      this.methods.put("dividedBy:", dividedBy);
-      this.methods.put("minus:", minus);
-      this.methods.put("multipliedBy:", multipliedBy);
-      this.methods.put("plus:", plus);
-      this.methods.put("times:", times);
-      this.methods.put("to:", to);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   static Methods putMethods(final Methods methods) {
+
+      methods.add("asDouble", bb(SSLong::asDouble));
+      methods.add("asLong", bb((SSLong::asLong)));
+      methods.add("clone", bb(SSLong::clone));
+      methods.add("incremented", bb(SSLong::incremented));
+      methods.add("isGreaterThan:", bb(SSLong::isGreaterThan));
+      methods.add("isGreaterOrEqualTo:", bb(SSLong::isGreaterOrEqualTo));
+      methods.add("isLessThan:", bb(SSLong::isLessThan));
+      methods.add("isLessOrEqualTo:", bb(SSLong::isLessOrEqualTo));
+      methods.add("dividedBy:", bb(SSLong::dividedBy));
+      methods.add("minus:", bb(SSLong::minus));
+      methods.add("multipliedBy:", bb(SSLong::multipliedBy));
+      methods.add("plus:", bb(SSLong::plus));
+      methods.add("times:", bb(SSLong::times));
+      methods.add("to:", bb(SSLong::to));
+
+      return methods;
    }
    /****************************************************************************
     * 
@@ -192,8 +202,8 @@ public final class SSLong extends SSDynamicObject {
       var value = ((SSLong) args.get(0)).value;
       final var block = args.get(1);
       SSObject result = stack.getNull();
-      
-      while(value-- > 0) {
+
+      while (value-- > 0) {
          result = block.execute(stack);
       }
       return result;
@@ -245,31 +255,6 @@ public final class SSLong extends SSDynamicObject {
    public final long value;
 
    private final static SSString nature = new SSString("number");
-   
-   private final static SSBinaryBlock asDouble = new SSBinaryBlock(
-         SSLong::asDouble);
-   private final static SSBinaryBlock asLong = new SSBinaryBlock(
-         SSLong::asLong);
-   private final static SSBinaryBlock incremented = new SSBinaryBlock(
-         SSLong::incremented);
-   private final static SSBinaryBlock isGreaterThan = new SSBinaryBlock(
-         SSLong::isGreaterThan);
-   private final static SSBinaryBlock isGreaterOrEqualTo = new SSBinaryBlock(
-         SSLong::isGreaterOrEqualTo);
-   private final static SSBinaryBlock isLessThan = new SSBinaryBlock(
-         SSLong::isLessThan);
-   private final static SSBinaryBlock isLessOrEqualTo = new SSBinaryBlock(
-         SSLong::isLessOrEqualTo);
-   private final static SSBinaryBlock dividedBy = new SSBinaryBlock(
-         SSLong::dividedBy);
-   private final static SSBinaryBlock minus = new SSBinaryBlock(
-         SSLong::minus);
-   private final static SSBinaryBlock multipliedBy = new SSBinaryBlock(
-         SSLong::multipliedBy);
-   private final static SSBinaryBlock plus = new SSBinaryBlock(
-         SSLong::plus);
-   private final static SSBinaryBlock times = new SSBinaryBlock(
-         SSLong::times);
-   private final static SSBinaryBlock to = new SSBinaryBlock(
-         SSLong::to);
+   final static Methods sharedMethods = putMethods(
+         new MethodMap(SSDynamicObject.sharedMethods));
 }

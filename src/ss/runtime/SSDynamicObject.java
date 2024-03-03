@@ -19,9 +19,7 @@ import static java.util.stream.Collectors.toSet;
 import static ss.runtime.SSBinaryBlock.bb;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.BiFunction;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
@@ -38,7 +36,7 @@ public class SSDynamicObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public SSDynamicObject(final Methods methods) {
+   public SSDynamicObject(final MethodMap methods) {
 
       this.methods = methods;
    }
@@ -48,7 +46,7 @@ public class SSDynamicObject implements SSObject {
    public SSDynamicObject(final SSDynamicObject other) {
 
       this.methods = new MethodMap(other.methods);
-      this.fields.putAll(other.fields);
+      this.fields.addAll(other.fields);
    }
    /****************************************************************************
     * 
@@ -74,6 +72,8 @@ public class SSDynamicObject implements SSObject {
       methods.add("forEach:", bb(SSDynamicObject::forEach));
       methods.add("method:", bb(SSDynamicObject::getMethod));
       methods.add("methods", bb(SSDynamicObject::getMethods));
+      methods.add("nature", bb((s, a) -> getField(s, "nature", a)));
+      methods.add("nature:", bb((s, a) -> setField(s, "nature", a)));
       methods.add("hash", bb(SSDynamicObject::hashCode));
       methods.add("isNotEqualTo:", bb(
             SSDynamicObject::isNotEqualTo));
@@ -284,8 +284,8 @@ public class SSDynamicObject implements SSObject {
    ****************************************************************************/
    SSObject addField(final Stack stack, final String name, final SSObject value) {
 
-      addBinaryMethod(name, (s, a) -> getField(s, name, a));
-      addBinaryMethod(name + ":", (s, a) -> setField(s, name, a));
+      this.methods.add(name, bb((s, a) -> getField(s, name, a)));
+      this.methods.add(name + ":", bb((s, a) -> setField(s, name, a)));
 
       return setField(stack, name, value);
    }
@@ -295,7 +295,7 @@ public class SSDynamicObject implements SSObject {
    SSObject addImmutableField(final Stack stack, final String name,
          final SSObject value) {
 
-      addBinaryMethod(name, (s, a) -> getField(s, name, a));
+      this.methods.add(name, bb((s, a) -> getField(s, name, a)));
 
       return setField(stack, name, value);
    }
@@ -314,8 +314,9 @@ public class SSDynamicObject implements SSObject {
    private static SSObject getFields(final Stack stack, final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
-      return new SSSet(
-            subject.fields.keySet().stream().map(SSString::new).collect(toSet()));
+//      return new SSSet(
+//            subject.fields.keySet().stream().map(SSString::new).collect(toSet()));
+      return new SSSet();
    }
    /****************************************************************************
     * 
@@ -332,7 +333,7 @@ public class SSDynamicObject implements SSObject {
    ****************************************************************************/
    SSObject setField(final Stack stack, final String name, final SSObject value) {
 
-      this.fields.put(name, value.evaluate(stack));
+      this.fields.add(name, value.evaluate(stack));
       return this;
    }
    /****************************************************************************
@@ -406,10 +407,10 @@ public class SSDynamicObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   final Methods methods;
-   final Map<String, SSObject> fields = new HashMap<>();
+   final MethodMap methods;
+   final MethodMap fields = new MethodMap();
    
-   final static Methods sharedMethods = putMethods(new Methods.HMap());
+   final static Methods sharedMethods = putMethods(new MethodMap());
    public final static SSString nature = new SSString("object");
    /****************************************************************************
     * 
@@ -420,8 +421,8 @@ public class SSDynamicObject implements SSObject {
       *************************************************************************/
       public Factory() {
 
-         addBinaryMethod("new", SSDynamicObject.Factory::createNew);
-         addBinaryMethod("newOfNature:", SSDynamicObject.Factory::newOfNature);
+         this.methods.add("new", bb(SSDynamicObject.Factory::createNew));
+         this.methods.add("newOfNature:", bb(SSDynamicObject.Factory::newOfNature));
       }
       /*************************************************************************
        * 
@@ -430,7 +431,7 @@ public class SSDynamicObject implements SSObject {
             final List<SSObject> args) {
 
          final var result = new SSDynamicObject();
-         result.addField(stack, "nature", nature);
+         result.setField(stack, "nature", nature);
          return result;
       }
       /*************************************************************************
@@ -440,7 +441,7 @@ public class SSDynamicObject implements SSObject {
             final List<SSObject> args) {
 
          final var result = new SSDynamicObject();
-         result.addField(stack, "nature", args.get(1));
+         result.setField(stack, "nature", args.get(1));
          return result;
       }
       /*************************************************************************

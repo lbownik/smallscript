@@ -26,6 +26,13 @@ final class MethodMap implements Methods {
    /****************************************************************************
     * 
    ****************************************************************************/
+   MethodMap() {
+
+      this(Methods.empty);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
    MethodMap(final Methods backup) {
 
       this.size = 0;
@@ -116,6 +123,13 @@ final class MethodMap implements Methods {
    /****************************************************************************
     * 
    ****************************************************************************/
+   void addAll(final MethodMap other) {
+      
+        copyNodes(other.table, this.table);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
    private void resize() {
 
       final Node[] oldTable = this.table;
@@ -192,7 +206,7 @@ final class MethodMap implements Methods {
             result.add(e.key);
          }
       }
-      //result.addAll(this.backup.keySet());
+      // result.addAll(this.backup.keySet());
 
       return result;
    }

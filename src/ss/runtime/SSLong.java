@@ -31,7 +31,7 @@ public final class SSLong extends SSDynamicObject {
 
       super(new MethodMap(sharedMethods));
       this.value = value;
-      addField(null, "nature", nature);
+      this.fields.add("nature", nature);
    }
    /****************************************************************************
     * 

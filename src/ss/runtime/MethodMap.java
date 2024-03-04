@@ -199,7 +199,7 @@ final class MethodMap implements Methods {
             result.add(e.key);
          }
       }
-      // result.addAll(this.backup.keySet());
+      result.addAll(this.backup.keySet());
 
       return result;
    }

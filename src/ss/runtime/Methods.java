@@ -15,6 +15,9 @@
 //------------------------------------------------------------------------------
 package ss.runtime;
 
+import static java.util.Collections.emptySet;
+import java.util.Set;
+
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
@@ -40,6 +43,13 @@ interface Methods {
    default void add(final String key, final SSObject value) {
 
       throw new UnsupportedOperationException();
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   default Set<String> keySet() {
+
+      return emptySet();
    }
 
    /****************************************************************************

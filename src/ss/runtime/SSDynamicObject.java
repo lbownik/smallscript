@@ -56,17 +56,15 @@ public class SSDynamicObject implements SSObject {
 
       methods.add("invoke::with:", bb(SSDynamicObject::invokeWith));
       methods.add("addField:", bb(SSDynamicObject::addField));
-      methods.add("addField::withValue:", bb(
-            SSDynamicObject::addFieldWithValue));
-      methods.add("addImmutableField::withValue:", bb(
-            SSDynamicObject::addImmutableFieldWithValue));
+      methods.add("addField::withValue:", bb(SSDynamicObject::addFieldWithValue));
+      methods.add("addImmutableField::withValue:",
+            bb(SSDynamicObject::addImmutableFieldWithValue));
       methods.add("addMethod::using:", bb(SSDynamicObject::addMethod));
       methods.add("asString", bb(SSDynamicObject::asString));
       methods.add("at:", bb(SSDynamicObject::at));
       methods.add("clone", bb(SSDynamicObject::clone));
       methods.add("collectTo:", bb(SSDynamicObject::collectTo));
-      methods.add("doesNotUnderstand:", bb(
-            SSDynamicObject::doesNotUnderstand));
+      methods.add("doesNotUnderstand:", bb(SSDynamicObject::doesNotUnderstand));
       methods.add("equals:", bb(SSDynamicObject::isEqualTo));
       methods.add("execute", bb(SSDynamicObject::evaluate));
       methods.add("fields", bb(SSDynamicObject::getFields));
@@ -76,14 +74,12 @@ public class SSDynamicObject implements SSObject {
       methods.add("nature", bb((s, a) -> getField(s, "nature", a)));
       methods.add("nature:", bb((s, a) -> setField(s, "nature", a)));
       methods.add("hash", bb(SSDynamicObject::hashCode));
-      methods.add("isNotEqualTo:", bb(
-            SSDynamicObject::isNotEqualTo));
+      methods.add("isNotEqualTo:", bb(SSDynamicObject::isNotEqualTo));
       methods.add("orDefault:", bb(SSDynamicObject::orDefault));
       methods.add("size", bb((stack, args) -> new SSLong(1)));
       methods.add("selectIf:", bb(SSDynamicObject::selectIf));
       methods.add("throw", bb(SSDynamicObject::throwThis));
-      methods.add("transformUsing:", bb(
-            SSDynamicObject::transformUsing));
+      methods.add("transformUsing:", bb(SSDynamicObject::transformUsing));
       methods.add("try::catch:", bb(SSDynamicObject::tryCatch));
 
       return methods;
@@ -245,9 +241,8 @@ public class SSDynamicObject implements SSObject {
    private static SSObject getMethods(final Stack stack, final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
-//      return new SSSet(
-//            subject.methods.keySet().stream().map(SSString::new).collect(toSet()));
-      return new SSSet();
+      return new SSSet(
+            subject.methods.keySet().stream().map(SSString::new).collect(toSet()));
    }
    /****************************************************************************
     * 
@@ -315,9 +310,8 @@ public class SSDynamicObject implements SSObject {
    private static SSObject getFields(final Stack stack, final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
-//      return new SSSet(
-//            subject.fields.keySet().stream().map(SSString::new).collect(toSet()));
-      return new SSSet();
+      return new SSSet(
+            subject.fields.keySet().stream().map(SSString::new).collect(toSet()));
    }
    /****************************************************************************
     * 
@@ -410,7 +404,7 @@ public class SSDynamicObject implements SSObject {
    ****************************************************************************/
    final MethodMap methods;
    final MethodMap fields;
-   
+
    final static Methods sharedMethods = putMethods(new MethodMap());
    public final static SSString nature = new SSString("object");
    /****************************************************************************

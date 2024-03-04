@@ -39,6 +39,7 @@ public class SSDynamicObject implements SSObject {
    public SSDynamicObject(final MethodMap methods) {
 
       this.methods = methods;
+      this.fields = new MethodMap();
    }
    /****************************************************************************
     * 
@@ -46,7 +47,7 @@ public class SSDynamicObject implements SSObject {
    public SSDynamicObject(final SSDynamicObject other) {
 
       this.methods = new MethodMap(other.methods);
-      this.fields.addAll(other.fields);
+      this.fields = new MethodMap(other.fields);
    }
    /****************************************************************************
     * 
@@ -408,7 +409,7 @@ public class SSDynamicObject implements SSObject {
     * 
    ****************************************************************************/
    final MethodMap methods;
-   final MethodMap fields = new MethodMap();
+   final MethodMap fields;
    
    final static Methods sharedMethods = putMethods(new MethodMap());
    public final static SSString nature = new SSString("object");

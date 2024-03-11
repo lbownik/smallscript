@@ -38,7 +38,7 @@ final class MethodMap implements Methods {
       this.size = 0;
       this.table = new Node[initialCapacity];
       this.threshold = (int) (loadFactor * initialCapacity);
-      this.backup = backup;
+      this.backup = backup != null ? backup : Methods.empty;
    }
    /****************************************************************************
     * 
@@ -240,6 +240,14 @@ final class MethodMap implements Methods {
             node.next = this.next.clone();
          }
          return node;
+      }
+      /*************************************************************************
+       * 
+      *************************************************************************/
+      @Override
+      public String toString() {
+
+         return "Node [key=" + this.key + ", value=" + this.value + "]";
       }
       /*************************************************************************
        * 

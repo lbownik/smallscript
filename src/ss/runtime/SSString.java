@@ -15,6 +15,8 @@
 //-----------------------------------------------------------------------------
 package ss.runtime;
 
+import static ss.runtime.SSBinaryBlock.bb;
+
 import java.util.List;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
@@ -24,9 +26,12 @@ public final class SSString extends SSDynamicObject {
     * 
    ****************************************************************************/
    static {
-
+      
+      sharedMethods = putMethods(
+            new MethodMap(SSDynamicObject.sharedMethods));
+      
       var n = new SSString("string", true);
-      n.addField(null, "nature", n);
+      n.fields.add("nature", n);
       nature = n;
    }
    /****************************************************************************
@@ -35,20 +40,29 @@ public final class SSString extends SSDynamicObject {
    public SSString(final String value) {
 
       this(value, true);
-      addField(null, "nature", nature);
+      this.fields.add("nature", nature);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
    private SSString(final String value, boolean noNature) {
 
+      super(new MethodMap(sharedMethods));
       this.value = value;
-      addBinaryMethod("append:", SSString::concatenate);
-      addBinaryMethod("at:", SSString::at);
-      addBinaryMethod("clone", SSString::clone);
-      addBinaryMethod("concatenate:", SSString::concatenate);
-      addBinaryMethod("size", SSString::size);
-      addBinaryMethod("startsWith:", SSString::startsWith);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   static Methods putMethods(final Methods methods) {
+
+      methods.add("append:", bb(SSString::concatenate));
+      methods.add("at:", bb(SSString::at));
+      methods.add("clone", bb(SSString::clone));
+      methods.add("concatenate:", bb(SSString::concatenate));
+      methods.add("size", bb(SSString::size));
+      methods.add("startsWith:", bb(SSString::startsWith));
+      
+      return methods;
    }
    /****************************************************************************
     * 
@@ -133,5 +147,6 @@ public final class SSString extends SSDynamicObject {
    ****************************************************************************/
    private final String value;
 
+   final static Methods sharedMethods;
    private final static SSString nature;
 }

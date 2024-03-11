@@ -15,6 +15,8 @@
 //-----------------------------------------------------------------------------
 package ss.runtime;
 
+import static ss.runtime.SSBinaryBlock.bb;
+
 import java.util.List;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
@@ -25,19 +27,9 @@ public final class SSDouble extends SSDynamicObject {
    ****************************************************************************/
    public SSDouble(final double value) {
 
+      super(new MethodMap(sharedMethods));
       this.value = value;
-      addField(null, "nature", nature);
-      addBinaryMethod("asDouble", SSDouble::asDouble);
-      addBinaryMethod("asLong", SSDouble::asLong);
-      addBinaryMethod("clone", SSDouble::clone);
-      addBinaryMethod("dividedBy:", SSDouble::dividedBy);
-      addBinaryMethod("isGreaterThan:", SSDouble::isGreaterThan);
-      addBinaryMethod("isGreaterOrEqualTo:", SSDouble::isGreaterOrEqualTo);
-      addBinaryMethod("isLessThan:", SSDouble::isLessThan);
-      addBinaryMethod("isLessOrEqualTo:", SSDouble::isLessOrEqualTo);
-      addBinaryMethod("minus:", SSDouble::minus);
-      addBinaryMethod("multipliedBy:", SSDouble::multipliedBy);
-      addBinaryMethod("plus:", SSDouble::plus);
+      this.fields.add("nature", nature);
    }
    /****************************************************************************
     * 
@@ -46,6 +38,25 @@ public final class SSDouble extends SSDynamicObject {
 
       super(other);
       this.value = other.value;
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   static Methods putMethods(final Methods methods) {
+
+      methods.add("asDouble", bb(SSDouble::asDouble));
+      methods.add("asLong", bb(SSDouble::asLong));
+      methods.add("clone", bb(SSDouble::clone));
+      methods.add("dividedBy:", bb(SSDouble::dividedBy));
+      methods.add("isGreaterThan:", bb(SSDouble::isGreaterThan));
+      methods.add("isGreaterOrEqualTo:", bb(SSDouble::isGreaterOrEqualTo));
+      methods.add("isLessThan:", bb(SSDouble::isLessThan));
+      methods.add("isLessOrEqualTo:", bb(SSDouble::isLessOrEqualTo));
+      methods.add("minus:", bb(SSDouble::minus));
+      methods.add("multipliedBy:", bb(SSDouble::multipliedBy));
+      methods.add("plus:", bb(SSDouble::plus));
+      
+      return methods;
    }
    /****************************************************************************
     * 
@@ -187,4 +198,6 @@ public final class SSDouble extends SSDynamicObject {
    public final double value;
 
    private final static SSString nature = new SSString("number");
+   final static Methods sharedMethods = putMethods(
+         new MethodMap(SSDynamicObject.sharedMethods));
 }

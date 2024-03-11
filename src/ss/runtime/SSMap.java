@@ -15,6 +15,8 @@
 //-----------------------------------------------------------------------------
 package ss.runtime;
 
+import static ss.runtime.SSBinaryBlock.bb;
+
 import java.util.HashMap;
 import java.util.List;
 /*******************************************************************************
@@ -33,18 +35,28 @@ public final class SSMap extends SSDynamicObject {
    ****************************************************************************/
    public SSMap(final HashMap<SSObject, SSObject> elements) {
 
+      super(new MethodMap(sharedMethods));
       this.elements = new HashMap<>(elements);
-      addBinaryMethod("at:", SSMap::at);
-      addBinaryMethod("at::put:", SSMap::atPut);
-      addBinaryMethod("at::put::andGetPreviousValue",
-            SSMap::atPutAndReturnPreviousValue);
-      addBinaryMethod("forEach:", SSMap::forEach);
-      addBinaryMethod("keys", SSMap::keys);
-      addBinaryMethod("removeAt:", SSMap::removeAt);
-      addBinaryMethod("removeAt::andGetRemovedValue",
-            SSMap::removeAtAndReturnRemovedValue);
-      addBinaryMethod("size", SSMap::size);
-      addField(null, "nature", SSMap.Factory.nature);
+      this.fields.add("nature", SSMap.Factory.nature);
+   }
+
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   static Methods putMethods(final Methods methods) {
+
+      methods.add("at:", bb(SSMap::at));
+      methods.add("at::put:", bb(SSMap::atPut));
+      methods.add("at::put::andGetPreviousValue",
+            bb(SSMap::atPutAndReturnPreviousValue));
+      methods.add("forEach:", bb(SSMap::forEach));
+      methods.add("keys", bb(SSMap::keys));
+      methods.add("removeAt:", bb(SSMap::removeAt));
+      methods.add("removeAt::andGetRemovedValue",
+            bb(SSMap::removeAtAndReturnRemovedValue));
+      methods.add("size", bb(SSMap::size));
+
+      return methods;
    }
    /****************************************************************************
     * 
@@ -153,6 +165,9 @@ public final class SSMap extends SSDynamicObject {
     * 
    ****************************************************************************/
    private final HashMap<SSObject, SSObject> elements;
+   
+   final static Methods sharedMethods = putMethods(
+         new MethodMap(SSDynamicObject.sharedMethods));
    /****************************************************************************
     * 
     ***************************************************************************/

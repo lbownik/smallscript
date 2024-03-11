@@ -15,6 +15,8 @@
 //-----------------------------------------------------------------------------
 package ss.runtime;
 
+import static ss.runtime.SSBinaryBlock.bb;
+
 import java.util.List;
 import java.util.stream.Stream;
 /*******************************************************************************
@@ -27,12 +29,21 @@ public final class SSStream extends SSDynamicObject {
    ****************************************************************************/
    public SSStream(final Stream<SSObject> stream) {
 
+      super(new MethodMap(sharedMethods));
       this.stream = stream;
-      addField(null, "nature", nature);
-      addBinaryMethod("collectTo:", SSStream::collectTo);
-      addBinaryMethod("forEach:", SSStream::forEach);
-      addBinaryMethod("selectIf:", SSStream::selectIf);
-      addBinaryMethod("transformUsing:", SSStream::transformUsing);
+      this.fields.add("nature", nature);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   static Methods putMethods(final Methods methods) {
+
+      methods.add("collectTo:", bb(SSStream::collectTo));
+      methods.add("forEach:", bb(SSStream::forEach));
+      methods.add("selectIf:", bb(SSStream::selectIf));
+      methods.add("transformUsing:", bb(SSStream::transformUsing));
+      
+      return methods;
    }
    /****************************************************************************
     * 
@@ -100,6 +111,8 @@ public final class SSStream extends SSDynamicObject {
     * 
    ****************************************************************************/
    private final Stream<SSObject> stream;
-
+   
+   final static Methods sharedMethods = putMethods(
+         new MethodMap(SSDynamicObject.sharedMethods));
    private final static SSString nature = new SSString("stream");
 }

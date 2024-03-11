@@ -15,6 +15,8 @@
 //-----------------------------------------------------------------------------
 package ss.runtime;
 
+import static ss.runtime.SSBinaryBlock.bb;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -34,15 +36,24 @@ public final class SSSet extends SSDynamicObject {
    ****************************************************************************/
    public SSSet(final Set<SSObject> elements) {
 
+      super(new MethodMap(sharedMethods));
       this.elements = new HashSet<>(elements);
-      addBinaryMethod("add:", SSSet::append);
-      addBinaryMethod("append:", SSSet::append);
-      addBinaryMethod("forEach:", SSSet::forEach);
-      addBinaryMethod("remove:", SSSet::remove);
-      addBinaryMethod("size", SSSet::size);
-      addBinaryMethod("selectIf:", SSSet::selectIf);
-      addBinaryMethod("transformUsing:", SSSet::transformUsing);
-      addField(null, "nature", SSSet.Factory.nature);
+      this.fields.add("nature", SSSet.Factory.nature);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   static Methods putMethods(final Methods methods) {
+
+      methods.add("add:", bb(SSSet::append));
+      methods.add("append:", bb(SSSet::append));
+      methods.add("forEach:", bb(SSSet::forEach));
+      methods.add("remove:", bb(SSSet::remove));
+      methods.add("size", bb(SSSet::size));
+      methods.add("selectIf:", bb(SSSet::selectIf));
+      methods.add("transformUsing:", bb(SSSet::transformUsing));
+      
+      return methods;
    }
    /****************************************************************************
     * 
@@ -134,6 +145,9 @@ public final class SSSet extends SSDynamicObject {
     * 
    ****************************************************************************/
    private final HashSet<SSObject> elements;
+   
+   final static Methods sharedMethods = putMethods(
+         new MethodMap(SSDynamicObject.sharedMethods));
    /****************************************************************************
     * 
     ***************************************************************************/

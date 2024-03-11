@@ -15,6 +15,8 @@
 //------------------------------------------------------------------------------
 package ss.runtime;
 
+import static ss.runtime.SSBinaryBlock.bb;
+
 import java.util.ArrayList;
 import java.util.List;
 /*******************************************************************************
@@ -33,21 +35,31 @@ public final class SSList extends SSDynamicObject {
    ****************************************************************************/
    public SSList(final List<? extends SSObject> elements) {
 
+      super(new MethodMap(sharedMethods));
       this.elements = new ArrayList<>(elements);
-      addBinaryMethod("add:", SSList::append);
-      addBinaryMethod("append:", SSList::append);
-      addBinaryMethod("at:", SSList::at);
-      addBinaryMethod("at::put:", SSList::atPut);
-      addBinaryMethod("at::put::andReturnPreviousItem",
-            SSList::atPutAndReturnPreviousItem);
-      addBinaryMethod("forEach:", SSList::forEach);
-      addBinaryMethod("removeAt:", SSList::removeAt);
-      addBinaryMethod("removeAt::andReturnRemovedItem",
-            SSList::removeAtAndReturnRemovedItem);
-      addBinaryMethod("size", SSList::size);
-      addBinaryMethod("selectIf:", SSList::selectIf);
-      addBinaryMethod("transformUsing:", SSList::transformUsing);
-      addField(null, "nature", SSList.Factory.nature);
+      this.fields.add("nature", SSList.Factory.nature);
+   }
+
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   static Methods putMethods(final Methods methods) {
+
+      methods.add("add:", bb(SSList::append));
+      methods.add("append:", bb(SSList::append));
+      methods.add("at:", bb(SSList::at));
+      methods.add("at::put:", bb(SSList::atPut));
+      methods.add("at::put::andReturnPreviousItem",
+            bb(SSList::atPutAndReturnPreviousItem));
+      methods.add("forEach:", bb(SSList::forEach));
+      methods.add("removeAt:", bb(SSList::removeAt));
+      methods.add("removeAt::andReturnRemovedItem",
+            bb(SSList::removeAtAndReturnRemovedItem));
+      methods.add("size", bb(SSList::size));
+      methods.add("selectIf:", bb(SSList::selectIf));
+      methods.add("transformUsing:", bb(SSList::transformUsing));
+
+      return methods;
    }
    /****************************************************************************
     * 
@@ -193,6 +205,9 @@ public final class SSList extends SSDynamicObject {
     * 
    ****************************************************************************/
    final ArrayList<SSObject> elements;
+   
+   final static Methods sharedMethods = putMethods(
+         new MethodMap(SSDynamicObject.sharedMethods));
    /****************************************************************************
     * 
     ***************************************************************************/

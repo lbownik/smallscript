@@ -100,7 +100,7 @@ public class SSBinaryBlock implements SSObject {
    @Override
    public SSObject evaluate(final Stack stack) {
 
-      return new SSClosure(stack, this);
+      return this;
    }
    /****************************************************************************
     * 

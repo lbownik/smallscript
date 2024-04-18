@@ -61,6 +61,17 @@ public final class SSMap extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
+   @Override
+   protected void addMethod(final String name, final SSObject block) {
+
+      if(this.methods == SSMap.sharedMethods) {
+         this.methods = new MethodMap(SSMap.sharedMethods);
+      }
+      this.methods.add(name, block);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
    private static SSObject at(final Stack stack, final List<SSObject> args) {
 
       final var subject = (SSMap) args.get(0);

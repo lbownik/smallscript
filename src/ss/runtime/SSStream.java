@@ -48,6 +48,17 @@ public final class SSStream extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
+   @Override
+   protected void addMethod(final String name, final SSObject block) {
+
+      if(this.methods == SSStream.sharedMethods) {
+         this.methods = new MethodMap(SSStream.sharedMethods);
+      }
+      this.methods.add(name, block);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
    private static SSObject collectTo(final Stack stack, final List<SSObject> args) {
 
       final var subject = (SSStream) args.get(0);

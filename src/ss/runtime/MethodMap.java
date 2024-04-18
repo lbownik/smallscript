@@ -36,7 +36,7 @@ final class MethodMap implements Methods {
    MethodMap(final Methods backup) {
 
       this.size = 0;
-      this.table = null;
+      this.table = new Node[initialCapacity];
       this.threshold = (int) (loadFactor * initialCapacity);
       this.backup = backup != null ? backup : Methods.empty;
    }
@@ -46,18 +46,16 @@ final class MethodMap implements Methods {
    MethodMap(final MethodMap other) {
 
       this.size = other.size;
-      this.table = other.table != null ? new Node[other.table.length] : null;
+      this.table = new Node[other.table.length];
       this.threshold = other.threshold;
       this.backup = other.backup;
 
-      if (this.table != null) {
-         final int length = other.table.length;
+      final int length = other.table.length;
 
-         for (int index = 0; index < length; ++index) {
-            final Node node = other.table[index];
-            if (node != null) {
-               this.table[index] = node.clone();
-            }
+      for (int index = 0; index < length; ++index) {
+         final Node node = other.table[index];
+         if (node != null) {
+            this.table[index] = node.clone();
          }
       }
    }
@@ -75,15 +73,13 @@ final class MethodMap implements Methods {
    @Override
    public SSObject getOrDefault(final String key, final SSObject defaultValue) {
 
-      if (this.table != null) {
-         Node node = this.table[(this.table.length - 1) & key.hashCode()];
+      Node node = this.table[(this.table.length - 1) & key.hashCode()];
 
-         while (node != null) {
-            if (key.equals(node.key)) {
-               return node.value;
-            }
-            node = node.next;
+      while (node != null) {
+         if (key.equals(node.key)) {
+            return node.value;
          }
+         node = node.next;
       }
       return this.backup.getOrDefault(key, defaultValue);
    }
@@ -93,9 +89,6 @@ final class MethodMap implements Methods {
    @Override
    public void add(final String key, final SSObject value) {
 
-      if (this.table == null) {
-         this.table = new Node[initialCapacity];
-      }
       final Node[] tab = this.table;
       final int index = (tab.length - 1) & key.hashCode();
       Node node = tab[index];
@@ -200,11 +193,9 @@ final class MethodMap implements Methods {
    public Set<String> keySet() {
 
       final var result = new HashSet<String>();
-      if (this.table != null) {
-         for (Node e : table) {
-            for (; e != null; e = e.next) {
-               result.add(e.key);
-            }
+      for (Node e : table) {
+         for (; e != null; e = e.next) {
+            result.add(e.key);
          }
       }
       result.addAll(this.backup.keySet());

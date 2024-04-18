@@ -91,6 +91,17 @@ public final class SSLong extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
+   @Override
+   protected void addMethod(final String name, final SSObject block) {
+
+      if(this.methods == SSLong.sharedMethods) {
+         this.methods = new MethodMap(SSLong.sharedMethods);
+      }
+      this.methods.add(name, block);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
    private static long evaluateSecond(final List<SSObject> args, final Stack stack) {
 
       return ((SSLong) args.get(1).evaluate(stack)).value;

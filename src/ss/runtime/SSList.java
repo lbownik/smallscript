@@ -64,6 +64,17 @@ public final class SSList extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
+   @Override
+   protected void addMethod(final String name, final SSObject block) {
+
+      if(this.methods == SSList.sharedMethods) {
+         this.methods = new MethodMap(SSList.sharedMethods);
+      }
+      this.methods.add(name, block);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
    private static SSObject append(final Stack stack, final List<SSObject> args) {
 
       final var subject = (SSList) args.get(0);

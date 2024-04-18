@@ -95,6 +95,16 @@ public class SSDynamicObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
+   protected void addMethod(final String name, final SSObject block) {
+
+      if(this.methods == SSDynamicObject.sharedMethods) {
+         this.methods = new MethodMap(SSDynamicObject.sharedMethods);
+      }
+      this.methods.add(name, block);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
    @Override
    public SSObject invoke(final Stack stack, final String method,
          final List<SSObject> args) {
@@ -224,7 +234,7 @@ public class SSDynamicObject implements SSObject {
       final var name = args.get(1).evaluate(stack).toString();
       final var block = args.get(2).evaluate(stack);
 
-      subject.methods.add(name, block);
+      subject.addMethod(name, block);
       return subject;
    }
    /****************************************************************************
@@ -402,7 +412,7 @@ public class SSDynamicObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   final MethodMap methods;
+   protected MethodMap methods;
    final MethodMap fields;
 
    final static Methods sharedMethods = putMethods(new MethodMap());

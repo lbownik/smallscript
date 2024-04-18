@@ -43,6 +43,17 @@ public final class SSSet extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
+   @Override
+   protected void addMethod(final String name, final SSObject block) {
+
+      if(this.methods == SSSet.sharedMethods) {
+         this.methods = new MethodMap(SSSet.sharedMethods);
+      }
+      this.methods.add(name, block);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
    static Methods putMethods(final Methods methods) {
 
       methods.add("add:", bb(SSSet::append));

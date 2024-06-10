@@ -15,6 +15,7 @@
 //-----------------------------------------------------------------------------
 package ss.runtime;
 
+import static java.util.Collections.emptyList;
 import java.util.List;
 import java.util.function.BiFunction;
 /*******************************************************************************
@@ -25,7 +26,7 @@ public class SSBinaryBlock implements SSObject {
     * 
    ****************************************************************************/
    static SSBinaryBlock bb(final BiFunction<Stack, List<SSObject>, SSObject> code) {
-      
+
       return new SSBinaryBlock(code);
    }
    /****************************************************************************
@@ -66,6 +67,26 @@ public class SSBinaryBlock implements SSObject {
             default -> doesNotUnderstand(stack, method, args);
          };
       }
+   }
+   /****************************************************************************
+    * Executes encompassed object performing necessary computations if needed.
+    * 
+    * @param stack a clean stack frame
+    ***************************************************************************/
+   @Override
+   public SSObject execute(final Stack stack) {
+
+      return this.code.apply(stack, emptyList());
+   }
+   /****************************************************************************
+    * Executes encompassed object performing necessary computations if needed.
+    * 
+    * @param stack a clean stack frame
+    ***************************************************************************/
+   @Override
+   public SSObject execute(final Stack stack, final List<SSObject> args) {
+
+      return this.code.apply(stack, args);
    }
    /****************************************************************************
     * 

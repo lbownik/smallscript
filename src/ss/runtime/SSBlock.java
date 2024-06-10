@@ -37,6 +37,16 @@ public class SSBlock extends SSDynamicObject {
       addBinaryMethod("whileTrue:", SSBlock::whileTrue);
    }
    /****************************************************************************
+    * Executes encompassed object performing necessary computations if needed.
+    * 
+    * @param stack a clean stack frame
+    ***************************************************************************/
+   @Override
+   public SSObject execute(final Stack stack) {
+
+      return execute(stack, emptyList());
+   }
+   /****************************************************************************
     * 
    ****************************************************************************/
    @Override
@@ -44,7 +54,7 @@ public class SSBlock extends SSDynamicObject {
          final List<SSObject> args) {
 
       if (method.startsWith("execute")) {
-         return doExecute(stack, args);
+         return execute(stack, args);
       } else {
          return super.invoke(stack, method, args);
       }
@@ -63,7 +73,7 @@ public class SSBlock extends SSDynamicObject {
 
       var subject = args.get(0);
       var arg = args.get(1).evaluate(stack);
-      
+
       if (arg instanceof SSClosure c) {
          return stack.get(subject.equals(c.target));
       } else {
@@ -73,15 +83,16 @@ public class SSBlock extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject isNotEqualTo(final Stack stack, final List<SSObject> args) {
+   private static SSObject isNotEqualTo(final Stack stack,
+         final List<SSObject> args) {
 
       var subject = args.get(0);
       var arg = args.get(1).evaluate(stack);
-      
+
       if (arg instanceof SSClosure c) {
-         return stack.get(! subject.equals(c.target));
+         return stack.get(!subject.equals(c.target));
       } else {
-         return stack.get(! subject.equals(arg));
+         return stack.get(!subject.equals(arg));
       }
    }
    /****************************************************************************
@@ -94,8 +105,8 @@ public class SSBlock extends SSDynamicObject {
       final var block = args.get(1);
 
       for (;;) {
-         if (subject.doExecute(stack, emptyList()).equals(stack.getTrue())) {
-            result = block.invoke(stack, "execute");
+         if (subject.execute(stack, emptyList()).equals(stack.getTrue())) {
+            result = block.execute(stack);
          } else {
             return result;
          }
@@ -113,9 +124,12 @@ public class SSBlock extends SSDynamicObject {
       }
    }
    /****************************************************************************
+    * Executes encompassed object performing necessary computations if needed.
     * 
-   ****************************************************************************/
-   private SSObject doExecute(Stack stack, final List<SSObject> args) {
+    * @param stack a clean stack frame
+    ***************************************************************************/
+   @Override
+   public SSObject execute(Stack stack, final List<SSObject> args) {
 
       stack = stack.pushNewFrame();
 

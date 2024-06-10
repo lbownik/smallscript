@@ -111,7 +111,7 @@ public class SSDynamicObject implements SSObject {
 
       final var block = this.methods.get(method);
       if (block != null) {
-         return block.invoke(stack, "execute", prependThisTo(args));
+         return block.execute(stack, prependThisTo(args));
       } else {
          final var message = new SSDynamicObject();
          message.addField(stack, "nature", new SSString("message"));

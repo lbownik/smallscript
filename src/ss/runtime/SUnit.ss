@@ -27,10 +27,10 @@ TestCase addMethod: "named::using:" :using: {!this !name !block |
 	        addField: "name"   :withValue: name
 	        addField: "block"  :withValue: block;
 	#----------------------------------------------------------------------------
-	case addMethod: "runWith::and:" :using: {!this !assert !fail |
+	case addMethod: "run" :using: {!this |
 	     
 	     this try: {
-	     		this block executeWith: assert :and: fail;
+	     		this block execute;
 	     		this result: "Passed";
 	     } :catch: { !e |
 	     		this result: ("Failed: " append: (e message));
@@ -86,7 +86,7 @@ TestSuite addMethod: "new" :using: {
 		!assert = this $createAssert;
 		!fail   = this $createFail;
 	
-		this tests forEach: {!test | test runWith: assert :and: fail };
+		this tests forEach: {!test | test run };
 		this;
 	};
 	#----------------------------------------------------------------------------

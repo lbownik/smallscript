@@ -14,6 +14,9 @@
 //limitations under the License.
 //-----------------------------------------------------------------------------
 package ss.runtime;
+
+import java.util.Set;
+
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
@@ -36,6 +39,14 @@ public class SSExistingVariableAssignment implements SSObject {
       var value = this.arg.evaluate(stack);
       stack.setVariable(this.variableName, value);
       return value;
+   }
+   /****************************************************************************
+    * @return names of referenced variables
+    ***************************************************************************/
+   @Override
+   public Set<String> referencedVariables() {
+
+      return Set.of(this.variableName);
    }
    /****************************************************************************
     * 

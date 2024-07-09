@@ -97,6 +97,27 @@ public interface Stack {
       }.pushNewFrame();
    }
    /****************************************************************************
+    * 
+   ****************************************************************************/
+   public static boolean isTopLevelVariable() {
+      
+      return false;
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   public final static String OBJECT = "Object";
+   public final static String NULL = "null";
+   public final static String TRUE = "true";
+   public final static String FALSE = "false";
+   public final static String LIST = "List";
+   public final static String MAP = "Map";
+   public final static String SET = "Set";
+   public final static String EXCEPTION = "Exception";
+   public final static String APPLICATION = "application";
+   
+   
+   /****************************************************************************
     * Inheriting from HasMap gives 10X performance boost of "pushNewFrame"
     * and 20% performance boost for "add/get/set/Variable".
    ****************************************************************************/

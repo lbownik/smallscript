@@ -22,6 +22,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import static ss.runtime.Stack.*;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
@@ -39,15 +40,15 @@ public class Interpreter {
    public Interpreter(final String[] args) {
 
       this.args = args;
-      stack.addVariable("Object", new SSDynamicObject.Factory());
-      stack.addVariable("null", SSNull.instance());
-      stack.addVariable("true", load(this.stack, "True.ss"));
-      stack.addVariable("false", load(this.stack, "False.ss"));
-      stack.addVariable("List", new SSList.Factory());
-      stack.addVariable("Map", new SSMap.Factory());
-      stack.addVariable("Set", new SSSet.Factory());
-      stack.addVariable("Exception", load(this.stack, "Exception.ss"));
-      stack.addVariable("application", new SSApplication(this));
+      stack.addVariable(OBJECT, new SSDynamicObject.Factory());
+      stack.addVariable(NULL, SSNull.instance());
+      stack.addVariable(TRUE, load(this.stack, "True.ss"));
+      stack.addVariable(FALSE, load(this.stack, "False.ss"));
+      stack.addVariable(LIST, new SSList.Factory());
+      stack.addVariable(MAP, new SSMap.Factory());
+      stack.addVariable(SET, new SSSet.Factory());
+      stack.addVariable(EXCEPTION, load(this.stack, "Exception.ss"));
+      stack.addVariable(APPLICATION, new SSApplication(this));
    }
    /****************************************************************************
     * 

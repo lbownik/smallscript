@@ -15,8 +15,11 @@
 //-----------------------------------------------------------------------------
 package ss.runtime;
 
-import java.util.List;
 import static java.util.Collections.emptyList;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
@@ -45,6 +48,18 @@ public class SSExpression implements SSObject {
    public SSObject evaluate(final Stack stack) {
 
       return this.object.invoke(stack, this.method, this.args);
+   }
+   /****************************************************************************
+    * @return names of referenced variables
+    ***************************************************************************/
+   @Override
+   public Set<String> referencedVariables() {
+
+      final var result = new HashSet<String>();
+      result.addAll(this.object.referencedVariables());
+      this.args.forEach(arg -> result.addAll(arg.referencedVariables()));
+      
+      return result;
    }
    /****************************************************************************
     * 

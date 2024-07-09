@@ -14,6 +14,11 @@
 //limitations under the License.
 //-----------------------------------------------------------------------------
 package ss.runtime;
+
+import static java.util.Collections.emptySet;
+
+import java.util.Set;
+
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
@@ -32,6 +37,14 @@ public class SSVariableReference implements SSObject {
    public SSObject evaluate(final Stack stack) {
       
       return stack.getVariable(this.variableName);
+   }
+   /****************************************************************************
+    * @return names of referenced variables
+    ***************************************************************************/
+   @Override
+   public Set<String> referencedVariables() {
+
+      return Set.of(this.variableName);
    }
    /****************************************************************************
     * 

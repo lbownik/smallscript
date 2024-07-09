@@ -16,8 +16,10 @@
 package ss.runtime;
 
 import static java.util.Collections.emptyList;
+import static java.util.Collections.emptySet;
 
 import java.util.List;
+import java.util.Set;
 
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
@@ -28,7 +30,7 @@ public interface SSObject {
     * needed.
     * 
     * @param stack a clean stack frame
-    ****************************************************************************/
+    ***************************************************************************/
    default public SSObject invoke(final Stack stack, final String method,
          final List<SSObject> args) {
 
@@ -39,7 +41,7 @@ public interface SSObject {
     * needed.
     * 
     * @param stack a clean stack frame
-    ****************************************************************************/
+    ***************************************************************************/
    default public SSObject invoke(final Stack stack, final String method) {
 
       return evaluate(stack).invoke(stack, method, emptyList());
@@ -48,7 +50,7 @@ public interface SSObject {
     * Executes encompassed object performing necessary computations if needed.
     * 
     * @param stack a clean stack frame
-    ****************************************************************************/
+    ***************************************************************************/
    default public SSObject execute(final Stack stack) {
 
       return invoke(stack, "execute");
@@ -57,7 +59,7 @@ public interface SSObject {
     * Executes encompassed object performing necessary computations if needed.
     * 
     * @param stack a clean stack frame
-    ****************************************************************************/
+    ***************************************************************************/
    default public SSObject execute(final Stack stack, final List<SSObject> args) {
 
       return invoke(stack, "execute", args);
@@ -67,10 +69,17 @@ public interface SSObject {
     * computations if needed.
     * 
     * @param stack a clean stack frame
-    ****************************************************************************/
+    ***************************************************************************/
    default public SSObject evaluate(final Stack stack) {
 
       return this;
+   }
+   /****************************************************************************
+    * @return names of referenced variables
+    ***************************************************************************/
+   default public Set<String> referencedVariables() {
+
+      return emptySet();
    }
    /****************************************************************************
     * 

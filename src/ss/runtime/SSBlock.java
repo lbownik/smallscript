@@ -17,7 +17,9 @@ package ss.runtime;
 
 import static java.util.Collections.emptyList;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
@@ -30,6 +32,8 @@ public class SSBlock extends SSDynamicObject {
 
       this.statements = statements;
       this.argumentNames = argumentNames;
+      this.enclosesVariables = !referencedVariables().isEmpty();
+
       setField(null, "nature", nature);
       addBinaryMethod("clone", SSBlock::clone);
       addBinaryMethod("equals:", SSBlock::equals);
@@ -58,6 +62,24 @@ public class SSBlock extends SSDynamicObject {
       } else {
          return super.invoke(stack, method, args);
       }
+   }
+   /****************************************************************************
+    * @return names of referenced variables
+    ***************************************************************************/
+   @Override
+   public Set<String> referencedVariables() {
+
+      final var result = new HashSet<String>();
+      for (final var statement : this.statements) {
+         for (final var variable : statement.referencedVariables()) {
+            if (!Stack.isTopLevelVariable()) {
+               result.add(variable);
+            }
+         }
+      }
+      result.removeAll(this.argumentNames);
+
+      return result;
    }
    /****************************************************************************
     * 
@@ -152,7 +174,7 @@ public class SSBlock extends SSDynamicObject {
    @Override
    public SSObject evaluate(final Stack stack) {
 
-      return new SSClosure(stack, this);
+      return this.enclosesVariables ? new SSClosure(stack, this) : this;
    }
    /****************************************************************************
     * 
@@ -185,6 +207,7 @@ public class SSBlock extends SSDynamicObject {
    ****************************************************************************/
    private final List<SSObject> statements;
    private final List<String> argumentNames;
+   private final boolean enclosesVariables;
 
    private final static SSString nature = new SSString("block");
 }

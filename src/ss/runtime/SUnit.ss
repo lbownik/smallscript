@@ -40,17 +40,19 @@ TestCase addMethod: "named::using:" :using: {!this !name !block |
 #-------------------------------------------------------------------------------
 # TestSuite
 #-------------------------------------------------------------------------------
-!TestSuite = Object new addMethod: "asString" :using: "TestSuite";
+!TestSuite = Object new addMethod: "asString" :using: "TestSuite"
+                        addImmutableField: "$TestCase" :withValue: TestCase;
 
 #-------------------------------------------------------------------------------
-TestSuite addMethod: "new" :using: {
+TestSuite addMethod: "new" :using: { !this |
 
 	!suite = Object new
-	         addImmutableField: "tests" :withValue: (List new);
+	         addImmutableField: "tests"     :withValue: (List new)
+	         addImmutableField: "$TestCase" :withValue: (this $TestCase);
    #----------------------------------------------------------------------------
 	suite addMethod: "addTestNamed::using:" :using: {!this !name !block |
 	       
-			this tests add: (TestCase named: name :using: block);
+		  this tests add: (this $TestCase named: name :using: block);
 	      this;
 	};	 
 	#----------------------------------------------------------------------------

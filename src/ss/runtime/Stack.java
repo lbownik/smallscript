@@ -99,9 +99,12 @@ public interface Stack {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public static boolean isTopLevelVariable() {
-      
-      return false;
+   public static boolean isTopLevelVariable(final String name) {
+
+      return name.equals(OBJECT) || name.equals(NULL) || name.equals(TRUE)
+            || name.equals(FALSE) || name.equals(LIST) || name.equals(MAP)
+            || name.equals(SET) || name.equals(EXCEPTION)
+            || name.equals(APPLICATION);
    }
    /****************************************************************************
     * 
@@ -115,13 +118,12 @@ public interface Stack {
    public final static String SET = "Set";
    public final static String EXCEPTION = "Exception";
    public final static String APPLICATION = "application";
-   
-   
+
    /****************************************************************************
-    * Inheriting from HasMap gives 10X performance boost of "pushNewFrame"
-    * and 20% performance boost for "add/get/set/Variable".
-   ****************************************************************************/
-   public static class Frame extends HashMap<String, SSObject>  implements Stack  {
+    * Inheriting from HasMap gives 10X performance boost of "pushNewFrame" and 20%
+    * performance boost for "add/get/set/Variable".
+    ****************************************************************************/
+   public static class Frame extends HashMap<String, SSObject> implements Stack {
       /*************************************************************************
        * 
       *************************************************************************/

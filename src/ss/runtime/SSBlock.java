@@ -16,6 +16,7 @@
 package ss.runtime;
 
 import static java.util.Collections.emptyList;
+import static ss.runtime.Stack.isTopLevelVariable;
 
 import java.util.HashSet;
 import java.util.List;
@@ -72,7 +73,7 @@ public class SSBlock extends SSDynamicObject {
       final var result = new HashSet<String>();
       for (final var statement : this.statements) {
          for (final var variable : statement.referencedVariables()) {
-            if (!Stack.isTopLevelVariable()) {
+            if (!isTopLevelVariable(variable)) {
                result.add(variable);
             }
          }

@@ -29,7 +29,6 @@ public final class SSClosure implements SSObject {
 
       this.enclosedStack = stack;
       this.target = target;
-      System.out.println("new SSClosure");
    }
    /****************************************************************************
     * Calls method of the encompassed object performing necessary computations if

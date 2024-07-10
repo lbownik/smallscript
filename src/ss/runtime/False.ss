@@ -21,7 +21,7 @@ Object new addMethod: "and:"     :using: {!this !other | this }
                                          {!this !tBlock !fBlock | fBlock execute }
            addMethod: "not"      :using: {!this | true }
            addMethod: "or:"      :using: {!this !other | other }
-           addMethod: "xor:"     :using: {!this !other | other }
+           addMethod: "orElse:"  :using: {!this !other | other }
            addMethod: "asString" :using: "false"
            addMethod: "hash"     :using: 1;
            

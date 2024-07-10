@@ -115,7 +115,7 @@ public class FalseUseCases extends UseCaseBase {
       assertSSTrue("false or: true;");
       assertSSFalse("false or: false;");
       assertSSNull("false or: null;");
-      assertResultEquals(new SSLong(1), "false xor: 1;");
+      assertResultEquals(new SSLong(1), "false orElse: 1;");
    }
    /****************************************************************************
     * 

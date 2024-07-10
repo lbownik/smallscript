@@ -31,7 +31,7 @@ public class StackUseCases {
    @Test
    public void variableOnStack_canBeRetrieved() throws Exception {
 
-      var stack = Stack.create().addVariable("a", new SSString("x"));
+      var stack = Stack.create().pushNewFrame().addVariable("a", new SSString("x"));
 
       assertEquals(new SSString("x"), stack.getVariable("a"));
 
@@ -46,7 +46,7 @@ public class StackUseCases {
    @Test
    public void variableOnStack_canBeChanged() throws Exception {
 
-      var stack = Stack.create().addVariable("a", new SSString("x"));
+      var stack = Stack.create().pushNewFrame().addVariable("a", new SSString("x"));
       stack.setVariable("a", new SSString("y"));
 
       assertEquals(new SSString("y"), stack.getVariable("a"));
@@ -65,7 +65,7 @@ public class StackUseCases {
    public void addVariable_throwsException_whenVariableAlreadyExistsInTheSameFrame()
          throws Exception {
 
-      var stack = Stack.create().addVariable("a", new SSString("x"));
+      var stack = Stack.create().pushNewFrame().addVariable("a", new SSString("x"));
 
       try {
          stack.addVariable("a", new SSString("y"));
@@ -79,12 +79,12 @@ public class StackUseCases {
     * 
     ***************************************************************************/
    @Test
-   public void addVariable_addsVriableToTopLevelFrame() throws Exception {
+   public void variableAddedToLowerFrame_isNotVisibleInHigherFrames() throws Exception {
 
       var stack = Stack.create();
-      var topLevelFrame = stack.pushNewFrame().addVariable("a", new SSString("x"));
+      var lowerFrame = stack.pushNewFrame().addVariable("a", new SSString("x"));
 
-      assertEquals(new SSString("x"), topLevelFrame.getVariable("a"));
+      assertEquals(new SSString("x"), lowerFrame.getVariable("a"));
 
       try {
          stack.getVariable("a");
@@ -101,7 +101,7 @@ public class StackUseCases {
    public void addVariable_shadowsVariablesAlreadyExistingOnStack()
          throws Exception {
 
-      var stack = Stack.create().addVariable("a", new SSString("x"));
+      var stack = Stack.create().pushNewFrame().addVariable("a", new SSString("x"));
       var topLevelFrame = stack.pushNewFrame().addVariable("a", new SSString("y"));
 
       assertEquals(new SSString("x"), stack.getVariable("a"));
@@ -133,6 +133,29 @@ public class StackUseCases {
          fail("Expected exception");
       } catch (RuntimeException e) {
          assertEquals("Variable 'a' does not exist.", e.getMessage());
+      }
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void topLevelVariables_canBeAddedToTopLevelFrame() throws Exception {
+
+      var stack = Stack.create().addVariable("true", new SSString("true"));
+
+      assertEquals(new SSString("true"), stack.getVariable("true"));
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void nonTopLevelVariables_canBeAddedToTopLevelFrame() throws Exception {
+
+      try {
+      Stack.create().addVariable("a", new SSString("true"));
+      fail("Expected exception");
+      } catch (RuntimeException e) {
+         assertEquals("Variable 'a'is not allowed as top-level variable.", e.getMessage());
       }
    }
    /****************************************************************************

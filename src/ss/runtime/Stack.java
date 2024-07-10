@@ -93,8 +93,7 @@ public interface Stack {
    ****************************************************************************/
    public static Stack create() {
 
-      return new Stack() {
-      }.pushNewFrame();
+      return new TopFrame();
    }
    /****************************************************************************
     * 
@@ -166,6 +165,53 @@ public interface Stack {
       /*************************************************************************
        * 
       *************************************************************************/
-      private final Stack previousFrame;
+      protected final Stack previousFrame;
+   }
+   /****************************************************************************
+    * Inheriting from HasMap gives 10X performance boost of "pushNewFrame" and 20%
+    * performance boost for "add/get/set/Variable".
+    ****************************************************************************/
+   public static class TopFrame extends Frame {
+      /*************************************************************************
+       * 
+      *************************************************************************/
+      private TopFrame() {
+
+         super(new Stack() {
+         });
+      }
+      /*************************************************************************
+       * 
+      *************************************************************************/
+      @Override
+      public Stack addVariable(final String name, final SSObject value) {
+
+         if (isTopLevelVariable(name)) {
+            if (put(name, value) == null) {
+               return this;
+            } else {
+               throw new RuntimeException(
+                     "Variable '" + name + "' already exists in this scope.");
+            }
+         } else {
+            throw new RuntimeException(
+                  "Variable '" + name + "'is not allowed as top-level variable.");
+         }
+      }
+      /*************************************************************************
+       * 
+      *************************************************************************/
+      @Override
+      public Stack setVariable(final String name, final SSObject value) {
+
+         if (isTopLevelVariable(name)) {
+            throw new RuntimeException("Variable '" + name + "'is read-only.");
+         } else {
+            return this.previousFrame.setVariable(name, value);
+         }
+      }
+      /*************************************************************************
+       * 
+      *************************************************************************/
    }
 }

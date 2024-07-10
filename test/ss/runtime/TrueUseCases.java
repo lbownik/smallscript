@@ -110,15 +110,15 @@ public class TrueUseCases  extends UseCaseBase {
     * 
     ***************************************************************************/
    @Test
-   public void trueXorSomethigElse_returnsSomethingElese_Not() throws Exception {
+   public void trueOrElseSomethigElse_returnsSomethingElese_Not() throws Exception {
 
-      assertSSFalse("true xor: true;");
-      assertSSTrue("true xor: false;");
-      assertSSNull("true xor: null;");
+      assertSSFalse("true orElse: true;");
+      assertSSTrue("true orElse: false;");
+      assertSSNull("true orElse: null;");
       assertSSTrue("""
            !o = Object new;
            o try: {
-             true xor: 1;
+             true orElse: 1;
              false;
            } :catch: {!e |
              (e nature equals: "exception") and:

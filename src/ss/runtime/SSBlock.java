@@ -36,6 +36,7 @@ public class SSBlock extends SSDynamicObject {
       this.argumentNames = argumentNames;
       this.enclosedVariables = referencedVariables();
       this.enclosedVariables.removeAll(declaredVariables());
+      this.declaresVariables = declaredVariables().size() > 0;
 
       setField(null, "nature", nature);
       addBinaryMethod("clone", SSBlock::clone);
@@ -94,6 +95,7 @@ public class SSBlock extends SSDynamicObject {
 
       return result.isEmpty() ? emptySet() : result; //optimization
    }
+   
    /****************************************************************************
     * 
    ****************************************************************************/
@@ -166,11 +168,10 @@ public class SSBlock extends SSDynamicObject {
    @Override
    public SSObject execute(Stack stack, final List<SSObject> args) {
 
-      if(this.declaredVariables().size() > 0) {
+      if(this.declaresVariables) {
          stack = stack.pushNewFrame();
+         initiateLocalVariables(stack, args);
       }
-
-      initiateLocalVariables(stack, args);
 
       SSObject result = null;
 
@@ -223,6 +224,7 @@ public class SSBlock extends SSDynamicObject {
    private final List<SSObject> statements;
    private final List<String> argumentNames;
    private final Set<String> enclosedVariables;
+   private final boolean declaresVariables;
 
    private final static SSString nature = new SSString("block");
 }

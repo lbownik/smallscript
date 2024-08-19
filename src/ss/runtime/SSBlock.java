@@ -166,7 +166,9 @@ public class SSBlock extends SSDynamicObject {
    @Override
    public SSObject execute(Stack stack, final List<SSObject> args) {
 
-      stack = stack.pushNewFrame();
+      if(this.declaredVariables().size() > 0) {
+         stack = stack.pushNewFrame();
+      }
 
       initiateLocalVariables(stack, args);
 

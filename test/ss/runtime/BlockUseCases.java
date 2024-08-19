@@ -125,6 +125,20 @@ public class BlockUseCases extends UseCaseBase {
             """);
    }
    /****************************************************************************
+   * 
+   ****************************************************************************/
+   @Test
+   public void arguments_returnsArgumentNames_forProperInvocation()
+         throws Exception {
+
+      assertResultEquals(new SSString("arg"), """
+            {!arg | null;} arguments at: 0;
+            """);
+      assertResultEquals(new SSLong(0), """
+            {} arguments size;
+            """);
+   }
+   /****************************************************************************
     * 
     ****************************************************************************/
    @Test

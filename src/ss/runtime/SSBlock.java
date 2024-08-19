@@ -39,6 +39,7 @@ public class SSBlock extends SSDynamicObject {
       this.declaresVariables = declaredVariables().size() > 0;
 
       setField(null, "nature", nature);
+      addBinaryMethod("arguments", SSBlock::getArguments);
       addBinaryMethod("clone", SSBlock::clone);
       addBinaryMethod("equals:", SSBlock::equals);
       addBinaryMethod("isNotEqualTo:", SSBlock::isNotEqualTo);
@@ -131,6 +132,15 @@ public class SSBlock extends SSDynamicObject {
       } else {
          return stack.get(!subject.equals(arg));
       }
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject getArguments(final Stack stack,
+         final List<SSObject> args) {
+      
+      final var subject = (SSBlock) args.get(0);
+      return new SSList(subject.argumentNames.stream().map(SSString::new).toList());
    }
    /****************************************************************************
     * 

@@ -84,6 +84,17 @@ public interface Stack {
    /****************************************************************************
     * 
    ****************************************************************************/
+   default public Stack copyVariableFrom(final Stack source, final String name) {
+      
+      try {
+         return addVariable(name, source.getVariable(name));
+      } catch (final VariableNotFoud e) {
+         return this;
+      }
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
    default public Stack pushNewFrame() {
 
       return new Frame(this);
@@ -94,6 +105,13 @@ public interface Stack {
    public static Stack create() {
 
       return new TopFrame();
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   public static Stack createClosure() {
+
+      return terminator.pushNewFrame();
    }
    /****************************************************************************
     * 
@@ -117,6 +135,9 @@ public interface Stack {
    public final static String SET = "Set";
    public final static String EXCEPTION = "Exception";
    public final static String APPLICATION = "application";
+
+   final static Stack terminator = new Stack() {
+   };
 
    /****************************************************************************
     * Inheriting from HasMap gives 10X performance boost of "pushNewFrame" and 20%
@@ -177,8 +198,7 @@ public interface Stack {
       *************************************************************************/
       private TopFrame() {
 
-         super(new Stack() {
-         });
+         super(Stack.terminator);
       }
       /*************************************************************************
        * 

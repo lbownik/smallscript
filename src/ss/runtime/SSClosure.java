@@ -27,7 +27,9 @@ public final class SSClosure implements SSObject {
     ****************************************************************************/
    public SSClosure(final Stack stack, final SSObject target) {
 
-      this.enclosedStack = stack;
+      this.enclosedStack = Stack.createClosure();
+      target.referencedVariables().forEach(
+            variable -> this.enclosedStack.copyVariableFrom(stack, variable));
       this.target = target;
    }
    /****************************************************************************

@@ -62,6 +62,18 @@ public class SSExpression implements SSObject {
       return result;
    }
    /****************************************************************************
+    * @return names of declared variables
+    ***************************************************************************/
+   @Override
+   public Set<String> declaredVariables() {
+
+      final var result = new HashSet<String>();
+      result.addAll(this.object.declaredVariables());
+      this.args.forEach(arg -> result.addAll(arg.declaredVariables()));
+      
+      return result;
+   }
+   /****************************************************************************
     * 
    ****************************************************************************/
    @Override

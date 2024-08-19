@@ -15,6 +15,8 @@
 //-----------------------------------------------------------------------------
 package ss.runtime;
 
+import java.util.Set;
+
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
@@ -44,6 +46,14 @@ public class SSNewVariableAssignment implements SSObject {
    public String toString() {
 
       return "!" + this.variableName + " = " + this.arg + "\n";
+   }
+   /****************************************************************************
+    * @return names of declared variables
+    ***************************************************************************/
+   @Override
+   public Set<String> declaredVariables() {
+
+      return Set.of(this.variableName);
    }
    /****************************************************************************
     * 

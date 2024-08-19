@@ -15,7 +15,10 @@
 //-----------------------------------------------------------------------------
 package ss.runtime;
 
+import static ss.runtime.Stack.isTopLevelVariable;
+
 import java.util.HashMap;
+import java.util.Set;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
@@ -84,17 +87,6 @@ public interface Stack {
    /****************************************************************************
     * 
    ****************************************************************************/
-   default public Stack copyVariableFrom(final Stack source, final String name) {
-      
-      try {
-         return addVariable(name, source.getVariable(name));
-      } catch (final VariableNotFoud e) {
-         return this;
-      }
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
    default public Stack pushNewFrame() {
 
       return new Frame(this);
@@ -109,9 +101,26 @@ public interface Stack {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public static Stack createClosure() {
+   public default Stack createClosure(final Set<String> enclosedVariables) {
 
-      return terminator.pushNewFrame();
+      final Stack closure = terminator.pushNewFrame();
+
+      for (final String variable : enclosedVariables) {
+         try {
+            closure.addVariable(variable, this.getVariable(variable));
+         } catch (final VariableNotFoud e) {
+            // ignore
+         }
+      }
+
+      return closure;
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   public default Stack combine(final Stack other) {
+
+      return new DualStack(this, other);
    }
    /****************************************************************************
     * 
@@ -192,7 +201,7 @@ public interface Stack {
     * Inheriting from HasMap gives 10X performance boost of "pushNewFrame" and 20%
     * performance boost for "add/get/set/Variable".
     ****************************************************************************/
-   public static class TopFrame extends Frame {
+   static class TopFrame extends Frame {
       /*************************************************************************
        * 
       *************************************************************************/
@@ -233,5 +242,55 @@ public interface Stack {
       /*************************************************************************
        * 
       *************************************************************************/
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   final class DualStack implements Stack {
+      /*************************************************************************
+       * 
+      *************************************************************************/
+      public DualStack(final Stack current, final Stack enclosed) {
+
+         this.current = current;
+         this.enclosed = enclosed;
+      }
+      /*************************************************************************
+       * 
+      *************************************************************************/
+      @Override
+      public Stack addVariable(final String name, final SSObject value) {
+
+         return this.current.addVariable(name, value);
+      }
+      /*************************************************************************
+       * 
+      *************************************************************************/
+      @Override
+      public Stack setVariable(final String name, final SSObject value) {
+
+         try {
+            return this.current.setVariable(name, value);
+         } catch (Stack.VariableNotFoud e) {
+            return this.enclosed.setVariable(name, value);
+         }
+      }
+      /*************************************************************************
+       * 
+      *************************************************************************/
+      @Override
+      public SSObject getVariable(final String name) {
+
+         try {
+            return this.current.getVariable(name);
+         } catch (Stack.VariableNotFoud e) {
+            return this.enclosed.getVariable(name);
+         }
+      }
+      /*************************************************************************
+       * 
+      *************************************************************************/
+      private final Stack current;
+      private final Stack enclosed;
    }
 }

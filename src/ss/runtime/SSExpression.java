@@ -79,7 +79,7 @@ public class SSExpression implements SSObject {
    @Override
    public String toString() {
 
-      return this.object + " " + this.method + " " + this.args + "\n";
+      return "(" + this.object + " " + this.method + " " + this.args + ")";
    }
    /****************************************************************************
     * 

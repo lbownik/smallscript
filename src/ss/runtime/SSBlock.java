@@ -35,8 +35,9 @@ public class SSBlock extends SSDynamicObject {
       this.statements = statements;
       this.argumentNames = argumentNames;
       this.enclosedVariables = referencedVariables();
-      this.enclosedVariables.removeAll(declaredVariables());
-      this.declaresVariables = declaredVariables().size() > 0;
+      final var declaredVariables = declaredVariables();
+      this.enclosedVariables.removeAll(declaredVariables);
+      this.declaresVariables = declaredVariables.size() > 0;
 
       setField(null, "nature", nature);
       addBinaryMethod("arguments", SSBlock::getArguments);
@@ -208,9 +209,17 @@ public class SSBlock extends SSDynamicObject {
    @Override
    public String toString() {
 
-      var result = new StringBuilder('\n').append(this.argumentNames).append("|\n");
+      final var result = new StringBuilder("{");
+      
+      if(this.argumentNames.size() > 0) {
+         this.argumentNames.forEach(arg -> result.append("!").append(arg));
+         result.append("|\n");
+      } else {
+         result.append("\n");
+      }
 
-      this.statements.forEach(s -> result.append(s).append("\n"));
+      this.statements.forEach(s -> result.append(s).append(";\n"));
+      result.append("};");
 
       return result.toString();
    }

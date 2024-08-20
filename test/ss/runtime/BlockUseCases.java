@@ -15,6 +15,10 @@
 //------------------------------------------------------------------------------
 package ss.runtime;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.List;
+
 import org.junit.Test;
 
 public class BlockUseCases extends UseCaseBase {
@@ -180,6 +184,34 @@ public class BlockUseCases extends UseCaseBase {
             !block2 = block1 clone;
             block1 equals: block2;
             """);
+   }
+   /****************************************************************************
+    * 
+    ****************************************************************************/
+   @Test 
+   public void parsingBlock_works() throws Exception {
+      
+      SSBlock block = new Parser().parse("!arg | arg;");
+      SSString arg = new SSString("abc");
+      Stack stack = Stack.create();
+      
+      assertEquals(arg, block.execute(stack, List.of(arg)));
+   }
+   /****************************************************************************
+    * 
+    ****************************************************************************/
+   @Test 
+   public void test() throws Exception {
+      
+//      System.out.println(new Parser().parse("""
+//            { !a !b !c | 
+//               !d = a asString;
+//               b;
+//            };
+//            """));
+      System.out.println(new Parser().parse("""
+            true ifTrue: "a" :ifFalse: "b";
+            """));
    }
    /****************************************************************************
     * 

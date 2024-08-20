@@ -54,7 +54,7 @@ public class SSExistingVariableAssignment implements SSObject {
    @Override
    public String toString() {
 
-      return this.variableName + " = " + this.arg + "\n";
+      return this.variableName + " = " + this.arg;
    }
    /****************************************************************************
     * 

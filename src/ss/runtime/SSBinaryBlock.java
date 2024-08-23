@@ -27,14 +27,16 @@ public class SSBinaryBlock implements SSObject {
    ****************************************************************************/
    static SSBinaryBlock bb(final BiFunction<Stack, List<SSObject>, SSObject> code) {
 
-      return new SSBinaryBlock(code);
+      return new SSBinaryBlock(code, emptyList());
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   public SSBinaryBlock(final BiFunction<Stack, List<SSObject>, SSObject> code) {
+   public SSBinaryBlock(final BiFunction<Stack, List<SSObject>, SSObject> code, 
+         final List<String> argumentNames) {
 
       this.code = code;
+      this.argumentNames = argumentNames;
    }
    /****************************************************************************
     * 
@@ -42,6 +44,7 @@ public class SSBinaryBlock implements SSObject {
    public SSBinaryBlock(final SSBinaryBlock other) {
 
       this.code = other.code;
+      this.argumentNames = other.argumentNames;
    }
    /****************************************************************************
     * 
@@ -54,6 +57,7 @@ public class SSBinaryBlock implements SSObject {
          return this.code.apply(stack, args);
       } else {
          return switch (method) {
+            case "arguments" -> argumentNames();
             case "asString" -> new SSString(toString());
             case "clone" -> new SSBinaryBlock(this);
             case "hash" -> new SSLong(hashCode());
@@ -126,6 +130,13 @@ public class SSBinaryBlock implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
+   private SSList argumentNames() {
+      
+      return new SSList(this.argumentNames.stream().map(SSString::new).toList());
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
    @Override
    public String toString() {
 
@@ -135,4 +146,5 @@ public class SSBinaryBlock implements SSObject {
     * 
    ****************************************************************************/
    private final BiFunction<Stack, List<SSObject>, SSObject> code;
+   private final List<String> argumentNames;
 }

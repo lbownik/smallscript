@@ -318,6 +318,17 @@ public class DynamicObjectUseCases extends UseCaseBase {
     * 
    ****************************************************************************/
    @Test
+   public void method_resturnsBlock() throws Exception {
+      
+      assertSSTrue("""
+               true method: "ifTrue:" nature equals: "block";
+            """);
+   }
+  
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   @Test
    public void fields_resturnsSetOfFields() throws Exception {
       
       assertSSTrue("""

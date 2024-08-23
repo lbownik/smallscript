@@ -15,6 +15,7 @@
 //------------------------------------------------------------------------------
 package ss.runtime;
 
+import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toSet;
 import static ss.runtime.SSBinaryBlock.bb;
 
@@ -90,7 +91,7 @@ public class SSDynamicObject implements SSObject {
    protected void addBinaryMethod(final String name,
          final BiFunction<Stack, List<SSObject>, SSObject> code) {
 
-      this.methods.add(name, new SSBinaryBlock(code));
+      this.methods.add(name, new SSBinaryBlock(code, emptyList()));
    }
    /****************************************************************************
     * 

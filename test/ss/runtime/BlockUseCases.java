@@ -200,18 +200,18 @@ public class BlockUseCases extends UseCaseBase {
    /****************************************************************************
     * 
     ****************************************************************************/
-   @Test 
-   public void test() throws Exception {
+   @Test
+   public void blockArguments_canBeListed() throws Exception {
       
-//      System.out.println(new Parser().parse("""
-//            { !a !b !c | 
-//               !d = a asString;
-//               b;
-//            };
-//            """));
-      System.out.println(new Parser().parse("""
-            true ifTrue: "a" :ifFalse: "b";
-            """));
+      assertSSTrue("""
+            !args = { } arguments;
+            args size equals: 0;
+            """);
+      
+      assertSSTrue("""
+            !args = { !a !b | null; } arguments;
+            (args size equals: 2) and: (args at: 0 equals: "a") and: (args at: 1 equals: "b");
+            """);
    }
    /****************************************************************************
     * 

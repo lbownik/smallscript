@@ -212,7 +212,7 @@ public class SSBlock extends SSDynamicObject {
       final var result = new StringBuilder("{");
       
       if(this.argumentNames.size() > 0) {
-         this.argumentNames.forEach(arg -> result.append("!").append(arg));
+         this.argumentNames.forEach(arg -> result.append(" !").append(arg));
          result.append("|\n");
       } else {
          result.append("\n");
@@ -229,13 +229,6 @@ public class SSBlock extends SSDynamicObject {
    public boolean isEmpty() {
 
       return this.statements.isEmpty();
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   public int size() {
-
-      return this.statements.size();
    }
    /****************************************************************************
     * 

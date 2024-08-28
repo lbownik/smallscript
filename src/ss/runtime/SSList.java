@@ -45,19 +45,19 @@ public final class SSList extends SSDynamicObject {
    ****************************************************************************/
    static Methods putMethods(final Methods methods) {
 
-      methods.add("add:", bb(SSList::append));
-      methods.add("append:", bb(SSList::append));
-      methods.add("at:", bb(SSList::at));
-      methods.add("at::put:", bb(SSList::atPut));
+      methods.add("add:", bb(SSList::append, List.of("item")));
+      methods.add("append:", bb(SSList::append, List.of("item")));
+      methods.add("at:", bb(SSList::at, List.of("index")));
+      methods.add("at::put:", bb(SSList::atPut, List.of("index", "item")));
       methods.add("at::put::andReturnPreviousItem",
-            bb(SSList::atPutAndReturnPreviousItem));
-      methods.add("forEach:", bb(SSList::forEach));
-      methods.add("removeAt:", bb(SSList::removeAt));
+            bb(SSList::atPutAndReturnPreviousItem, List.of("index", "item")));
+      methods.add("forEach:", bb(SSList::forEach, List.of("block")));
+      methods.add("removeAt:", bb(SSList::removeAt, List.of("index")));
       methods.add("removeAt::andReturnRemovedItem",
-            bb(SSList::removeAtAndReturnRemovedItem));
+            bb(SSList::removeAtAndReturnRemovedItem, List.of("index")));
       methods.add("size", bb(SSList::size));
-      methods.add("selectIf:", bb(SSList::selectIf));
-      methods.add("transformUsing:", bb(SSList::transformUsing));
+      methods.add("selectIf:", bb(SSList::selectIf, List.of("block")));
+      methods.add("transformUsing:", bb(SSList::transformUsing, List.of("block")));
 
       return methods;
    }

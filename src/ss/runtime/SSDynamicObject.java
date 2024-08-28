@@ -55,33 +55,33 @@ public class SSDynamicObject implements SSObject {
    ****************************************************************************/
    static Methods putMethods(final Methods methods) {
 
-      methods.add("invoke::with:", bb(SSDynamicObject::invokeWith));
-      methods.add("addField:", bb(SSDynamicObject::addField));
-      methods.add("addField::withValue:", bb(SSDynamicObject::addFieldWithValue));
+      methods.add("invoke::with:", bb(SSDynamicObject::invokeWith, List.of("method", "argList")));
+      methods.add("addField:", bb(SSDynamicObject::addField, List.of("name")));
+      methods.add("addField::withValue:", bb(SSDynamicObject::addFieldWithValue, List.of("name", "value")));
       methods.add("addImmutableField::withValue:",
-            bb(SSDynamicObject::addImmutableFieldWithValue));
-      methods.add("addMethod::using:", bb(SSDynamicObject::addMethod));
+            bb(SSDynamicObject::addImmutableFieldWithValue, List.of("name", "value")));
+      methods.add("addMethod::using:", bb(SSDynamicObject::addMethod, List.of("name", "block")));
       methods.add("asString", bb(SSDynamicObject::asString));
-      methods.add("at:", bb(SSDynamicObject::at));
+      methods.add("at:", bb(SSDynamicObject::at, List.of("index")));
       methods.add("clone", bb(SSDynamicObject::clone));
-      methods.add("collectTo:", bb(SSDynamicObject::collectTo));
-      methods.add("doesNotUnderstand:", bb(SSDynamicObject::doesNotUnderstand));
-      methods.add("equals:", bb(SSDynamicObject::isEqualTo));
+      methods.add("collectTo:", bb(SSDynamicObject::collectTo, List.of("collector")));
+      methods.add("doesNotUnderstand:", bb(SSDynamicObject::doesNotUnderstand, List.of("message")));
+      methods.add("equals:", bb(SSDynamicObject::isEqualTo, List.of("other")));
       methods.add("execute", bb(SSDynamicObject::evaluate));
       methods.add("fields", bb(SSDynamicObject::getFields));
-      methods.add("forEach:", bb(SSDynamicObject::forEach));
-      methods.add("method:", bb(SSDynamicObject::getMethod));
+      methods.add("forEach:", bb(SSDynamicObject::forEach, List.of("block")));
+      methods.add("method:", bb(SSDynamicObject::getMethod, List.of("name")));
       methods.add("methods", bb(SSDynamicObject::getMethods));
       methods.add("nature", bb((s, a) -> getField(s, "nature", a)));
-      methods.add("nature:", bb((s, a) -> setField(s, "nature", a)));
+      methods.add("nature:", bb((s, a) -> setField(s, "nature", a), List.of("value")));
       methods.add("hash", bb(SSDynamicObject::hashCode));
-      methods.add("isNotEqualTo:", bb(SSDynamicObject::isNotEqualTo));
-      methods.add("orDefault:", bb(SSDynamicObject::orDefault));
+      methods.add("isNotEqualTo:", bb(SSDynamicObject::isNotEqualTo, List.of("other")));
+      methods.add("orDefault:", bb(SSDynamicObject::orDefault, List.of("default")));
       methods.add("size", bb((stack, args) -> new SSLong(1)));
-      methods.add("selectIf:", bb(SSDynamicObject::selectIf));
+      methods.add("selectIf:", bb(SSDynamicObject::selectIf, List.of("block")));
       methods.add("throw", bb(SSDynamicObject::throwThis));
-      methods.add("transformUsing:", bb(SSDynamicObject::transformUsing));
-      methods.add("try::catch:", bb(SSDynamicObject::tryCatch));
+      methods.add("transformUsing:", bb(SSDynamicObject::transformUsing, List.of("block")));
+      methods.add("try::catch:", bb(SSDynamicObject::tryCatch, List.of("tryBlock", "catchBlock")));
 
       return methods;
    }
@@ -91,7 +91,16 @@ public class SSDynamicObject implements SSObject {
    protected void addBinaryMethod(final String name,
          final BiFunction<Stack, List<SSObject>, SSObject> code) {
 
-      this.methods.add(name, new SSBinaryBlock(code, emptyList()));
+      this.methods.add(name, bb(code));
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   protected void addBinaryMethod(final String name,
+         final BiFunction<Stack, List<SSObject>, SSObject> code, 
+         final List<String> argumentNames) {
+
+      this.methods.add(name, bb(code, argumentNames));
    }
    /****************************************************************************
     * 
@@ -160,9 +169,9 @@ public class SSDynamicObject implements SSObject {
 
       final var subject = (SSDynamicObject) args.get(0);
       final var method = args.get(1).evaluate(stack).toString();
-      final var mArgs = ((SSList) args.get(2).evaluate(stack)).elements;
+      final var argList = ((SSList) args.get(2).evaluate(stack)).elements;
 
-      return subject.invoke(stack, method, mArgs);
+      return subject.invoke(stack, method, argList);
    }
    /****************************************************************************
     * 
@@ -292,7 +301,7 @@ public class SSDynamicObject implements SSObject {
    SSObject addField(final Stack stack, final String name, final SSObject value) {
 
       this.methods.add(name, bb((s, a) -> getField(s, name, a)));
-      this.methods.add(name + ":", bb((s, a) -> setField(s, name, a)));
+      this.methods.add(name + ":", bb((s, a) -> setField(s, name, a), List.of("value")));
 
       return setField(stack, name, value);
    }

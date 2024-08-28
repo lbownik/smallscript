@@ -44,17 +44,18 @@ public final class SSDouble extends SSDynamicObject {
    ****************************************************************************/
    static Methods putMethods(final Methods methods) {
 
+      final List<String> listOfNumber = List.of("number");
       methods.add("asDouble", bb(SSDouble::asDouble));
       methods.add("asLong", bb(SSDouble::asLong));
       methods.add("clone", bb(SSDouble::clone));
-      methods.add("dividedBy:", bb(SSDouble::dividedBy));
-      methods.add("isGreaterThan:", bb(SSDouble::isGreaterThan));
-      methods.add("isGreaterOrEqualTo:", bb(SSDouble::isGreaterOrEqualTo));
-      methods.add("isLessThan:", bb(SSDouble::isLessThan));
-      methods.add("isLessOrEqualTo:", bb(SSDouble::isLessOrEqualTo));
-      methods.add("minus:", bb(SSDouble::minus));
-      methods.add("multipliedBy:", bb(SSDouble::multipliedBy));
-      methods.add("plus:", bb(SSDouble::plus));
+      methods.add("dividedBy:", bb(SSDouble::dividedBy, listOfNumber));
+      methods.add("isGreaterThan:", bb(SSDouble::isGreaterThan, listOfNumber));
+      methods.add("isGreaterOrEqualTo:", bb(SSDouble::isGreaterOrEqualTo, listOfNumber));
+      methods.add("isLessThan:", bb(SSDouble::isLessThan, listOfNumber));
+      methods.add("isLessOrEqualTo:", bb(SSDouble::isLessOrEqualTo, listOfNumber));
+      methods.add("minus:", bb(SSDouble::minus, listOfNumber));
+      methods.add("multipliedBy:", bb(SSDouble::multipliedBy, listOfNumber));
+      methods.add("plus:", bb(SSDouble::plus, listOfNumber));
       
       return methods;
    }

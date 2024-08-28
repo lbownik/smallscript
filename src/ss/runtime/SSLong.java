@@ -38,20 +38,21 @@ public final class SSLong extends SSDynamicObject {
    ****************************************************************************/
    static Methods putMethods(final Methods methods) {
 
+      final List<String> listOfNumber = List.of("number");
       methods.add("asDouble", bb(SSLong::asDouble));
       methods.add("asLong", bb((SSLong::asLong)));
       methods.add("clone", bb(SSLong::clone));
       methods.add("incremented", bb(SSLong::incremented));
-      methods.add("isGreaterThan:", bb(SSLong::isGreaterThan));
-      methods.add("isGreaterOrEqualTo:", bb(SSLong::isGreaterOrEqualTo));
-      methods.add("isLessThan:", bb(SSLong::isLessThan));
-      methods.add("isLessOrEqualTo:", bb(SSLong::isLessOrEqualTo));
-      methods.add("dividedBy:", bb(SSLong::dividedBy));
-      methods.add("minus:", bb(SSLong::minus));
-      methods.add("multipliedBy:", bb(SSLong::multipliedBy));
-      methods.add("plus:", bb(SSLong::plus));
-      methods.add("times:", bb(SSLong::times));
-      methods.add("to:", bb(SSLong::to));
+      methods.add("isGreaterThan:", bb(SSLong::isGreaterThan, listOfNumber));
+      methods.add("isGreaterOrEqualTo:", bb(SSLong::isGreaterOrEqualTo, listOfNumber));
+      methods.add("isLessThan:", bb(SSLong::isLessThan, listOfNumber));
+      methods.add("isLessOrEqualTo:", bb(SSLong::isLessOrEqualTo, listOfNumber));
+      methods.add("dividedBy:", bb(SSLong::dividedBy, listOfNumber));
+      methods.add("minus:", bb(SSLong::minus, listOfNumber));
+      methods.add("multipliedBy:", bb(SSLong::multipliedBy, listOfNumber));
+      methods.add("plus:", bb(SSLong::plus, listOfNumber));
+      methods.add("times:", bb(SSLong::times, List.of("block")));
+      methods.add("to:", bb(SSLong::to, listOfNumber));
 
       return methods;
    }

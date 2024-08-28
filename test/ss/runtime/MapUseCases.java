@@ -181,5 +181,100 @@ public class MapUseCases extends UseCaseBase {
    }
    /****************************************************************************
     * 
+   ****************************************************************************/
+   @Test
+   public void builtInMethods_returnArgumentLists() throws Exception {
+
+      assertSSTrue("""
+            Map new method: "invoke::with:" arguments equals: (List append: "method" append: "argList");
+            """);
+      assertSSTrue("""
+            Map new method: "addField:" arguments equals: (List append: "name");
+            """);
+      assertSSTrue("""
+            Map new method: "addField::withValue:" arguments equals: (List append: "name" append: "value");
+            """);
+      assertSSTrue("""
+            Map new method: "addImmutableField::withValue:" arguments equals: (List append: "name" append: "value");
+            """);
+      assertSSTrue("""
+            Map new method: "addMethod::using:" arguments equals: (List append: "name" append: "block");
+            """);
+      assertSSTrue("""
+            Map new method: "asString" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            Map new method: "at:" arguments equals: (List append: "key");
+            """);
+      assertSSTrue("""
+            Map new method: "clone" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            Map new method: "collectTo:" arguments equals: (List append: "collector");
+            """);
+      assertSSTrue("""
+            Map new method: "equals:" arguments equals: (List append: "other");
+            """);
+      assertSSTrue("""
+            Map new method: "execute" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            Map new method: "fields" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            Map new method: "forEach:" arguments equals: (List append: "block");
+            """);
+      assertSSTrue("""
+            Map new method: "method:" arguments equals: (List append: "name");
+            """);
+      assertSSTrue("""
+            Map new method: "methods" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            Map new method: "nature" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            Map new method: "nature:" arguments equals: (List append: "value");
+            """);
+      assertSSTrue("""
+            Map new method: "hash" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            Map new method: "isNotEqualTo:" arguments equals: (List append: "other");
+            """);
+      assertSSTrue("""
+            Map new method: "orDefault:" arguments equals: (List append: "default");
+            """);
+      assertSSTrue("""
+            Map new method: "size" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            Map new method: "selectIf:" arguments equals: (List append: "block");
+            """);
+      assertSSTrue("""
+            Map new method: "throw" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            Map new method: "transformUsing:" arguments equals: (List append: "block");
+            """);
+      assertSSTrue("""
+            Map new method: "try::catch:" arguments equals: (List append: "tryBlock" append: "catchBlock");
+            """);
+      
+      assertSSTrue("""
+            Map new method: "at::put:" arguments equals: (List append: "key" append: "value");
+            """);
+      assertSSTrue("""
+            Map new method: "at::put::andGetPreviousValue" arguments equals: (List append: "key" append: "value");
+            """);
+      assertSSTrue("""
+            Map new method: "removeAt:" arguments equals: (List append: "key");
+            """);
+      assertSSTrue("""
+            Map new method: "removeAt::andGetRemovedValue" arguments equals: (List append: "key");
+            """);
+   }
+   /****************************************************************************
+    * 
     ****************************************************************************/
 }

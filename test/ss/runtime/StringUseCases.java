@@ -111,5 +111,97 @@ public class StringUseCases extends UseCaseBase {
    }
    /****************************************************************************
     * 
+   ****************************************************************************/
+   @Test
+   public void builtInMethods_returnArgumentLists() throws Exception {
+
+      assertSSTrue("""
+            "" method: "invoke::with:" arguments equals: (List append: "method" append: "argList");
+            """);
+      assertSSTrue("""
+            "" method: "addField:" arguments equals: (List append: "name");
+            """);
+      assertSSTrue("""
+            "" method: "addField::withValue:" arguments equals: (List append: "name" append: "value");
+            """);
+      assertSSTrue("""
+            "" method: "addImmutableField::withValue:" arguments equals: (List append: "name" append: "value");
+            """);
+      assertSSTrue("""
+            "" method: "addMethod::using:" arguments equals: (List append: "name" append: "block");
+            """);
+      assertSSTrue("""
+            "" method: "asString" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            "" method: "at:" arguments equals: (List append: "index");
+            """);
+      assertSSTrue("""
+            "" method: "clone" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            "" method: "collectTo:" arguments equals: (List append: "collector");
+            """);
+      assertSSTrue("""
+            "" method: "equals:" arguments equals: (List append: "other");
+            """);
+      assertSSTrue("""
+            "" method: "execute" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            "" method: "fields" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            "" method: "forEach:" arguments equals: (List append: "block");
+            """);
+      assertSSTrue("""
+            "" method: "method:" arguments equals: (List append: "name");
+            """);
+      assertSSTrue("""
+            "" method: "methods" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            "" method: "nature" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            "" method: "nature:" arguments equals: (List append: "value");
+            """);
+      assertSSTrue("""
+            "" method: "hash" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            "" method: "isNotEqualTo:" arguments equals: (List append: "other");
+            """);
+      assertSSTrue("""
+            "" method: "orDefault:" arguments equals: (List append: "default");
+            """);
+      assertSSTrue("""
+            "" method: "size" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            "" method: "selectIf:" arguments equals: (List append: "block");
+            """);
+      assertSSTrue("""
+            "" method: "throw" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            "" method: "transformUsing:" arguments equals: (List append: "block");
+            """);
+      assertSSTrue("""
+            "" method: "try::catch:" arguments equals: (List append: "tryBlock" append: "catchBlock");
+            """);
+      
+      assertSSTrue("""
+            "" method: "append:" arguments equals: (List append: "text");
+            """);
+      assertSSTrue("""
+            "" method: "concatenate:" arguments equals: (List append: "text");
+            """);
+      assertSSTrue("""
+            "" method: "startsWith:" arguments equals: (List append: "text");
+            """);
+   }
+   /****************************************************************************
+    * 
     ***************************************************************************/
 }

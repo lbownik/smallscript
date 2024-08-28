@@ -119,7 +119,7 @@ public class DynamicObjectUseCases extends UseCaseBase {
             !list = o transformUsing: {!item | item } collectTo: List;
             (list size equals: 1) and: (list at: 0 equals: o);
             """);
-      
+
    }
    /****************************************************************************
     * 
@@ -308,7 +308,7 @@ public class DynamicObjectUseCases extends UseCaseBase {
    ****************************************************************************/
    @Test
    public void methods_resturnsSetOfMethods() throws Exception {
-      
+
       assertSSTrue("""
                !methods = Object new methods;
                (methods size isGreaterThan: 0) and: (methods nature equals: "set");
@@ -319,18 +319,18 @@ public class DynamicObjectUseCases extends UseCaseBase {
    ****************************************************************************/
    @Test
    public void method_resturnsBlock() throws Exception {
-      
+
       assertSSTrue("""
                true method: "ifTrue:" nature equals: "block";
             """);
    }
-  
+
    /****************************************************************************
     * 
    ****************************************************************************/
    @Test
    public void fields_resturnsSetOfFields() throws Exception {
-      
+
       assertSSTrue("""
                !fields = Object new fields;
                (fields size equals: 1) and: (fields nature equals: "set");
@@ -341,9 +341,99 @@ public class DynamicObjectUseCases extends UseCaseBase {
    ****************************************************************************/
    @Test
    public void invoke_invekesMethodByName() throws Exception {
-      
+
       assertSSTrue("""
                "abc" invoke: "size" :with: (List new) equals: 3;
+            """);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   @Test
+   public void builtInMethods_returnArgumentLists() throws Exception {
+
+      assertSSTrue("""
+            Object method: "invoke::with:" arguments equals: (List append: "method" append: "argList");
+            """);
+      assertSSTrue("""
+            Object method: "addField:" arguments equals: (List append: "name");
+            """);
+      assertSSTrue("""
+            Object method: "addField::withValue:" arguments equals: (List append: "name" append: "value");
+            """);
+      assertSSTrue("""
+            Object method: "addImmutableField::withValue:" arguments equals: (List append: "name" append: "value");
+            """);
+      assertSSTrue("""
+            Object method: "addMethod::using:" arguments equals: (List append: "name" append: "block");
+            """);
+      assertSSTrue("""
+            Object method: "asString" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            Object method: "at:" arguments equals: (List append: "index");
+            """);
+      assertSSTrue("""
+            Object method: "clone" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            Object method: "collectTo:" arguments equals: (List append: "collector");
+            """);
+      assertSSTrue("""
+            Object method: "doesNotUnderstand:" arguments equals: (List append: "message");
+            """);
+      assertSSTrue("""
+            Object method: "equals:" arguments equals: (List append: "other");
+            """);
+      assertSSTrue("""
+            Object method: "execute" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            Object method: "fields" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            Object method: "forEach:" arguments equals: (List append: "block");
+            """);
+      assertSSTrue("""
+            Object method: "method:" arguments equals: (List append: "name");
+            """);
+      assertSSTrue("""
+            Object method: "methods" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            Object method: "nature" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            Object method: "nature:" arguments equals: (List append: "value");
+            """);
+      assertSSTrue("""
+            Object method: "hash" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            Object method: "isNotEqualTo:" arguments equals: (List append: "other");
+            """);
+      assertSSTrue("""
+            Object method: "orDefault:" arguments equals: (List append: "default");
+            """);
+      assertSSTrue("""
+            Object method: "size" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            Object method: "selectIf:" arguments equals: (List append: "block");
+            """);
+      assertSSTrue("""
+            Object method: "throw" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            Object method: "transformUsing:" arguments equals: (List append: "block");
+            """);
+      assertSSTrue("""
+            Object method: "try::catch:" arguments equals: (List append: "tryBlock" append: "catchBlock");
+            """);
+      
+      assertSSTrue("""
+            Object addField: "xyz";
+            Object method: "xyz:" arguments equals: (List append: "value");
             """);
    }
    /****************************************************************************

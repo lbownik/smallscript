@@ -137,5 +137,45 @@ public class DoubleUseCases extends UseCaseBase {
    }
    /****************************************************************************
     * 
+   ****************************************************************************/
+   @Test
+   public void builtInMethods_returnArgumentLists() throws Exception {
+
+      assertSSTrue("""
+            1.0 method: "asDouble" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            1.0 method: "asLong" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            1.0 method: "clone" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            1.0 method: "dividedBy:" arguments equals: (List append: "number");
+            """);
+      assertSSTrue("""
+            1.0 method: "isGreaterThan:" arguments equals: (List append: "number");
+            """);
+      assertSSTrue("""
+            1.0 method: "isGreaterOrEqualTo:" arguments equals: (List append: "number");
+            """);
+      assertSSTrue("""
+            1.0 method: "isLessThan:" arguments equals: (List append: "number");
+            """);
+      assertSSTrue("""
+            1.0 method: "isLessOrEqualTo:" arguments equals: (List append: "number");
+            """);
+      assertSSTrue("""
+            1.0 method: "minus:" arguments equals: (List append: "number");
+            """);
+      assertSSTrue("""
+            1.0 method: "multipliedBy:" arguments equals: (List append: "number");
+            """);
+      assertSSTrue("""
+            1.0 method: "plus:" arguments equals: (List append: "number");
+            """);
+   }
+   /****************************************************************************
+    * 
     ***************************************************************************/
 }

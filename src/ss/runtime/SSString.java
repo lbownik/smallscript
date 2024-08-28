@@ -55,12 +55,12 @@ public final class SSString extends SSDynamicObject {
    ****************************************************************************/
    static Methods putMethods(final Methods methods) {
 
-      methods.add("append:", bb(SSString::concatenate));
-      methods.add("at:", bb(SSString::at));
+      methods.add("append:", bb(SSString::concatenate, List.of("text")));
+      methods.add("at:", bb(SSString::at, List.of("index")));
       methods.add("clone", bb(SSString::clone));
-      methods.add("concatenate:", bb(SSString::concatenate));
+      methods.add("concatenate:", bb(SSString::concatenate, List.of("text")));
       methods.add("size", bb(SSString::size));
-      methods.add("startsWith:", bb(SSString::startsWith));
+      methods.add("startsWith:", bb(SSString::startsWith, List.of("text")));
       
       return methods;
    }

@@ -30,8 +30,8 @@ public final class SSOutput extends SSDynamicObject {
 
       this.out = out;
       addBinaryMethod("clone", SSOutput::clone);
-      addBinaryMethod("writeLine:", SSOutput::writeLine);
-      addBinaryMethod("append:", SSOutput::append);
+      addBinaryMethod("writeLine:", SSOutput::writeLine, List.of("object"));
+      addBinaryMethod("append:", SSOutput::append, List.of("object"));
    }
    /****************************************************************************
     * 

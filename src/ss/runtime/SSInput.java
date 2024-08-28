@@ -29,7 +29,7 @@ public final class SSInput extends SSDynamicObject {
 
       this.reader = reader;
       addBinaryMethod("clone", SSInput::clone);
-      addBinaryMethod("readLine:", SSInput::readLine);
+      addBinaryMethod("readLine", SSInput::readLine);
    }
    /****************************************************************************
     * 

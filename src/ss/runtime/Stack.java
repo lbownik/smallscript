@@ -15,8 +15,6 @@
 //-----------------------------------------------------------------------------
 package ss.runtime;
 
-import static ss.runtime.Stack.isTopLevelVariable;
-
 import java.util.HashMap;
 import java.util.Set;
 /*******************************************************************************

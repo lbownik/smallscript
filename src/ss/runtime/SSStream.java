@@ -38,10 +38,10 @@ public final class SSStream extends SSDynamicObject {
    ****************************************************************************/
    static Methods putMethods(final Methods methods) {
 
-      methods.add("collectTo:", bb(SSStream::collectTo));
-      methods.add("forEach:", bb(SSStream::forEach));
-      methods.add("selectIf:", bb(SSStream::selectIf));
-      methods.add("transformUsing:", bb(SSStream::transformUsing));
+      methods.add("collectTo:", bb(SSStream::collectTo, List.of("collector")));
+      methods.add("forEach:", bb(SSStream::forEach, List.of("block")));
+      methods.add("selectIf:", bb(SSStream::selectIf, List.of("block")));
+      methods.add("transformUsing:", bb(SSStream::transformUsing, List.of("block")));
       
       return methods;
    }

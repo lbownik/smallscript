@@ -56,13 +56,13 @@ public final class SSSet extends SSDynamicObject {
    ****************************************************************************/
    static Methods putMethods(final Methods methods) {
 
-      methods.add("add:", bb(SSSet::append));
-      methods.add("append:", bb(SSSet::append));
-      methods.add("forEach:", bb(SSSet::forEach));
-      methods.add("remove:", bb(SSSet::remove));
+      methods.add("add:", bb(SSSet::append, List.of("item")));
+      methods.add("append:", bb(SSSet::append, List.of("item")));
+      methods.add("forEach:", bb(SSSet::forEach, List.of("block")));
+      methods.add("remove:", bb(SSSet::remove, List.of("item")));
       methods.add("size", bb(SSSet::size));
-      methods.add("selectIf:", bb(SSSet::selectIf));
-      methods.add("transformUsing:", bb(SSSet::transformUsing));
+      methods.add("selectIf:", bb(SSSet::selectIf, List.of("block")));
+      methods.add("transformUsing:", bb(SSSet::transformUsing, List.of("block")));
       
       return methods;
    }

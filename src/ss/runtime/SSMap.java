@@ -45,15 +45,15 @@ public final class SSMap extends SSDynamicObject {
    ****************************************************************************/
    static Methods putMethods(final Methods methods) {
 
-      methods.add("at:", bb(SSMap::at));
-      methods.add("at::put:", bb(SSMap::atPut));
+      methods.add("at:", bb(SSMap::at, List.of("key")));
+      methods.add("at::put:", bb(SSMap::atPut, List.of("key", "value")));
       methods.add("at::put::andGetPreviousValue",
-            bb(SSMap::atPutAndReturnPreviousValue));
-      methods.add("forEach:", bb(SSMap::forEach));
+            bb(SSMap::atPutAndReturnPreviousValue, List.of("key", "value")));
+      methods.add("forEach:", bb(SSMap::forEach, List.of("block")));
       methods.add("keys", bb(SSMap::keys));
-      methods.add("removeAt:", bb(SSMap::removeAt));
+      methods.add("removeAt:", bb(SSMap::removeAt, List.of("key")));
       methods.add("removeAt::andGetRemovedValue",
-            bb(SSMap::removeAtAndReturnRemovedValue));
+            bb(SSMap::removeAtAndReturnRemovedValue, List.of("key")));
       methods.add("size", bb(SSMap::size));
 
       return methods;

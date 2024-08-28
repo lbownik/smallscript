@@ -98,5 +98,15 @@ public class NullUseCases extends UseCaseBase {
    }
    /****************************************************************************
     * 
+   ****************************************************************************/
+   @Test
+   public void builtInMethods_returnNullAsArgumentLists() throws Exception {
+      
+      assertSSTrue("""
+            null method: "asString" arguments equals: null;
+            """);
+   }
+   /****************************************************************************
+    * 
     ****************************************************************************/
 }

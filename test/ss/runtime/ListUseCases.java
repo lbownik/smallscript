@@ -165,5 +165,106 @@ public class ListUseCases extends UseCaseBase {
    }
    /****************************************************************************
     * 
+   ****************************************************************************/
+   @Test
+   public void builtInMethods_returnArgumentLists() throws Exception {
+
+      assertSSTrue("""
+            List new method: "invoke::with:" arguments equals: (List append: "method" append: "argList");
+            """);
+      assertSSTrue("""
+            List new method: "addField:" arguments equals: (List append: "name");
+            """);
+      assertSSTrue("""
+            List new method: "addField::withValue:" arguments equals: (List append: "name" append: "value");
+            """);
+      assertSSTrue("""
+            List new method: "addImmutableField::withValue:" arguments equals: (List append: "name" append: "value");
+            """);
+      assertSSTrue("""
+            List new method: "addMethod::using:" arguments equals: (List append: "name" append: "block");
+            """);
+      assertSSTrue("""
+            List new method: "asString" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            List new method: "at:" arguments equals: (List append: "index");
+            """);
+      assertSSTrue("""
+            List new method: "clone" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            List new method: "collectTo:" arguments equals: (List append: "collector");
+            """);
+      assertSSTrue("""
+            List new method: "equals:" arguments equals: (List append: "other");
+            """);
+      assertSSTrue("""
+            List new method: "execute" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            List new method: "fields" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            List new method: "forEach:" arguments equals: (List append: "block");
+            """);
+      assertSSTrue("""
+            List new method: "method:" arguments equals: (List append: "name");
+            """);
+      assertSSTrue("""
+            List new method: "methods" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            List new method: "nature" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            List new method: "nature:" arguments equals: (List append: "value");
+            """);
+      assertSSTrue("""
+            List new method: "hash" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            List new method: "isNotEqualTo:" arguments equals: (List append: "other");
+            """);
+      assertSSTrue("""
+            List new method: "orDefault:" arguments equals: (List append: "default");
+            """);
+      assertSSTrue("""
+            List new method: "size" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            List new method: "selectIf:" arguments equals: (List append: "block");
+            """);
+      assertSSTrue("""
+            List new method: "throw" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            List new method: "transformUsing:" arguments equals: (List append: "block");
+            """);
+      assertSSTrue("""
+            List new method: "try::catch:" arguments equals: (List append: "tryBlock" append: "catchBlock");
+            """);
+      
+      assertSSTrue("""
+            List new method: "add:" arguments equals: (List append: "item");
+            """);
+      assertSSTrue("""
+            List new method: "append:" arguments equals: (List append: "item");
+            """);
+      assertSSTrue("""
+            List new method: "at::put:" arguments equals: (List append: "index" append: "item");
+            """);
+      assertSSTrue("""
+            List new method: "at::put::andReturnPreviousItem" arguments equals: (List append: "index" append: "item");
+            """);
+      assertSSTrue("""
+            List new method: "removeAt:" arguments equals: (List append: "index");
+            """);
+      assertSSTrue("""
+            List new method: "removeAt::andReturnRemovedItem" arguments equals: (List append: "index");
+            """);
+   }
+   /****************************************************************************
+    * 
     ****************************************************************************/
 }

@@ -166,5 +166,54 @@ public class LongUseCases extends UseCaseBase {
    }
    /****************************************************************************
     * 
+   ****************************************************************************/
+   @Test
+   public void builtInMethods_returnArgumentLists() throws Exception {
+
+      assertSSTrue("""
+            1 method: "asDouble" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            1 method: "asLong" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            1 method: "clone" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            1 method: "incremented" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            1 method: "dividedBy:" arguments equals: (List append: "number");
+            """);
+      assertSSTrue("""
+            1 method: "isGreaterThan:" arguments equals: (List append: "number");
+            """);
+      assertSSTrue("""
+            1 method: "isGreaterOrEqualTo:" arguments equals: (List append: "number");
+            """);
+      assertSSTrue("""
+            1 method: "isLessThan:" arguments equals: (List append: "number");
+            """);
+      assertSSTrue("""
+            1 method: "isLessOrEqualTo:" arguments equals: (List append: "number");
+            """);
+      assertSSTrue("""
+            1 method: "minus:" arguments equals: (List append: "number");
+            """);
+      assertSSTrue("""
+            1 method: "multipliedBy:" arguments equals: (List append: "number");
+            """);
+      assertSSTrue("""
+            1 method: "plus:" arguments equals: (List append: "number");
+            """);
+      assertSSTrue("""
+            1 method: "times:" arguments equals: (List append: "block");
+            """);
+      assertSSTrue("""
+            1 method: "to:" arguments equals: (List append: "number");
+            """);
+   }
+   /****************************************************************************
+    * 
     ***************************************************************************/
 }

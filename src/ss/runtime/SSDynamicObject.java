@@ -58,8 +58,6 @@ public class SSDynamicObject implements SSObject {
       methods.add("invoke::with:", bb(SSDynamicObject::invokeWith, List.of("method", "argList")));
       methods.add("addField:", bb(SSDynamicObject::addField, List.of("name")));
       methods.add("addField::withValue:", bb(SSDynamicObject::addFieldWithValue, List.of("name", "value")));
-      methods.add("addImmutableField::withValue:",
-            bb(SSDynamicObject::addImmutableFieldWithValue, List.of("name", "value")));
       methods.add("addMethod::using:", bb(SSDynamicObject::addMethod, List.of("name", "block")));
       methods.add("asString", bb(SSDynamicObject::asString));
       methods.add("at:", bb(SSDynamicObject::at, List.of("index")));
@@ -283,17 +281,6 @@ public class SSDynamicObject implements SSObject {
       final var name = args.get(1).evaluate(stack).toString();
       final var value = args.get(2).evaluate(stack);
       return subject.addField(stack, name, value);
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject addImmutableFieldWithValue(final Stack stack,
-         final List<SSObject> args) {
-
-      final var subject = (SSDynamicObject) args.get(0);
-      final var name = args.get(1).evaluate(stack).toString();
-      final var value = args.get(2).evaluate(stack);
-      return subject.addImmutableField(stack, name, value);
    }
    /****************************************************************************
     * 

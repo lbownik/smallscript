@@ -125,9 +125,6 @@ public class StringUseCases extends UseCaseBase {
             "" method: "addField::withValue:" arguments equals: (List append: "name" append: "value");
             """);
       assertSSTrue("""
-            "" method: "addImmutableField::withValue:" arguments equals: (List append: "name" append: "value");
-            """);
-      assertSSTrue("""
             "" method: "addMethod::using:" arguments equals: (List append: "name" append: "block");
             """);
       assertSSTrue("""

@@ -41,14 +41,14 @@ TestCase addMethod: "named::using:" :using: {!this !name !block |
 # TestSuite
 #-------------------------------------------------------------------------------
 !TestSuite = Object new addMethod: "asString" :using: "TestSuite"
-                        addImmutableField: "$TestCase" :withValue: TestCase;
+                        addField: "$TestCase" :withValue: TestCase;
 
 #-------------------------------------------------------------------------------
 TestSuite addMethod: "new" :using: { !this |
 
 	!suite = Object new
-	         addImmutableField: "tests"     :withValue: (List new)
-	         addImmutableField: "$TestCase" :withValue: (this $TestCase);
+	         addField: "tests"     :withValue: (List new)
+	         addField: "$TestCase" :withValue: (this $TestCase);
    #----------------------------------------------------------------------------
 	suite addMethod: "addTestNamed::using:" :using: {!this !name !block |
 	       

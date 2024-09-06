@@ -160,9 +160,6 @@ public class SetUseCases extends UseCaseBase {
             Set new method: "addField::withValue:" arguments equals: (List append: "name" append: "value");
             """);
       assertSSTrue("""
-            Set new method: "addImmutableField::withValue:" arguments equals: (List append: "name" append: "value");
-            """);
-      assertSSTrue("""
             Set new method: "addMethod::using:" arguments equals: (List append: "name" append: "block");
             """);
       assertSSTrue("""

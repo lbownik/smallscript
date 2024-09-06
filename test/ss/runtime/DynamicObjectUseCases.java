@@ -183,30 +183,6 @@ public class DynamicObjectUseCases extends UseCaseBase {
             """);
    }
    /****************************************************************************
-   * 
-   ****************************************************************************/
-   @Test
-   public void addingImmutableFields_createsOnyGetterMethod() throws Exception {
-
-      assertSSTrue("""
-            !object = Object new;
-            !fieldName = "a";
-            !value = 10;
-            object addImmutableField: fieldName :withValue: value;
-            object a equals: 10;
-            """);
-      assertSSTrue(
-            """
-                  !object = Object new;
-                  object addImmutableField: "a" :withValue: 10;
-                  object try: {
-                     object a: 20;
-                  } :catch: {!e |
-                     (e nature equals: "exception") and: (e message equals: "Method 'a:' is not defined.");
-                  };
-                  """);
-   }
-   /****************************************************************************
     * 
     ****************************************************************************/
    @Test
@@ -360,9 +336,6 @@ public class DynamicObjectUseCases extends UseCaseBase {
             """);
       assertSSTrue("""
             Object method: "addField::withValue:" arguments equals: (List append: "name" append: "value");
-            """);
-      assertSSTrue("""
-            Object method: "addImmutableField::withValue:" arguments equals: (List append: "name" append: "value");
             """);
       assertSSTrue("""
             Object method: "addMethod::using:" arguments equals: (List append: "name" append: "block");

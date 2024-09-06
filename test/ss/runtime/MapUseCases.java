@@ -195,9 +195,6 @@ public class MapUseCases extends UseCaseBase {
             Map new method: "addField::withValue:" arguments equals: (List append: "name" append: "value");
             """);
       assertSSTrue("""
-            Map new method: "addImmutableField::withValue:" arguments equals: (List append: "name" append: "value");
-            """);
-      assertSSTrue("""
             Map new method: "addMethod::using:" arguments equals: (List append: "name" append: "block");
             """);
       assertSSTrue("""

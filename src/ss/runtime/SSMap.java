@@ -189,7 +189,7 @@ public final class SSMap extends SSDynamicObject {
       public Factory() {
 
          addBinaryMethod("new", SSMap.Factory::createNew);
-         addBinaryMethod("at::put:", SSMap.Factory::atPut);
+         addBinaryMethod("at::put:", SSMap.Factory::atPut, List.of("key", "value"));
       }
       /*************************************************************************
        * 

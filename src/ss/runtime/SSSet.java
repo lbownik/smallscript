@@ -169,7 +169,7 @@ public final class SSSet extends SSDynamicObject {
       public Factory() {
 
          addBinaryMethod("new", SSSet.Factory::createNew);
-         addBinaryMethod("append:", SSSet.Factory::append);
+         addBinaryMethod("append:", SSSet.Factory::append, List.of("item"));
       }
       /*************************************************************************
        * 

@@ -229,7 +229,7 @@ public final class SSList extends SSDynamicObject {
       public Factory() {
 
          addBinaryMethod("new", SSList.Factory::createNew);
-         addBinaryMethod("append:", SSList.Factory::append);
+         addBinaryMethod("append:", SSList.Factory::append, List.of("item"));
       }
       /*************************************************************************
        * 

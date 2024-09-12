@@ -17,6 +17,7 @@ package ss.runtime;
 
 import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
+import static ss.runtime.SSBinaryBlock.bb;
 import static ss.runtime.Stack.isTopLevelVariable;
 
 import java.util.HashSet;
@@ -39,11 +40,11 @@ public class SSBlock extends SSDynamicObject {
       this.enclosedVariables.removeAll(declaredVariables);
       this.declaresVariables = declaredVariables.size() > 0;
 
-      setField(null, "nature", nature);
       addBinaryMethod("arguments", SSBlock::getArguments);
       addBinaryMethod("clone", SSBlock::clone);
       addBinaryMethod("equals:", SSBlock::equals);
       addBinaryMethod("isNotEqualTo:", SSBlock::isNotEqualTo);
+      addBinaryMethod("nature", (s, a) -> nature);
       addBinaryMethod("whileTrue:", SSBlock::whileTrue);
    }
    /****************************************************************************

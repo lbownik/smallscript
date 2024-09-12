@@ -215,9 +215,6 @@ public class ListUseCases extends UseCaseBase {
             List new method: "nature" arguments equals: (List new);
             """);
       assertSSTrue("""
-            List new method: "nature:" arguments equals: (List append: "value");
-            """);
-      assertSSTrue("""
             List new method: "hash" arguments equals: (List new);
             """);
       assertSSTrue("""

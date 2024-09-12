@@ -161,9 +161,6 @@ public class StringUseCases extends UseCaseBase {
             "" method: "nature" arguments equals: (List new);
             """);
       assertSSTrue("""
-            "" method: "nature:" arguments equals: (List append: "value");
-            """);
-      assertSSTrue("""
             "" method: "hash" arguments equals: (List new);
             """);
       assertSSTrue("""

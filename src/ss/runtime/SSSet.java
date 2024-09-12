@@ -38,7 +38,6 @@ public final class SSSet extends SSDynamicObject {
 
       super(new MethodMap(sharedMethods));
       this.elements = new HashSet<>(elements);
-      this.fields.add("nature", SSSet.Factory.nature);
    }
    /****************************************************************************
     * 
@@ -56,13 +55,17 @@ public final class SSSet extends SSDynamicObject {
    ****************************************************************************/
    static Methods putMethods(final Methods methods) {
 
-      methods.add("add:", bb(SSSet::append, List.of("item")));
-      methods.add("append:", bb(SSSet::append, List.of("item")));
-      methods.add("forEach:", bb(SSSet::forEach, List.of("block")));
-      methods.add("remove:", bb(SSSet::remove, List.of("item")));
+      final var listOfItem = List.of("item");
+      final var listOfBlock = List.of("block");
+      
+      methods.add("add:", bb(SSSet::append, listOfItem));
+      methods.add("append:", bb(SSSet::append, listOfItem));
+      methods.add("forEach:", bb(SSSet::forEach, listOfBlock));
+      methods.add("nature", bb((s, a) -> nature));
+      methods.add("remove:", bb(SSSet::remove, listOfItem));
       methods.add("size", bb(SSSet::size));
-      methods.add("selectIf:", bb(SSSet::selectIf, List.of("block")));
-      methods.add("transformUsing:", bb(SSSet::transformUsing, List.of("block")));
+      methods.add("selectIf:", bb(SSSet::selectIf, listOfBlock));
+      methods.add("transformUsing:", bb(SSSet::transformUsing, listOfBlock));
       
       return methods;
    }
@@ -159,6 +162,7 @@ public final class SSSet extends SSDynamicObject {
    
    final static Methods sharedMethods = putMethods(
          new MethodMap(SSDynamicObject.sharedMethods));
+   private final static SSString nature = new SSString("set");
    /****************************************************************************
     * 
     ***************************************************************************/
@@ -168,36 +172,17 @@ public final class SSSet extends SSDynamicObject {
       *************************************************************************/
       public Factory() {
 
-         addBinaryMethod("new", SSSet.Factory::createNew);
+         addBinaryMethod("new", (s, a) -> new SSSet());
          addBinaryMethod("append:", SSSet.Factory::append, List.of("item"));
-      }
-      /*************************************************************************
-       * 
-      *************************************************************************/
-      private static SSSet createNew(final Stack stack, final List<SSObject> args) {
-
-         return new SSSet();
       }
       /*************************************************************************
        * 
       *************************************************************************/
       private static SSObject append(final Stack stack, final List<SSObject> args) {
 
-         final var result = createNew(stack, args);
+         final var result = new SSSet();
          result.elements.add(args.get(1).evaluate(stack));
          return result;
       }
-      /*************************************************************************
-       * 
-      *************************************************************************/
-      @Override
-      public String toString() {
-
-         return "Set";
-      }
-      /*************************************************************************
-       * 
-      *************************************************************************/
-      private final static SSString nature = new SSString("set");
    }
 }

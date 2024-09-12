@@ -29,7 +29,6 @@ public final class SSDouble extends SSDynamicObject {
 
       super(new MethodMap(sharedMethods));
       this.value = value;
-      this.fields.add("nature", nature);
    }
    /****************************************************************************
     * 
@@ -45,6 +44,7 @@ public final class SSDouble extends SSDynamicObject {
    static Methods putMethods(final Methods methods) {
 
       final List<String> listOfNumber = List.of("number");
+      
       methods.add("asDouble", bb(SSDouble::asDouble));
       methods.add("asLong", bb(SSDouble::asLong));
       methods.add("clone", bb(SSDouble::clone));
@@ -55,6 +55,7 @@ public final class SSDouble extends SSDynamicObject {
       methods.add("isLessOrEqualTo:", bb(SSDouble::isLessOrEqualTo, listOfNumber));
       methods.add("minus:", bb(SSDouble::minus, listOfNumber));
       methods.add("multipliedBy:", bb(SSDouble::multipliedBy, listOfNumber));
+      methods.add("nature", bb((s, a) -> nature));
       methods.add("plus:", bb(SSDouble::plus, listOfNumber));
       
       return methods;
@@ -198,7 +199,7 @@ public final class SSDouble extends SSDynamicObject {
    ****************************************************************************/
    public final double value;
 
-   private final static SSString nature = new SSString("number");
    final static Methods sharedMethods = putMethods(
          new MethodMap(SSDynamicObject.sharedMethods));
+   private final static SSString nature = new SSString("number");
 }

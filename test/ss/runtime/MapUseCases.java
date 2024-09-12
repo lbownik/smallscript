@@ -231,9 +231,6 @@ public class MapUseCases extends UseCaseBase {
             Map new method: "nature" arguments equals: (List new);
             """);
       assertSSTrue("""
-            Map new method: "nature:" arguments equals: (List append: "value");
-            """);
-      assertSSTrue("""
             Map new method: "hash" arguments equals: (List new);
             """);
       assertSSTrue("""

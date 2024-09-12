@@ -27,7 +27,7 @@ public class ObjectFactoryUseCases extends UseCaseBase {
    @Test
    public void objectFactory_worksProperly_forAllOperations() throws Exception {
 
-      assertSSTrue("Object asString startsWith: \"Object#\";");
+      assertSSTrue("Object asString startsWith: \"object#\";");
       assertSSFalse("Object clone equals: Object;");
       assertSSTrue("Object new isNotEqualTo: null;");
    }

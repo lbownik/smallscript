@@ -196,9 +196,6 @@ public class SetUseCases extends UseCaseBase {
             Set new method: "nature" arguments equals: (List new);
             """);
       assertSSTrue("""
-            Set new method: "nature:" arguments equals: (List append: "value");
-            """);
-      assertSSTrue("""
             Set new method: "hash" arguments equals: (List new);
             """);
       assertSSTrue("""

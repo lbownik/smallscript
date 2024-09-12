@@ -37,7 +37,6 @@ public final class SSList extends SSDynamicObject {
 
       super(new MethodMap(sharedMethods));
       this.elements = new ArrayList<>(elements);
-      this.fields.add("nature", SSList.Factory.nature);
    }
 
    /****************************************************************************
@@ -45,19 +44,24 @@ public final class SSList extends SSDynamicObject {
    ****************************************************************************/
    static Methods putMethods(final Methods methods) {
 
-      methods.add("add:", bb(SSList::append, List.of("item")));
-      methods.add("append:", bb(SSList::append, List.of("item")));
-      methods.add("at:", bb(SSList::at, List.of("index")));
+      final var listOfItem = List.of("item");
+      final var listOfIndex = List.of("index");
+      final var listOfBlock = List.of("block");
+      
+      methods.add("add:", bb(SSList::append, listOfItem));
+      methods.add("append:", bb(SSList::append, listOfItem));
+      methods.add("at:", bb(SSList::at, listOfIndex));
       methods.add("at::put:", bb(SSList::atPut, List.of("index", "item")));
       methods.add("at::put::andReturnPreviousItem",
             bb(SSList::atPutAndReturnPreviousItem, List.of("index", "item")));
-      methods.add("forEach:", bb(SSList::forEach, List.of("block")));
-      methods.add("removeAt:", bb(SSList::removeAt, List.of("index")));
+      methods.add("forEach:", bb(SSList::forEach, listOfBlock));
+      methods.add("nature", bb((s, a) -> nature));
+      methods.add("removeAt:", bb(SSList::removeAt, listOfIndex));
       methods.add("removeAt::andReturnRemovedItem",
-            bb(SSList::removeAtAndReturnRemovedItem, List.of("index")));
+            bb(SSList::removeAtAndReturnRemovedItem, listOfIndex));
       methods.add("size", bb(SSList::size));
-      methods.add("selectIf:", bb(SSList::selectIf, List.of("block")));
-      methods.add("transformUsing:", bb(SSList::transformUsing, List.of("block")));
+      methods.add("selectIf:", bb(SSList::selectIf, listOfBlock));
+      methods.add("transformUsing:", bb(SSList::transformUsing, listOfBlock));
 
       return methods;
    }
@@ -219,6 +223,7 @@ public final class SSList extends SSDynamicObject {
    
    final static Methods sharedMethods = putMethods(
          new MethodMap(SSDynamicObject.sharedMethods));
+   private final static SSString nature = new SSString("list");
    /****************************************************************************
     * 
     ***************************************************************************/
@@ -228,36 +233,17 @@ public final class SSList extends SSDynamicObject {
       *************************************************************************/
       public Factory() {
 
-         addBinaryMethod("new", SSList.Factory::createNew);
+         addBinaryMethod("new", (stack, args) -> new SSList());
          addBinaryMethod("append:", SSList.Factory::append, List.of("item"));
-      }
-      /*************************************************************************
-       * 
-      *************************************************************************/
-      private static SSList createNew(final Stack stack, final List<SSObject> args) {
-
-         return new SSList();
       }
       /*************************************************************************
        * 
       *************************************************************************/
       private static SSObject append(final Stack stack, final List<SSObject> args) {
 
-         final var result = createNew(stack, args);
+         final var result = new SSList();
          result.elements.add(args.get(1).evaluate(stack));
          return result;
       }
-      /*************************************************************************
-       * 
-      *************************************************************************/
-      @Override
-      public String toString() {
-
-         return "List";
-      }
-      /*************************************************************************
-       * 
-      *************************************************************************/
-      private final static SSString nature = new SSString("list");
    }
 }

@@ -31,17 +31,18 @@ public final class SSStream extends SSDynamicObject {
 
       super(new MethodMap(sharedMethods));
       this.stream = stream;
-      this.fields.add("nature", nature);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
    static Methods putMethods(final Methods methods) {
 
+      final var listOfBlock = List.of("block");
+      
       methods.add("collectTo:", bb(SSStream::collectTo, List.of("collector")));
-      methods.add("forEach:", bb(SSStream::forEach, List.of("block")));
-      methods.add("selectIf:", bb(SSStream::selectIf, List.of("block")));
-      methods.add("transformUsing:", bb(SSStream::transformUsing, List.of("block")));
+      methods.add("forEach:", bb(SSStream::forEach, listOfBlock));
+      methods.add("selectIf:", bb(SSStream::selectIf, listOfBlock));
+      methods.add("transformUsing:", bb(SSStream::transformUsing, listOfBlock));
       
       return methods;
    }
@@ -125,5 +126,4 @@ public final class SSStream extends SSDynamicObject {
    
    final static Methods sharedMethods = putMethods(
          new MethodMap(SSDynamicObject.sharedMethods));
-   private final static SSString nature = new SSString("stream");
 }

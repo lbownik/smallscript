@@ -22,30 +22,11 @@ import java.util.List;
  * @author lukasz.bownik@gmail.com {
  ******************************************************************************/
 public final class SSString extends SSDynamicObject {
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   static {
-      
-      sharedMethods = putMethods(
-            new MethodMap(SSDynamicObject.sharedMethods));
-      
-      var n = new SSString("string", true);
-      n.fields.add("nature", n);
-      nature = n;
-   }
+
    /****************************************************************************
     * 
    ****************************************************************************/
    public SSString(final String value) {
-
-      this(value, true);
-      this.fields.add("nature", nature);
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private SSString(final String value, boolean noNature) {
 
       super(new MethodMap(sharedMethods));
       this.value = value;
@@ -59,6 +40,7 @@ public final class SSString extends SSDynamicObject {
       methods.add("at:", bb(SSString::at, List.of("index")));
       methods.add("clone", bb(SSString::clone));
       methods.add("concatenate:", bb(SSString::concatenate, List.of("text")));
+      methods.add("nature", bb((s, a) -> nature));
       methods.add("size", bb(SSString::size));
       methods.add("startsWith:", bb(SSString::startsWith, List.of("text")));
       
@@ -158,6 +140,7 @@ public final class SSString extends SSDynamicObject {
    ****************************************************************************/
    private final String value;
 
-   final static Methods sharedMethods;
-   private final static SSString nature;
+   final static Methods sharedMethods = putMethods(
+         new MethodMap(SSDynamicObject.sharedMethods));
+   private final static SSString nature = new SSString("string");
 }

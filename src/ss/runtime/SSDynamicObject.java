@@ -15,7 +15,6 @@
 //------------------------------------------------------------------------------
 package ss.runtime;
 
-import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toSet;
 import static ss.runtime.SSBinaryBlock.bb;
 
@@ -55,6 +54,8 @@ public class SSDynamicObject implements SSObject {
    ****************************************************************************/
    static Methods putMethods(final Methods methods) {
 
+      final var listOfBlock = List.of("block");
+      
       methods.add("invoke::with:",
             bb(SSDynamicObject::invokeWith, List.of("method", "argList")));
       methods.add("addField:", bb(SSDynamicObject::addField, List.of("name")));
@@ -72,21 +73,19 @@ public class SSDynamicObject implements SSObject {
       methods.add("equals:", bb(SSDynamicObject::isEqualTo, List.of("other")));
       methods.add("execute", bb(SSDynamicObject::evaluate));
       methods.add("fields", bb(SSDynamicObject::getFields));
-      methods.add("forEach:", bb(SSDynamicObject::forEach, List.of("block")));
+      methods.add("forEach:", bb(SSDynamicObject::forEach, listOfBlock));
       methods.add("method:", bb(SSDynamicObject::getMethod, List.of("name")));
       methods.add("methods", bb(SSDynamicObject::getMethods));
-      methods.add("nature", bb((s, a) -> getField(s, "nature", a)));
-      methods.add("nature:",
-            bb((s, a) -> setField(s, "nature", a), List.of("value")));
+      methods.add("nature", bb((s, a) -> nature));
       methods.add("hash", bb(SSDynamicObject::hashCode));
       methods.add("isNotEqualTo:",
             bb(SSDynamicObject::isNotEqualTo, List.of("other")));
       methods.add("orDefault:", bb(SSDynamicObject::orDefault, List.of("default")));
       methods.add("size", bb((stack, args) -> new SSLong(1)));
-      methods.add("selectIf:", bb(SSDynamicObject::selectIf, List.of("block")));
+      methods.add("selectIf:", bb(SSDynamicObject::selectIf, listOfBlock));
       methods.add("throw", bb(SSDynamicObject::throwThis));
       methods.add("transformUsing:",
-            bb(SSDynamicObject::transformUsing, List.of("block")));
+            bb(SSDynamicObject::transformUsing, listOfBlock));
       methods.add("try::catch:",
             bb(SSDynamicObject::tryCatch, List.of("tryBlock", "catchBlock")));
 
@@ -433,19 +432,9 @@ public class SSDynamicObject implements SSObject {
       *************************************************************************/
       public Factory() {
 
-         this.methods.add("new", bb(SSDynamicObject.Factory::createNew));
+         this.methods.add("new", bb((stack, args) -> new SSDynamicObject()));
          this.methods.add("newOfNature:",
                bb(SSDynamicObject.Factory::newOfNature, List.of("nature")));
-      }
-      /*************************************************************************
-       * 
-      *************************************************************************/
-      private static SSObject createNew(final Stack stack,
-            final List<SSObject> args) {
-
-         final var result = new SSDynamicObject();
-         result.setField(stack, "nature", nature);
-         return result;
       }
       /*************************************************************************
        * 
@@ -454,16 +443,8 @@ public class SSDynamicObject implements SSObject {
             final List<SSObject> args) {
 
          final var result = new SSDynamicObject();
-         result.setField(stack, "nature", args.get(1));
+         result.addField(stack, "nature", args.get(1));
          return result;
-      }
-      /*************************************************************************
-       * 
-      *************************************************************************/
-      @Override
-      public String toString() {
-
-         return "Object#" + hashCode();
       }
       /*************************************************************************
        * 

@@ -309,7 +309,7 @@ public class DynamicObjectUseCases extends UseCaseBase {
 
       assertSSTrue("""
                !fields = Object new fields;
-               (fields size equals: 1) and: (fields nature equals: "set");
+               (fields size equals: 0) and: (fields nature equals: "set");
             """);
    }
    /****************************************************************************
@@ -375,9 +375,6 @@ public class DynamicObjectUseCases extends UseCaseBase {
             """);
       assertSSTrue("""
             Object method: "nature" arguments equals: (List new);
-            """);
-      assertSSTrue("""
-            Object method: "nature:" arguments equals: (List append: "value");
             """);
       assertSSTrue("""
             Object method: "hash" arguments equals: (List new);

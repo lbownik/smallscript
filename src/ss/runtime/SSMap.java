@@ -37,7 +37,6 @@ public final class SSMap extends SSDynamicObject {
 
       super(new MethodMap(sharedMethods));
       this.elements = new HashMap<>(elements);
-      this.fields.add("nature", SSMap.Factory.nature);
    }
 
    /****************************************************************************
@@ -51,6 +50,7 @@ public final class SSMap extends SSDynamicObject {
             bb(SSMap::atPutAndReturnPreviousValue, List.of("key", "value")));
       methods.add("forEach:", bb(SSMap::forEach, List.of("block")));
       methods.add("keys", bb(SSMap::keys));
+      methods.add("nature", bb((s, a) -> nature));
       methods.add("removeAt:", bb(SSMap::removeAt, List.of("key")));
       methods.add("removeAt::andGetRemovedValue",
             bb(SSMap::removeAtAndReturnRemovedValue, List.of("key")));
@@ -179,6 +179,7 @@ public final class SSMap extends SSDynamicObject {
    
    final static Methods sharedMethods = putMethods(
          new MethodMap(SSDynamicObject.sharedMethods));
+   private final static SSString nature = new SSString("map");
    /****************************************************************************
     * 
     ***************************************************************************/
@@ -188,39 +189,20 @@ public final class SSMap extends SSDynamicObject {
       *************************************************************************/
       public Factory() {
 
-         addBinaryMethod("new", SSMap.Factory::createNew);
+         addBinaryMethod("new", (s,a) -> new SSMap());
          addBinaryMethod("at::put:", SSMap.Factory::atPut, List.of("key", "value"));
-      }
-      /*************************************************************************
-       * 
-      *************************************************************************/
-      private static SSMap createNew(final Stack stack, final List<SSObject> args) {
-
-         return new SSMap();
       }
       /*************************************************************************
        * 
       *************************************************************************/
       private static SSObject atPut(final Stack stack, final List<SSObject> args) {
 
-         final var result = createNew(stack, args);
+         final var result = new SSMap();
          final var key = args.get(1).evaluate(stack);
          final var value = args.get(2).evaluate(stack);
 
          result.elements.put(key, value);
          return result;
       }
-      /*************************************************************************
-       * 
-      *************************************************************************/
-      @Override
-      public String toString() {
-
-         return "Map";
-      }
-      /*************************************************************************
-       * 
-      *************************************************************************/
-      private final static SSString nature = new SSString("map");
    }
 }

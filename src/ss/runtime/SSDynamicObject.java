@@ -19,6 +19,7 @@ import static java.util.stream.Collectors.toSet;
 import static ss.runtime.SSBinaryBlock.bb;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.function.BiFunction;
 /*******************************************************************************
@@ -39,7 +40,7 @@ public class SSDynamicObject implements SSObject {
    public SSDynamicObject(final MethodMap methods) {
 
       this.methods = methods;
-      this.fields = new MethodMap();
+      this.fields = null;
    }
    /****************************************************************************
     * 
@@ -47,7 +48,11 @@ public class SSDynamicObject implements SSObject {
    public SSDynamicObject(final SSDynamicObject other) {
 
       this.methods = new MethodMap(other.methods);
-      this.fields = new MethodMap(other.fields);
+      if(other.fields != null) {
+         this.fields = new HashMap<>(other.fields);
+      } else {
+         this.fields = null;
+      }
    }
    /****************************************************************************
     * 
@@ -299,6 +304,9 @@ public class SSDynamicObject implements SSObject {
       this.methods.add(name + ":",
             bb((s, a) -> setField(s, name, a), List.of("value")));
 
+      if(this.fields == null) {
+         this.fields = new HashMap<>();
+      }
       return setField(stack, name, value);
    }
    /****************************************************************************
@@ -326,8 +334,12 @@ public class SSDynamicObject implements SSObject {
    private static SSObject getFields(final Stack stack, final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
+      if(subject.fields != null) {
       return new SSSet(
             subject.fields.keySet().stream().map(SSString::new).collect(toSet()));
+      } else {
+         return new SSSet();
+      }
    }
    /****************************************************************************
     * 
@@ -344,7 +356,7 @@ public class SSDynamicObject implements SSObject {
    ****************************************************************************/
    SSObject setField(final Stack stack, final String name, final SSObject value) {
 
-      this.fields.add(name, value.evaluate(stack));
+      this.fields.put(name, value.evaluate(stack));
       return this;
    }
    /****************************************************************************
@@ -419,7 +431,7 @@ public class SSDynamicObject implements SSObject {
     * 
    ****************************************************************************/
    protected MethodMap methods;
-   final MethodMap fields;
+   HashMap<String, SSObject> fields;
 
    final static Methods sharedMethods = putMethods(new MethodMap());
    public final static SSString nature = new SSString("object");

@@ -43,6 +43,7 @@ public final class SSNull implements SSObject {
          case "orDefault:" -> args.get(0);
          case "nature" -> new SSString(name);
          case "size" -> new SSLong(0);
+         case "throw" -> throw new AuxiliaryException(this);
          default -> this;
       };
    }

@@ -20,6 +20,7 @@ import java.io.InputStreamReader;
 import java.io.PrintStream;
 import java.util.List;
 import java.util.stream.Stream;
+import static ss.runtime.SSBinaryBlock.bb;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
  ******************************************************************************/
@@ -37,9 +38,9 @@ public final class SSApplication extends SSDynamicObject {
       addField(null, "output", new SSOutput(out));
       addField(null, "error", new SSOutput(err));
 
-      addBinaryMethod("clone", SSApplication::clone);
-      addBinaryMethod("exit:", SSApplication::exit);
-      addBinaryMethod("load:", SSApplication::load);
+      this. methods.add("clone", bb(SSApplication::clone));
+      this. methods.add("exit:", bb(SSApplication::exit));
+      this. methods.add("load:", bb(SSApplication::load));
 
       addImmutableField(null, "arguments",
             new SSList(Stream.of(interpreter.args).map(SSString::new).toList()));

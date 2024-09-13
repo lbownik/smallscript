@@ -15,6 +15,8 @@
 //-----------------------------------------------------------------------------
 package ss.runtime;
 
+import static ss.runtime.SSBinaryBlock.bb;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.util.List;
@@ -28,8 +30,8 @@ public final class SSInput extends SSDynamicObject {
    public SSInput(final BufferedReader reader) {
 
       this.reader = reader;
-      addBinaryMethod("clone", SSInput::clone);
-      addBinaryMethod("readLine", SSInput::readLine);
+      this.methods.add("clone", bb(SSInput::clone));
+      this.methods.add("readLine", bb(SSInput::readLine));
    }
    /****************************************************************************
     * 

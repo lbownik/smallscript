@@ -47,13 +47,14 @@ public final class SSList extends SSDynamicObject {
       final var listOfItem = List.of("item");
       final var listOfIndex = List.of("index");
       final var listOfBlock = List.of("block");
+      final var listOfIndexItem = List.of("index", "item");
       
       methods.add("add:", bb(SSList::append, listOfItem));
       methods.add("append:", bb(SSList::append, listOfItem));
       methods.add("at:", bb(SSList::at, listOfIndex));
-      methods.add("at::put:", bb(SSList::atPut, List.of("index", "item")));
+      methods.add("at::put:", bb(SSList::atPut, listOfIndexItem));
       methods.add("at::put::andReturnPreviousItem",
-            bb(SSList::atPutAndReturnPreviousItem, List.of("index", "item")));
+            bb(SSList::atPutAndReturnPreviousItem, listOfIndexItem));
       methods.add("forEach:", bb(SSList::forEach, listOfBlock));
       methods.add("nature", bb((s, a) -> nature));
       methods.add("removeAt:", bb(SSList::removeAt, listOfIndex));
@@ -233,8 +234,8 @@ public final class SSList extends SSDynamicObject {
       *************************************************************************/
       public Factory() {
 
-         addBinaryMethod("new", (stack, args) -> new SSList());
-         addBinaryMethod("append:", SSList.Factory::append, List.of("item"));
+         this.methods.add("new", bb((stack, args) -> new SSList()));
+         this.methods.add("append:", bb(SSList.Factory::append, List.of("item")));
       }
       /*************************************************************************
        * 

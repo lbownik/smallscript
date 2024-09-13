@@ -40,12 +40,12 @@ public class SSBlock extends SSDynamicObject {
       this.enclosedVariables.removeAll(declaredVariables);
       this.declaresVariables = declaredVariables.size() > 0;
 
-      addBinaryMethod("arguments", SSBlock::getArguments);
-      addBinaryMethod("clone", SSBlock::clone);
-      addBinaryMethod("equals:", SSBlock::equals);
-      addBinaryMethod("isNotEqualTo:", SSBlock::isNotEqualTo);
-      addBinaryMethod("nature", (s, a) -> nature);
-      addBinaryMethod("whileTrue:", SSBlock::whileTrue);
+      this.methods.add("arguments", bb(SSBlock::getArguments));
+      this.methods.add("clone", bb(SSBlock::clone));
+      this.methods.add("equals:", bb(SSBlock::equals));
+      this.methods.add("isNotEqualTo:", bb(SSBlock::isNotEqualTo));
+      this.methods.add("nature", bb((s, a) -> nature));
+      this.methods.add("whileTrue:", bb(SSBlock::whileTrue));
    }
    /****************************************************************************
     * Executes encompassed object performing necessary computations if needed.

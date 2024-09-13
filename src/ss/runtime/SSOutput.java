@@ -18,6 +18,7 @@ package ss.runtime;
 import java.io.PrintStream;
 import static java.util.Collections.emptyList;
 import java.util.List;
+import static ss.runtime.SSBinaryBlock.bb;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
  ******************************************************************************/
@@ -28,10 +29,12 @@ public final class SSOutput extends SSDynamicObject {
    ****************************************************************************/
    public SSOutput(final PrintStream out) {
 
+      final var listOfObject = List.of("object");
+      
       this.out = out;
-      addBinaryMethod("clone", SSOutput::clone);
-      addBinaryMethod("writeLine:", SSOutput::writeLine, List.of("object"));
-      addBinaryMethod("append:", SSOutput::append, List.of("object"));
+      this.methods.add("clone", bb(SSOutput::clone));
+      this.methods.add("writeLine:", bb(SSOutput::writeLine, listOfObject));
+      this.methods.add("append:", bb(SSOutput::append, listOfObject));
    }
    /****************************************************************************
     * 

@@ -21,7 +21,6 @@ import static ss.runtime.SSBinaryBlock.bb;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.function.BiFunction;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
@@ -95,23 +94,6 @@ public class SSDynamicObject implements SSObject {
             bb(SSDynamicObject::tryCatch, List.of("tryBlock", "catchBlock")));
 
       return methods;
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   protected void addBinaryMethod(final String name,
-         final BiFunction<Stack, List<SSObject>, SSObject> code) {
-
-      this.methods.add(name, bb(code));
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   protected void addBinaryMethod(final String name,
-         final BiFunction<Stack, List<SSObject>, SSObject> code,
-         final List<String> argumentNames) {
-
-      this.methods.add(name, bb(code, argumentNames));
    }
    /****************************************************************************
     * 

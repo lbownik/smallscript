@@ -44,16 +44,19 @@ public final class SSMap extends SSDynamicObject {
    ****************************************************************************/
    static Methods putMethods(final Methods methods) {
 
-      methods.add("at:", bb(SSMap::at, List.of("key")));
-      methods.add("at::put:", bb(SSMap::atPut, List.of("key", "value")));
+      final var listOfKey = List.of("key");
+      final var listOfKeyValue = List.of("key", "value");
+      
+      methods.add("at:", bb(SSMap::at, listOfKey));
+      methods.add("at::put:", bb(SSMap::atPut, listOfKeyValue));
       methods.add("at::put::andGetPreviousValue",
-            bb(SSMap::atPutAndReturnPreviousValue, List.of("key", "value")));
+            bb(SSMap::atPutAndReturnPreviousValue, listOfKeyValue));
       methods.add("forEach:", bb(SSMap::forEach, List.of("block")));
       methods.add("keys", bb(SSMap::keys));
       methods.add("nature", bb((s, a) -> nature));
-      methods.add("removeAt:", bb(SSMap::removeAt, List.of("key")));
+      methods.add("removeAt:", bb(SSMap::removeAt, listOfKey));
       methods.add("removeAt::andGetRemovedValue",
-            bb(SSMap::removeAtAndReturnRemovedValue, List.of("key")));
+            bb(SSMap::removeAtAndReturnRemovedValue, listOfKey));
       methods.add("size", bb(SSMap::size));
 
       return methods;
@@ -189,8 +192,8 @@ public final class SSMap extends SSDynamicObject {
       *************************************************************************/
       public Factory() {
 
-         addBinaryMethod("new", (s,a) -> new SSMap());
-         addBinaryMethod("at::put:", SSMap.Factory::atPut, List.of("key", "value"));
+         this.methods.add("new", bb((s,a) -> new SSMap()));
+         this.methods.add("at::put:", bb(SSMap.Factory::atPut, List.of("key", "value")));
       }
       /*************************************************************************
        * 

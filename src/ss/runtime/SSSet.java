@@ -172,8 +172,8 @@ public final class SSSet extends SSDynamicObject {
       *************************************************************************/
       public Factory() {
 
-         addBinaryMethod("new", (s, a) -> new SSSet());
-         addBinaryMethod("append:", SSSet.Factory::append, List.of("item"));
+         this.methods.add("new", bb((s, a) -> new SSSet()));
+         this.methods.add("append:", bb(SSSet.Factory::append, List.of("item")));
       }
       /*************************************************************************
        * 

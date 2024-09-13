@@ -135,6 +135,59 @@ public class DynamicObjectUseCases extends UseCaseBase {
               e equals: o;
             };
             """);
+      
+      assertSSTrue("""
+            !o = Object new;
+            o try: { !this |
+              this throw;
+            } :catch: {!e |
+              e equals: o;
+            };
+            """);
+   }
+   
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void tryChatch_invokesClose() throws Exception {
+
+      assertSSTrue("""
+            !o = Object new;
+            o addField: "closed" :withValue: false;
+            o addMethod: "close" :using: { !this |
+                  this closed: true;
+            };
+            
+            o try: {
+              o throw;
+            } :catch: {};
+            
+            o closed equals: true;
+            """);
+   }
+   
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void try_invokesClose() throws Exception {
+
+      assertSSTrue("""
+            !o = Object new;
+            o addField: "closed" :withValue: false;
+            o addMethod: "close" :using: { !this |
+                  this closed: true;
+            };
+            !outerThis = null;
+            
+            
+            o try: { !this |
+              outerThis = this;
+            } ;
+            
+            (outerThis equals: o) and: (o closed equals: true);
+            """);
    }
    /****************************************************************************
     * 
@@ -322,6 +375,17 @@ public class DynamicObjectUseCases extends UseCaseBase {
                "abc" invoke: "size" :with: (List new) equals: 3;
             """);
    }
+   
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   @Test
+   public void close_doesNothing_andReturnsThis() throws Exception {
+
+      assertSSTrue("""
+               Object close equals: Object;
+            """);
+   }
    /****************************************************************************
     * 
    ****************************************************************************/
@@ -348,6 +412,9 @@ public class DynamicObjectUseCases extends UseCaseBase {
             """);
       assertSSTrue("""
             Object method: "clone" arguments equals: (List new);
+            """);
+      assertSSTrue("""
+            Object method: "close" arguments equals: (List new);
             """);
       assertSSTrue("""
             Object method: "collectTo:" arguments equals: (List append: "collector");

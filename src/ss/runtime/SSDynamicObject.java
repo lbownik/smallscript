@@ -70,6 +70,7 @@ public class SSDynamicObject implements SSObject {
       methods.add("asString", bb(SSDynamicObject::asString));
       methods.add("at:", bb(SSDynamicObject::at, List.of("index")));
       methods.add("clone", bb(SSDynamicObject::clone));
+      methods.add("close", bb(SSDynamicObject::orDefault));
       methods.add("collectTo:",
             bb(SSDynamicObject::collectTo, List.of("collector")));
       methods.add("doesNotUnderstand:",
@@ -90,6 +91,8 @@ public class SSDynamicObject implements SSObject {
       methods.add("throw", bb(SSDynamicObject::throwThis));
       methods.add("transformUsing:",
             bb(SSDynamicObject::transformUsing, listOfBlock));
+      methods.add("try:",
+            bb(SSDynamicObject::try_, List.of("tryBlock")));
       methods.add("try::catch:",
             bb(SSDynamicObject::tryCatch, List.of("tryBlock", "catchBlock")));
 
@@ -200,10 +203,25 @@ public class SSDynamicObject implements SSObject {
    ****************************************************************************/
    private static SSObject tryCatch(final Stack stack, final List<SSObject> args) {
 
+      final var subject = args.get(0);
       try {
-         return args.get(1).invoke(stack, "execute");
+         return args.get(1).invoke(stack, "execute", List.of(subject));
       } catch (final AuxiliaryException e) {
          return args.get(2).invoke(stack, "execute", List.of(e.object));
+      } finally {
+         subject.invoke(stack, "close");
+      }
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject try_(final Stack stack, final List<SSObject> args) {
+
+      final var subject = args.get(0);
+      try {
+         return args.get(1).invoke(stack, "execute", List.of(subject));
+      } finally {
+         subject.invoke(stack, "close");
       }
    }
    /****************************************************************************

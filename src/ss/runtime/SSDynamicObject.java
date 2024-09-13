@@ -71,7 +71,7 @@ public class SSDynamicObject implements SSObject {
       methods.add("asString", bb(SSDynamicObject::asString));
       methods.add("at:", bb(SSDynamicObject::at, List.of("index")));
       methods.add("clone", bb(SSDynamicObject::clone));
-      methods.add("close", bb(SSDynamicObject::orDefault));
+      methods.add("close", bb(SSDynamicObject::returnThis));
       methods.add("collectTo:",
             bb(SSDynamicObject::collectTo, List.of("collector")));
       methods.add("doesNotUnderstand:",
@@ -86,7 +86,7 @@ public class SSDynamicObject implements SSObject {
       methods.add("hash", bb(SSDynamicObject::hashCode));
       methods.add("isNotEqualTo:",
             bb(SSDynamicObject::isNotEqualTo, List.of("other")));
-      methods.add("orDefault:", bb(SSDynamicObject::orDefault, List.of("default")));
+      methods.add("orDefault:", bb(SSDynamicObject::returnThis, List.of("default")));
       methods.add("size", bb((stack, args) -> new SSLong(1)));
       methods.add("selectIf:", bb(SSDynamicObject::selectIf, listOfBlock));
       methods.add("throw", bb(SSDynamicObject::throwThis));
@@ -147,7 +147,7 @@ public class SSDynamicObject implements SSObject {
    /****************************************************************************
     * 
     ****************************************************************************/
-   private static SSObject orDefault(final Stack stack, final List<SSObject> args) {
+   private static SSObject returnThis(final Stack stack, final List<SSObject> args) {
 
       return args.get(0);
    }

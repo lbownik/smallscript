@@ -26,7 +26,7 @@ public final class SSList extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSList() {
+   public SSList() {
 
       this(new ArrayList<>());
    }

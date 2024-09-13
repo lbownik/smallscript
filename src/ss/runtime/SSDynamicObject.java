@@ -60,6 +60,7 @@ public class SSDynamicObject implements SSObject {
 
       final var listOfBlock = List.of("block");
       
+      methods.add("arguments", bb((s, a) -> new SSList()));
       methods.add("invoke::with:",
             bb(SSDynamicObject::invokeWith, List.of("method", "argList")));
       methods.add("addField:", bb(SSDynamicObject::addField, List.of("name")));

@@ -28,6 +28,7 @@ public class DynamicObjectUseCases extends UseCaseBase {
    public void newlyCreatedObject_hasSetBasicProperties() throws Exception {
 
       assertSSTrue("Object new size equals: 1;");
+      assertSSTrue("Object new arguments equals: (List new);");
       assertSSTrue("Object new nature equals: \"object\";");
       assertSSTrue("Object newOfNature: \"xyz\" nature equals: \"xyz\";");
       assertSSTrue("Object new asString startsWith: \"object#\";");

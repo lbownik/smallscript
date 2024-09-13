@@ -82,10 +82,12 @@ public class BinaryBlockUseCases extends UseCaseBase {
 
       assertSSTrue("""
             !block = Object method: "asString";
-            block try: {
+            !outerBlock = null;
+            block try: { !this |
+              outerBlock = this;
               block throw;
             } :catch: {!e |
-              e equals: block;
+              (e equals: block) and: (outerBlock equals: block);
             };
             """);
    }

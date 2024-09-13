@@ -68,6 +68,7 @@ public class SSBinaryBlock implements SSObject {
             case "arguments" -> argumentNames();
             case "asString" -> new SSString(toString());
             case "clone" -> new SSBinaryBlock(this);
+            case "close" -> this;
             case "hash" -> new SSLong(hashCode());
             case "equals:" -> stack.get(this.equals(args.get(0).evaluate(stack)));
             case "isNotEqualTo:" ->
@@ -75,6 +76,7 @@ public class SSBinaryBlock implements SSObject {
             case "nature" -> new SSString("binaryBlock");
             case "size" -> new SSLong(1);
             case "throw" -> throw new AuxiliaryException(this);
+            case "try:" -> args.get(0).invoke(stack, "execute", List.of(this));
             case "try::catch:" -> tryCatch(stack, args);
             default -> doesNotUnderstand(stack, method, args);
          };
@@ -119,10 +121,10 @@ public class SSBinaryBlock implements SSObject {
    private SSObject tryCatch(final Stack stack, final List<SSObject> args) {
 
       try {
-         return args.get(0).invoke(stack, "execute");
+         return args.get(0).invoke(stack, "execute", List.of(this));
       } catch (final AuxiliaryException e) {
          return args.get(1).invoke(stack, "execute", List.of(e.object));
-      }
+      } 
    }
    /****************************************************************************
     * Returns an object which can accept method calls performing necessary

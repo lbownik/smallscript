@@ -27,6 +27,7 @@ import java.util.Set;
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
 public class SSBlock extends SSDynamicObject {
+
    /****************************************************************************
     * 
    ****************************************************************************/
@@ -40,6 +41,18 @@ public class SSBlock extends SSDynamicObject {
       final var declaredVariables = declaredVariables();
       this.enclosedVariables.removeAll(declaredVariables);
       this.declaresVariables = declaredVariables.size() > 0;
+   }
+
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   public SSBlock(final SSBlock other) {
+
+      super(new MethodMap(other.methods));
+      this.statements = other.statements;
+      this.argumentNames = other.argumentNames;
+      this.enclosedVariables = other.enclosedVariables;
+      this.declaresVariables = other.declaresVariables;
    }
 
    /****************************************************************************
@@ -115,7 +128,7 @@ public class SSBlock extends SSDynamicObject {
    ****************************************************************************/
    private static SSObject clone(final Stack stack, final List<SSObject> args) {
 
-      return args.get(0);
+      return new SSBlock((SSBlock) args.get(0));
    }
    /****************************************************************************
     * 

@@ -176,13 +176,13 @@ public class BlockUseCases extends UseCaseBase {
     * 
     ****************************************************************************/
    @Test 
-   public void blocksDontClone() throws Exception {
+   public void blockCloning_works() throws Exception {
       
       
       assertSSTrue("""
             !block1 = {};
             !block2 = block1 clone;
-            block1 equals: block2;
+            (block1 isNotEqualTo: block2) and: (block1 arguments equals: (block2 arguments));
             """);
    }
    /****************************************************************************

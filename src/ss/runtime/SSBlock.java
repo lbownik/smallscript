@@ -33,19 +33,30 @@ public class SSBlock extends SSDynamicObject {
    public SSBlock(final List<SSObject> statements,
          final List<String> argumentNames) {
 
+      super(new MethodMap(sharedMethods));
       this.statements = statements;
       this.argumentNames = argumentNames;
       this.enclosedVariables = referencedVariables();
       final var declaredVariables = declaredVariables();
       this.enclosedVariables.removeAll(declaredVariables);
       this.declaresVariables = declaredVariables.size() > 0;
+   }
 
-      this.methods.add("arguments", bb(SSBlock::getArguments));
-      this.methods.add("clone", bb(SSBlock::clone));
-      this.methods.add("equals:", bb(SSBlock::equals));
-      this.methods.add("isNotEqualTo:", bb(SSBlock::isNotEqualTo));
-      this.methods.add("nature", bb((s, a) -> nature));
-      this.methods.add("whileTrue:", bb(SSBlock::whileTrue));
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   static Methods putMethods(final Methods methods) {
+
+      final var listOfOther = List.of("other");
+
+      methods.add("arguments", bb(SSBlock::getArguments));
+      methods.add("clone", bb(SSBlock::clone));
+      methods.add("equals:", bb(SSBlock::equals, listOfOther));
+      methods.add("isNotEqualTo:", bb(SSBlock::isNotEqualTo, listOfOther));
+      methods.add("nature", bb((s, a) -> nature));
+      methods.add("whileTrue:", bb(SSBlock::whileTrue, List.of("block")));
+
+      return methods;
    }
    /****************************************************************************
     * Executes encompassed object performing necessary computations if needed.
@@ -85,7 +96,7 @@ public class SSBlock extends SSDynamicObject {
          }
       }
 
-      return result.isEmpty() ? emptySet() : result; //optimization
+      return result.isEmpty() ? emptySet() : result; // optimization
    }
    /****************************************************************************
     * @return names of referenced variables
@@ -96,9 +107,9 @@ public class SSBlock extends SSDynamicObject {
       final var result = new HashSet<String>(this.argumentNames);
       this.statements.forEach(s -> result.addAll(s.declaredVariables()));
 
-      return result.isEmpty() ? emptySet() : result; //optimization
+      return result.isEmpty() ? emptySet() : result; // optimization
    }
-   
+
    /****************************************************************************
     * 
    ****************************************************************************/
@@ -140,7 +151,7 @@ public class SSBlock extends SSDynamicObject {
    ****************************************************************************/
    private static SSObject getArguments(final Stack stack,
          final List<SSObject> args) {
-      
+
       final var subject = (SSBlock) args.get(0);
       return new SSList(subject.argumentNames.stream().map(SSString::new).toList());
    }
@@ -180,7 +191,7 @@ public class SSBlock extends SSDynamicObject {
    @Override
    public SSObject execute(Stack stack, final List<SSObject> args) {
 
-      if(this.declaresVariables) {
+      if (this.declaresVariables) {
          stack = stack.pushNewFrame();
          initiateLocalVariables(stack, args);
       }
@@ -211,8 +222,8 @@ public class SSBlock extends SSDynamicObject {
    public String toString() {
 
       final var result = new StringBuilder("{");
-      
-      if(this.argumentNames.size() > 0) {
+
+      if (this.argumentNames.size() > 0) {
          this.argumentNames.forEach(arg -> result.append(" !").append(arg));
          result.append("|\n");
       } else {
@@ -239,5 +250,7 @@ public class SSBlock extends SSDynamicObject {
    private final Set<String> enclosedVariables;
    private final boolean declaresVariables;
 
+   final static Methods sharedMethods = putMethods(
+         new MethodMap(SSDynamicObject.sharedMethods));
    private final static SSString nature = new SSString("block");
 }

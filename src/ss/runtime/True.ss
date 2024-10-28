@@ -15,14 +15,14 @@
 #-------------------------------------------------------------------------------
 Object new addMethod: "and:"     :using: {!this !other | other }
            addMethod: "clone"    :using: {!this | this }
-           addMethod: "ifFalse:" :using: {!this | null }
+           addMethod: "ifFalse:" :using: { null }
            addMethod: "ifTrue:"  :using: {!this !tBlock | tBlock execute }
            addMethod: "ifTrue::ifFalse:" :using: 
-                                         {!this !tBlock !fBlock | tBlock execute }
-           addMethod: "not"      :using: {!this | false }
-           addMethod: "or:"      :using: {!this !other | this }
+                                         {!this !tBlock | tBlock execute }
+           addMethod: "not"      :using: { false }
+           addMethod: "or:"      :using: {!this | this }
            addMethod: "orElse:"  :using: {!this !other | other not }
-           addMethod: "asString" :using: "true"
-           addMethod: "hash"     :using: 2;
+           addMethod: "asString" :using: {"true" }
+           addMethod: "hash"     :using: {2 };
            
            

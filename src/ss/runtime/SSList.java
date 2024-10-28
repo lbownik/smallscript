@@ -35,14 +35,14 @@ public final class SSList extends SSDynamicObject {
    ****************************************************************************/
    public SSList(final List<? extends SSObject> elements) {
 
-      super(new MethodMap(sharedMethods));
+      super(sharedMethods);
       this.elements = new ArrayList<>(elements);
    }
 
    /****************************************************************************
     * 
    ****************************************************************************/
-   static Methods putMethods(final Methods methods) {
+   static MethodMap putMethods(final MethodMap methods) {
 
       final var listOfItem = List.of("item");
       final var listOfIndex = List.of("index");
@@ -65,17 +65,6 @@ public final class SSList extends SSDynamicObject {
       methods.add("transformUsing:", bb(SSList::transformUsing, listOfBlock));
 
       return methods;
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   @Override
-   protected void addMethod(final String name, final SSObject block) {
-
-      if(this.methods == SSList.sharedMethods) {
-         this.methods = new MethodMap(SSList.sharedMethods);
-      }
-      this.methods.add(name, block);
    }
    /****************************************************************************
     * 
@@ -222,8 +211,8 @@ public final class SSList extends SSDynamicObject {
    ****************************************************************************/
    final ArrayList<SSObject> elements;
    
-   final static Methods sharedMethods = putMethods(
-         new MethodMap(SSDynamicObject.sharedMethods));
+   final static MethodMap sharedMethods = putMethods(
+         new MethodMap(SSDynamicObject.sharedMethods, true));
    private final static SSString nature = new SSString("list");
    /****************************************************************************
     * 
@@ -234,8 +223,8 @@ public final class SSList extends SSDynamicObject {
       *************************************************************************/
       public Factory() {
 
-         this.methods.add("new", bb((stack, args) -> new SSList()));
-         this.methods.add("append:", bb(SSList.Factory::append, List.of("item")));
+         addMethod("new", bb((stack, args) -> new SSList()));
+         addMethod("append:", bb(SSList.Factory::append, List.of("item")));
       }
       /*************************************************************************
        * 

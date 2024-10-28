@@ -34,7 +34,7 @@ public class SSBlock extends SSDynamicObject {
    public SSBlock(final List<SSObject> statements,
          final List<String> argumentNames) {
 
-      super(new MethodMap(sharedMethods));
+      super(sharedMethods);
       this.statements = statements;
       this.argumentNames = argumentNames;
       this.enclosedVariables = referencedVariables();
@@ -58,7 +58,7 @@ public class SSBlock extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   static Methods putMethods(final Methods methods) {
+   static MethodMap putMethods(final MethodMap methods) {
 
       final var listOfOther = List.of("other");
 
@@ -263,7 +263,7 @@ public class SSBlock extends SSDynamicObject {
    private final Set<String> enclosedVariables;
    private final boolean declaresVariables;
 
-   final static Methods sharedMethods = putMethods(
-         new MethodMap(SSDynamicObject.sharedMethods));
+   final static MethodMap sharedMethods = putMethods(
+         new MethodMap(SSDynamicObject.sharedMethods, true));
    private final static SSString nature = new SSString("block");
 }

@@ -102,9 +102,13 @@ public class Interpreter {
          var line = console.readLine();
          while (line != null) {
             try {
-               out.println(this.parser.parse(line).execute(stack));
+               out.println(this.parser.parse(line).execute(this.stack));
             } catch (final Exception e) {
-               out.println(e.getMessage());
+               if (e instanceof AuxiliaryException ae) {
+                  out.println(ae.getMessage(this.stack));
+               } else {
+                  out.println(e.getMessage());
+               }
             }
             out.print(">");
             line = console.readLine();
@@ -121,8 +125,8 @@ public class Interpreter {
       if (args.length == 0) {
          new Interpreter(args).repl();
       } else {
-         new Interpreter(args).execute(Files.newBufferedReader(
-               Paths.get(args[0]).toAbsolutePath()));
+         new Interpreter(args).execute(
+               Files.newBufferedReader(Paths.get(args[0]).toAbsolutePath()));
       }
    }
    /****************************************************************************

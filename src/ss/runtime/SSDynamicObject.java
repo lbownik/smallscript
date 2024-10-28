@@ -31,7 +31,7 @@ public class SSDynamicObject implements SSObject {
    ****************************************************************************/
    public SSDynamicObject() {
 
-      this(new MethodMap(sharedMethods));
+      this(sharedMethods);
    }
    /****************************************************************************
     * 
@@ -47,7 +47,7 @@ public class SSDynamicObject implements SSObject {
    public SSDynamicObject(final SSDynamicObject other) {
 
       this.methods = new MethodMap(other.methods);
-      if(other.fields != null) {
+      if (other.fields != null) {
          this.fields = new HashMap<>(other.fields);
       } else {
          this.fields = null;
@@ -56,10 +56,10 @@ public class SSDynamicObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   static Methods putMethods(final Methods methods) {
+   static MethodMap putMethods(final MethodMap methods) {
 
       final var listOfBlock = List.of("block");
-      
+
       methods.add("arguments", bb((s, a) -> new SSList()));
       methods.add("invoke::with:",
             bb(SSDynamicObject::invokeWith, List.of("method", "argList")));
@@ -92,8 +92,7 @@ public class SSDynamicObject implements SSObject {
       methods.add("throw", bb(SSDynamicObject::throwThis));
       methods.add("transformUsing:",
             bb(SSDynamicObject::transformUsing, listOfBlock));
-      methods.add("try:",
-            bb(SSDynamicObject::try_, List.of("tryBlock")));
+      methods.add("try:", bb(SSDynamicObject::try_, List.of("tryBlock")));
       methods.add("try::catch:",
             bb(SSDynamicObject::tryCatch, List.of("tryBlock", "catchBlock")));
 
@@ -104,8 +103,8 @@ public class SSDynamicObject implements SSObject {
    ****************************************************************************/
    protected void addMethod(final String name, final SSObject block) {
 
-      if (this.methods == SSDynamicObject.sharedMethods) {
-         this.methods = new MethodMap(SSDynamicObject.sharedMethods);
+      if (this.methods.isShared()) {
+         this.methods = new MethodMap(this.methods, false);
       }
       this.methods.add(name, block);
    }
@@ -301,11 +300,10 @@ public class SSDynamicObject implements SSObject {
    ****************************************************************************/
    SSObject addField(final Stack stack, final String name, final SSObject value) {
 
-      this.methods.add(name, bb((s, a) -> getField(s, name, a)));
-      this.methods.add(name + ":",
-            bb((s, a) -> setField(s, name, a), List.of("value")));
+      addMethod(name, bb((s, a) -> getField(s, name, a)));
+      addMethod(name + ":", bb((s, a) -> setField(s, name, a), List.of("value")));
 
-      if(this.fields == null) {
+      if (this.fields == null) {
          this.fields = new HashMap<>();
       }
       return setField(stack, name, value);
@@ -325,9 +323,9 @@ public class SSDynamicObject implements SSObject {
    private static SSObject getFields(final Stack stack, final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
-      if(subject.fields != null) {
-      return new SSSet(
-            subject.fields.keySet().stream().map(SSString::new).collect(toSet()));
+      if (subject.fields != null) {
+         return new SSSet(
+               subject.fields.keySet().stream().map(SSString::new).collect(toSet()));
       } else {
          return new SSSet();
       }
@@ -422,9 +420,9 @@ public class SSDynamicObject implements SSObject {
     * 
    ****************************************************************************/
    protected MethodMap methods;
-   HashMap<String, SSObject> fields;
+   private HashMap<String, SSObject> fields;
 
-   final static Methods sharedMethods = putMethods(new MethodMap());
+   final static MethodMap sharedMethods = putMethods(new MethodMap());
    public final static SSString nature = new SSString("object");
    /****************************************************************************
     * 
@@ -435,8 +433,8 @@ public class SSDynamicObject implements SSObject {
       *************************************************************************/
       public Factory() {
 
-         this.methods.add("new", bb((stack, args) -> new SSDynamicObject()));
-         this.methods.add("newOfNature:",
+         addMethod("new", bb((stack, args) -> new SSDynamicObject()));
+         addMethod("newOfNature:",
                bb(SSDynamicObject.Factory::newOfNature, List.of("nature")));
       }
       /*************************************************************************

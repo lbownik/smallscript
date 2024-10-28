@@ -35,14 +35,14 @@ public final class SSMap extends SSDynamicObject {
    ****************************************************************************/
    public SSMap(final HashMap<SSObject, SSObject> elements) {
 
-      super(new MethodMap(sharedMethods));
+      super(sharedMethods);
       this.elements = new HashMap<>(elements);
    }
 
    /****************************************************************************
     * 
    ****************************************************************************/
-   static Methods putMethods(final Methods methods) {
+   static MethodMap putMethods(final MethodMap methods) {
 
       final var listOfKey = List.of("key");
       final var listOfKeyValue = List.of("key", "value");
@@ -60,17 +60,6 @@ public final class SSMap extends SSDynamicObject {
       methods.add("size", bb(SSMap::size));
 
       return methods;
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   @Override
-   protected void addMethod(final String name, final SSObject block) {
-
-      if(this.methods == SSMap.sharedMethods) {
-         this.methods = new MethodMap(SSMap.sharedMethods);
-      }
-      this.methods.add(name, block);
    }
    /****************************************************************************
     * 
@@ -180,8 +169,8 @@ public final class SSMap extends SSDynamicObject {
    ****************************************************************************/
    private final HashMap<SSObject, SSObject> elements;
    
-   final static Methods sharedMethods = putMethods(
-         new MethodMap(SSDynamicObject.sharedMethods));
+   final static MethodMap sharedMethods = putMethods(
+         new MethodMap(SSDynamicObject.sharedMethods, true));
    private final static SSString nature = new SSString("map");
    /****************************************************************************
     * 
@@ -192,8 +181,8 @@ public final class SSMap extends SSDynamicObject {
       *************************************************************************/
       public Factory() {
 
-         this.methods.add("new", bb((s,a) -> new SSMap()));
-         this.methods.add("at::put:", bb(SSMap.Factory::atPut, List.of("key", "value")));
+         addMethod("new", bb((s,a) -> new SSMap()));
+         addMethod("at::put:", bb(SSMap.Factory::atPut, List.of("key", "value")));
       }
       /*************************************************************************
        * 

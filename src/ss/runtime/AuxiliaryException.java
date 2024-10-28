@@ -37,11 +37,10 @@ final class AuxiliaryException extends RuntimeException {
    /****************************************************************************
     * 
    ****************************************************************************/
-   @Override
-   public String getMessage() {
+   public String getMessage(final Stack stack) {
       
       if(this.object instanceof SSDynamicObject o) {
-         return o.fields.get("message").toString();
+         return o.invoke(stack, "message").toString();
       } else {
          return this.object.toString();
       }

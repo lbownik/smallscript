@@ -36,24 +36,13 @@ public final class SSSet extends SSDynamicObject {
    ****************************************************************************/
    public SSSet(final Set<SSObject> elements) {
 
-      super(new MethodMap(sharedMethods));
+      super(sharedMethods);
       this.elements = new HashSet<>(elements);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   @Override
-   protected void addMethod(final String name, final SSObject block) {
-
-      if(this.methods == SSSet.sharedMethods) {
-         this.methods = new MethodMap(SSSet.sharedMethods);
-      }
-      this.methods.add(name, block);
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   static Methods putMethods(final Methods methods) {
+   static MethodMap putMethods(final MethodMap methods) {
 
       final var listOfItem = List.of("item");
       final var listOfBlock = List.of("block");
@@ -160,8 +149,8 @@ public final class SSSet extends SSDynamicObject {
    ****************************************************************************/
    private final HashSet<SSObject> elements;
    
-   final static Methods sharedMethods = putMethods(
-         new MethodMap(SSDynamicObject.sharedMethods));
+   final static MethodMap sharedMethods = putMethods(
+         new MethodMap(SSDynamicObject.sharedMethods, true));
    private final static SSString nature = new SSString("set");
    /****************************************************************************
     * 
@@ -172,8 +161,8 @@ public final class SSSet extends SSDynamicObject {
       *************************************************************************/
       public Factory() {
 
-         this.methods.add("new", bb((s, a) -> new SSSet()));
-         this.methods.add("append:", bb(SSSet.Factory::append, List.of("item")));
+         addMethod("new", bb((s, a) -> new SSSet()));
+         addMethod("append:", bb(SSSet.Factory::append, List.of("item")));
       }
       /*************************************************************************
        * 

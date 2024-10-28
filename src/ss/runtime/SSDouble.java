@@ -27,7 +27,7 @@ public final class SSDouble extends SSDynamicObject {
    ****************************************************************************/
    public SSDouble(final double value) {
 
-      super(new MethodMap(sharedMethods));
+      super(sharedMethods);
       this.value = value;
    }
    /****************************************************************************
@@ -41,7 +41,7 @@ public final class SSDouble extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   static Methods putMethods(final Methods methods) {
+   static MethodMap putMethods(final MethodMap methods) {
 
       final List<String> listOfNumber = List.of("number");
       
@@ -199,7 +199,7 @@ public final class SSDouble extends SSDynamicObject {
    ****************************************************************************/
    public final double value;
 
-   final static Methods sharedMethods = putMethods(
-         new MethodMap(SSDynamicObject.sharedMethods));
+   final static MethodMap sharedMethods = putMethods(
+         new MethodMap(SSDynamicObject.sharedMethods, true));
    private final static SSString nature = new SSString("number");
 }

@@ -32,9 +32,9 @@ public final class SSOutput extends SSDynamicObject {
       final var listOfObject = List.of("object");
       
       this.out = out;
-      this.methods.add("clone", bb(SSOutput::clone));
-      this.methods.add("writeLine:", bb(SSOutput::writeLine, listOfObject));
-      this.methods.add("append:", bb(SSOutput::append, listOfObject));
+      addMethod("clone", bb(SSOutput::clone));
+      addMethod("writeLine:", bb(SSOutput::writeLine, listOfObject));
+      addMethod("append:", bb(SSOutput::append, listOfObject));
    }
    /****************************************************************************
     * 

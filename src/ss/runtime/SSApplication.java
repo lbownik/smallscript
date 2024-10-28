@@ -38,9 +38,9 @@ public final class SSApplication extends SSDynamicObject {
       addField(null, "output", new SSOutput(out));
       addField(null, "error", new SSOutput(err));
 
-      this. methods.add("clone", bb(SSApplication::clone));
-      this. methods.add("exit:", bb(SSApplication::exit));
-      this. methods.add("load:", bb(SSApplication::load));
+      addMethod("clone", bb(SSApplication::clone));
+      addMethod("exit:", bb(SSApplication::exit));
+      addMethod("load:", bb(SSApplication::load));
 
       addField(null, "arguments",
             new SSList(Stream.of(interpreter.args).map(SSString::new).toList()));

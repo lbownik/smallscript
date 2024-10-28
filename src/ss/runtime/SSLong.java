@@ -29,13 +29,13 @@ public final class SSLong extends SSDynamicObject {
    ****************************************************************************/
    public SSLong(final long value) {
 
-      super(new MethodMap(sharedMethods));
+      super(sharedMethods);
       this.value = value;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   static Methods putMethods(final Methods methods) {
+   static MethodMap putMethods(final MethodMap methods) {
 
       final List<String> listOfNumber = List.of("number");
       
@@ -89,17 +89,6 @@ public final class SSLong extends SSDynamicObject {
          throwException(stack, arg, "Cannot cast " + n + " to number.");
          return stack.getNull(); // never happens
       }
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   @Override
-   protected void addMethod(final String name, final SSObject block) {
-
-      if(this.methods == SSLong.sharedMethods) {
-         this.methods = new MethodMap(SSLong.sharedMethods);
-      }
-      this.methods.add(name, block);
    }
    /****************************************************************************
     * 
@@ -268,6 +257,6 @@ public final class SSLong extends SSDynamicObject {
    public final long value;
 
    private final static SSString nature = new SSString("number");
-   final static Methods sharedMethods = putMethods(
-         new MethodMap(SSDynamicObject.sharedMethods));
+   final static MethodMap sharedMethods = putMethods(
+         new MethodMap(SSDynamicObject.sharedMethods, true));
 }

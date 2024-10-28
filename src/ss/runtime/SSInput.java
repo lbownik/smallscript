@@ -30,8 +30,8 @@ public final class SSInput extends SSDynamicObject {
    public SSInput(final BufferedReader reader) {
 
       this.reader = reader;
-      this.methods.add("clone", bb(SSInput::clone));
-      this.methods.add("readLine", bb(SSInput::readLine));
+      addMethod("clone", bb(SSInput::clone));
+      addMethod("readLine", bb(SSInput::readLine));
    }
    /****************************************************************************
     * 

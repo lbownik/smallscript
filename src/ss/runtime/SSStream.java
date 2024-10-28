@@ -29,13 +29,13 @@ public final class SSStream extends SSDynamicObject {
    ****************************************************************************/
    public SSStream(final Stream<SSObject> stream) {
 
-      super(new MethodMap(sharedMethods));
+      super(sharedMethods);
       this.stream = stream;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   static Methods putMethods(final Methods methods) {
+   static MethodMap putMethods(final MethodMap methods) {
 
       final var listOfBlock = List.of("block");
       
@@ -45,17 +45,6 @@ public final class SSStream extends SSDynamicObject {
       methods.add("transformUsing:", bb(SSStream::transformUsing, listOfBlock));
       
       return methods;
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   @Override
-   protected void addMethod(final String name, final SSObject block) {
-
-      if(this.methods == SSStream.sharedMethods) {
-         this.methods = new MethodMap(SSStream.sharedMethods);
-      }
-      this.methods.add(name, block);
    }
    /****************************************************************************
     * 
@@ -124,6 +113,6 @@ public final class SSStream extends SSDynamicObject {
    ****************************************************************************/
    private final Stream<SSObject> stream;
    
-   final static Methods sharedMethods = putMethods(
-         new MethodMap(SSDynamicObject.sharedMethods));
+   final static MethodMap sharedMethods = putMethods(
+         new MethodMap(SSDynamicObject.sharedMethods, true));
 }

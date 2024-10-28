@@ -28,17 +28,18 @@ final class MethodMap implements Methods {
    ****************************************************************************/
    MethodMap() {
 
-      this(Methods.empty);
+      this(Methods.empty, true);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   MethodMap(final Methods backup) {
+   MethodMap(final Methods backup, final boolean shared) {
 
       this.size = 0;
       this.table = new Node[initialCapacity];
       this.threshold = (int) (loadFactor * initialCapacity);
       this.backup = backup != null ? backup : Methods.empty;
+      this.shared = shared;
    }
    /****************************************************************************
     * 
@@ -49,6 +50,7 @@ final class MethodMap implements Methods {
       this.table = new Node[other.table.length];
       this.threshold = other.threshold;
       this.backup = other.backup;
+      this.shared = other.shared;
 
       final int length = other.table.length;
 
@@ -205,10 +207,18 @@ final class MethodMap implements Methods {
    /****************************************************************************
     * 
    ****************************************************************************/
+   public boolean isShared() {
+      
+      return this.shared;
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
    private Node[] table;
    private int threshold;
    private int size;
    private final Methods backup;
+   private final boolean shared;
 
    private final static float loadFactor = 0.75f;
    private final static int initialCapacity = 32;

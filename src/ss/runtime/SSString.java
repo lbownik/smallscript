@@ -28,13 +28,13 @@ public final class SSString extends SSDynamicObject {
    ****************************************************************************/
    public SSString(final String value) {
 
-      super(new MethodMap(sharedMethods));
+      super(sharedMethods);
       this.value = value;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   static Methods putMethods(final Methods methods) {
+   static MethodMap putMethods(final MethodMap methods) {
 
       methods.add("append:", bb(SSString::concatenate, List.of("text")));
       methods.add("at:", bb(SSString::at, List.of("index")));
@@ -53,17 +53,6 @@ public final class SSString extends SSDynamicObject {
 
       super(other);
       this.value = other.value;
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   @Override
-   protected void addMethod(final String name, final SSObject block) {
-
-      if(this.methods == SSString.sharedMethods) {
-         this.methods = new MethodMap(SSString.sharedMethods);
-      }
-      this.methods.add(name, block);
    }
    /****************************************************************************
     * 
@@ -140,7 +129,7 @@ public final class SSString extends SSDynamicObject {
    ****************************************************************************/
    private final String value;
 
-   final static Methods sharedMethods = putMethods(
-         new MethodMap(SSDynamicObject.sharedMethods));
+   final static MethodMap sharedMethods = putMethods(
+         new MethodMap(SSDynamicObject.sharedMethods, true));
    private final static SSString nature = new SSString("string");
 }

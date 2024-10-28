@@ -46,7 +46,11 @@ public class SSDynamicObject implements SSObject {
    ****************************************************************************/
    public SSDynamicObject(final SSDynamicObject other) {
 
-      this.methods = new MethodMap(other.methods);
+      if (other.methods.isShared()) {
+         this.methods = other.methods;
+      } else {
+         this.methods = new MethodMap(other.methods);
+      }
       if (other.fields != null) {
          this.fields = new HashMap<>(other.fields);
       } else {

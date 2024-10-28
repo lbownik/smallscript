@@ -313,16 +313,6 @@ public class SSDynamicObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   SSObject addImmutableField(final Stack stack, final String name,
-         final SSObject value) {
-
-      this.methods.add(name, bb((s, a) -> getField(s, name, a)));
-
-      return setField(stack, name, value);
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
    private static SSObject getField(final Stack stack, final String name,
          final List<SSObject> args) {
 

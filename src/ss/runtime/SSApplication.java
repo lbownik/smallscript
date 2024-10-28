@@ -42,7 +42,7 @@ public final class SSApplication extends SSDynamicObject {
       this. methods.add("exit:", bb(SSApplication::exit));
       this. methods.add("load:", bb(SSApplication::load));
 
-      addImmutableField(null, "arguments",
+      addField(null, "arguments",
             new SSList(Stream.of(interpreter.args).map(SSString::new).toList()));
    }
    /****************************************************************************

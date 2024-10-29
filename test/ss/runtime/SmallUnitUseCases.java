@@ -20,7 +20,7 @@ import org.junit.Test;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
-public class SUnitUseCases extends UseCaseBase {
+public class SmallUnitUseCases extends UseCaseBase {
 
    /****************************************************************************
     * 
@@ -29,8 +29,8 @@ public class SUnitUseCases extends UseCaseBase {
    public void library_loadsProperly() throws Exception {
 
       assertSSTrue("""
-            !SUnit = application load: "SUnit.ss";
-            !suite = SUnit Suite new;
+            !SmallUnit = application load: "SmallUnit.ss";
+            !suite = SmallUnit Suite new;
             
             suite addTestNamed: "test1" :using: { 
             

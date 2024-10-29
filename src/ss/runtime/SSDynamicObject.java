@@ -135,14 +135,10 @@ public class SSDynamicObject implements SSObject {
    ****************************************************************************/
    private List<SSObject> prependThisTo(final List<SSObject> args) {
       
-      if(args.isEmpty()) {
-          return List.of(this);
-      } else {
         final ArrayList<SSObject> result = new ArrayList<>(args.size() + 1);
         result.add(this);
         result.addAll(args);
         return result;
-      }
    }
    /****************************************************************************
     * 

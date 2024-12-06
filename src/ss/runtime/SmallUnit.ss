@@ -58,9 +58,9 @@ TestSuite addMethod: "new" :using: { !this |
 	#----------------------------------------------------------------------------
 	suite addMethod: "$createAssert" :using: {!this |
 	
-	      Object new addMethod: "that::equals:" :using: {!this !expected !actual |
+	      Object new addMethod: "that::isEqualTo:" :using: {!this !expected !actual |
 	      		 
-	      		 expected equals: actual ifFalse: { 
+	      		 expected isEqualTo: actual ifFalse: { 
 	      		    Object new addField: "nature"  :withValue: "assertionFailure"
 	      		               addField: "cause"   :withValue: this
 	      		               addField: "message" :withValue: 

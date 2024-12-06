@@ -26,14 +26,14 @@ public class StringUseCases extends UseCaseBase {
    @Test
    public void charHasSetBasicProperties() throws Exception {
 
-      assertSSTrue("\"abc\" size equals: 3;");
-      assertSSTrue("\"abc\" nature equals: \"string\";");
-      assertSSTrue("\"abc\" nature nature equals: \"string\";");
-      assertSSTrue("\"abc\" asString equals: \"abc\";");
+      assertSSTrue("\"abc\" size isEqualTo: 3;");
+      assertSSTrue("\"abc\" nature isEqualTo: \"string\";");
+      assertSSTrue("\"abc\" nature nature isEqualTo: \"string\";");
+      assertSSTrue("\"abc\" asString isEqualTo: \"abc\";");
       assertResultEquals(new SSLong(96354), "\"abc\" hash;");
       assertSSTrue("""
             !o = "B";
-            o orDefault: "a" equals: o;
+            o orDefault: "a" isEqualTo: o;
             """);
    }
    /****************************************************************************
@@ -42,9 +42,9 @@ public class StringUseCases extends UseCaseBase {
    @Test
    public void stringEualsOnlyToItself() throws Exception {
 
-      assertSSTrue("\"abc\" equals: \"abc\";");
-      assertSSFalse("\"abc\" equals: \"a\";");
-      assertSSFalse("\"abc\" equals: null;");
+      assertSSTrue("\"abc\" isEqualTo: \"abc\";");
+      assertSSFalse("\"abc\" isEqualTo: \"a\";");
+      assertSSFalse("\"abc\" isEqualTo: null;");
       assertSSFalse("\"abc\" isNotEqualTo: \"abc\";");
       assertSSTrue("\"abc\" isNotEqualTo: \"a\";");
       assertSSTrue("\"abc\" isNotEqualTo: null;");
@@ -61,8 +61,8 @@ public class StringUseCases extends UseCaseBase {
                \"abc\" at: -1;
                false;
             } :catch: {!e|
-               (e nature equals: "exception") and:
-               (e message equals: "Index -1 out of bounds.");
+               (e nature isEqualTo: "exception") and:
+               (e message isEqualTo: "Index -1 out of bounds.");
             };
             """);
       assertSSTrue("""
@@ -70,8 +70,8 @@ public class StringUseCases extends UseCaseBase {
                \"abc\" at: 3;
                false;
             } :catch: {!e|
-               (e nature equals: "exception") and:
-               (e message equals: "Index 3 out of bounds.");
+               (e nature isEqualTo: "exception") and:
+               (e message isEqualTo: "Index 3 out of bounds.");
             };
             """);
    }
@@ -100,13 +100,13 @@ public class StringUseCases extends UseCaseBase {
    @Test
    public void stringCanBeCloned() throws Exception {
 
-      assertSSTrue("\"abc\" clone equals: \"abc\";");
+      assertSSTrue("\"abc\" clone isEqualTo: \"abc\";");
       assertSSTrue("""
             !old = \"abc\";
             old addField: "test" :withValue: 1;
             !new = old clone;
             new test: 2;
-            old test equals: 1;
+            old test isEqualTo: 1;
             """);
    }
    /****************************************************************************
@@ -116,83 +116,83 @@ public class StringUseCases extends UseCaseBase {
    public void builtInMethods_returnArgumentLists() throws Exception {
 
       assertSSTrue("""
-            "" method: "invoke::with:" arguments equals: (List append: "method" append: "argList");
+            "" method: "invoke::with:" arguments isEqualTo: (List append: "method" append: "argList");
             """);
       assertSSTrue("""
-            "" method: "addField:" arguments equals: (List append: "name");
+            "" method: "addField:" arguments isEqualTo: (List append: "name");
             """);
       assertSSTrue("""
-            "" method: "addField::withValue:" arguments equals: (List append: "name" append: "value");
+            "" method: "addField::withValue:" arguments isEqualTo: (List append: "name" append: "value");
             """);
       assertSSTrue("""
-            "" method: "addMethod::using:" arguments equals: (List append: "name" append: "block");
+            "" method: "addMethod::using:" arguments isEqualTo: (List append: "name" append: "block");
             """);
       assertSSTrue("""
-            "" method: "asString" arguments equals: (List new);
+            "" method: "asString" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            "" method: "at:" arguments equals: (List append: "index");
+            "" method: "at:" arguments isEqualTo: (List append: "index");
             """);
       assertSSTrue("""
-            "" method: "clone" arguments equals: (List new);
+            "" method: "clone" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            "" method: "collectTo:" arguments equals: (List append: "collector");
+            "" method: "collectTo:" arguments isEqualTo: (List append: "collector");
             """);
       assertSSTrue("""
-            "" method: "equals:" arguments equals: (List append: "other");
+            "" method: "isEqualTo:" arguments isEqualTo: (List append: "other");
             """);
       assertSSTrue("""
-            "" method: "execute" arguments equals: (List new);
+            "" method: "execute" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            "" method: "fields" arguments equals: (List new);
+            "" method: "fields" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            "" method: "forEach:" arguments equals: (List append: "block");
+            "" method: "forEach:" arguments isEqualTo: (List append: "block");
             """);
       assertSSTrue("""
-            "" method: "method:" arguments equals: (List append: "name");
+            "" method: "method:" arguments isEqualTo: (List append: "name");
             """);
       assertSSTrue("""
-            "" method: "methods" arguments equals: (List new);
+            "" method: "methods" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            "" method: "nature" arguments equals: (List new);
+            "" method: "nature" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            "" method: "hash" arguments equals: (List new);
+            "" method: "hash" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            "" method: "isNotEqualTo:" arguments equals: (List append: "other");
+            "" method: "isNotEqualTo:" arguments isEqualTo: (List append: "other");
             """);
       assertSSTrue("""
-            "" method: "orDefault:" arguments equals: (List append: "default");
+            "" method: "orDefault:" arguments isEqualTo: (List append: "default");
             """);
       assertSSTrue("""
-            "" method: "size" arguments equals: (List new);
+            "" method: "size" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            "" method: "selectIf:" arguments equals: (List append: "block");
+            "" method: "selectIf:" arguments isEqualTo: (List append: "block");
             """);
       assertSSTrue("""
-            "" method: "throw" arguments equals: (List new);
+            "" method: "throw" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            "" method: "transformUsing:" arguments equals: (List append: "block");
+            "" method: "transformUsing:" arguments isEqualTo: (List append: "block");
             """);
       assertSSTrue("""
-            "" method: "try::catch:" arguments equals: (List append: "tryBlock" append: "catchBlock");
+            "" method: "try::catch:" arguments isEqualTo: (List append: "tryBlock" append: "catchBlock");
             """);
       
       assertSSTrue("""
-            "" method: "append:" arguments equals: (List append: "text");
+            "" method: "append:" arguments isEqualTo: (List append: "text");
             """);
       assertSSTrue("""
-            "" method: "concatenate:" arguments equals: (List append: "text");
+            "" method: "concatenate:" arguments isEqualTo: (List append: "text");
             """);
       assertSSTrue("""
-            "" method: "startsWith:" arguments equals: (List append: "text");
+            "" method: "startsWith:" arguments isEqualTo: (List append: "text");
             """);
    }
    /****************************************************************************

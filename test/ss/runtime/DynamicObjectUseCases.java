@@ -27,15 +27,15 @@ public class DynamicObjectUseCases extends UseCaseBase {
    @Test
    public void newlyCreatedObject_hasSetBasicProperties() throws Exception {
 
-      assertSSTrue("Object new size equals: 1;");
-      assertSSTrue("Object new arguments equals: (List new);");
-      assertSSTrue("Object new nature equals: \"object\";");
-      assertSSTrue("Object newOfNature: \"xyz\" nature equals: \"xyz\";");
+      assertSSTrue("Object new size isEqualTo: 1;");
+      assertSSTrue("Object new arguments isEqualTo: (List new);");
+      assertSSTrue("Object new nature isEqualTo: \"object\";");
+      assertSSTrue("Object newOfNature: \"xyz\" nature isEqualTo: \"xyz\";");
       assertSSTrue("Object new asString startsWith: \"object#\";");
       assertSSTrue("Object new hash isGreaterThan: 0;");
       assertSSTrue("""
             !o = Object new;
-            o orDefault: "a" equals: o;
+            o orDefault: "a" isEqualTo: o;
             """);
    }
    /****************************************************************************
@@ -44,7 +44,7 @@ public class DynamicObjectUseCases extends UseCaseBase {
    @Test
    public void objectEqualsToItself() throws Exception {
 
-      assertSSTrue("!o = Object new; o equals: o;");
+      assertSSTrue("!o = Object new; o isEqualTo: o;");
       assertSSFalse("!o = Object new; o isNotEqualTo: o;");
    }
    /****************************************************************************
@@ -66,7 +66,7 @@ public class DynamicObjectUseCases extends UseCaseBase {
    @Test
    public void executingObject_doesNothingAndReturnsThisObject() throws Exception {
 
-      assertSSTrue("!o = Object new; o execute equals: o;");
+      assertSSTrue("!o = Object new; o execute isEqualTo: o;");
    }
    /****************************************************************************
     * 
@@ -75,15 +75,15 @@ public class DynamicObjectUseCases extends UseCaseBase {
    public void objectIsEquivalentTo_aListWithASingleElement_ofThis()
          throws Exception {
 
-      assertSSTrue("Object new size equals: 1;");
-      assertSSTrue("!o = Object new; o at: 0 equals: o;");
+      assertSSTrue("Object new size isEqualTo: 1;");
+      assertSSTrue("!o = Object new; o at: 0 isEqualTo: o;");
       assertSSTrue("""
             !o = Object new;
             o try: {
               o at: -1;
             } :catch: {!e |
-              (e nature equals: "exception") and:
-              (e message equals: "Index -1 out of bounds.");
+              (e nature isEqualTo: "exception") and:
+              (e message isEqualTo: "Index -1 out of bounds.");
             };
             """);
       assertSSTrue("""
@@ -91,8 +91,8 @@ public class DynamicObjectUseCases extends UseCaseBase {
             o try: {
               o at: 1;
             } :catch: {!e |
-              (e nature equals: "exception") and:
-              (e message equals: "Index 1 out of bounds.");
+              (e nature isEqualTo: "exception") and:
+              (e message isEqualTo: "Index 1 out of bounds.");
             };
             """);
       assertSSTrue("""
@@ -103,22 +103,22 @@ public class DynamicObjectUseCases extends UseCaseBase {
                counter = counter plus: 1;
                innerItem = item;
             };
-            (counter equals: 1) and: (result equals: o) and: (innerItem equals: o);
+            (counter isEqualTo: 1) and: (result isEqualTo: o) and: (innerItem isEqualTo: o);
             """);
       assertSSTrue("""
             !o = Object new;
             !list = o collectTo: List;
-            (list size equals: 1) and: (list at: 0 equals: o);
+            (list size isEqualTo: 1) and: (list at: 0 isEqualTo: o);
             """);
       assertSSTrue("""
             !o = Object new;
-            !list = o selectIf: {!item | item equals: o} collectTo: List;
-            (list size equals: 1) and: (list at: 0 equals: o);
+            !list = o selectIf: {!item | item isEqualTo: o} collectTo: List;
+            (list size isEqualTo: 1) and: (list at: 0 isEqualTo: o);
             """);
       assertSSTrue("""
             !o = Object new;
             !list = o transformUsing: {!item | item } collectTo: List;
-            (list size equals: 1) and: (list at: 0 equals: o);
+            (list size isEqualTo: 1) and: (list at: 0 isEqualTo: o);
             """);
 
    }
@@ -133,7 +133,7 @@ public class DynamicObjectUseCases extends UseCaseBase {
             o try: {
               o throw;
             } :catch: {!e |
-              e equals: o;
+              e isEqualTo: o;
             };
             """);
       
@@ -142,7 +142,7 @@ public class DynamicObjectUseCases extends UseCaseBase {
             o try: { !this |
               this throw;
             } :catch: {!e |
-              e equals: o;
+              e isEqualTo: o;
             };
             """);
    }
@@ -164,7 +164,7 @@ public class DynamicObjectUseCases extends UseCaseBase {
               o throw;
             } :catch: {};
             
-            o closed equals: true;
+            o closed isEqualTo: true;
             """);
    }
    
@@ -187,7 +187,7 @@ public class DynamicObjectUseCases extends UseCaseBase {
               outerThis = this;
             } ;
             
-            (outerThis equals: o) and: (o closed equals: true);
+            (outerThis isEqualTo: o) and: (o closed isEqualTo: true);
             """);
    }
    /****************************************************************************
@@ -199,14 +199,14 @@ public class DynamicObjectUseCases extends UseCaseBase {
       assertSSTrue("""
             !object = Object new;
             object addMethod: "a" :using: { 1;};
-            object a equals: 1;
+            object a isEqualTo: 1;
             """);
       assertSSTrue("""
             !object = Object new;
             !methodName = "a";
             !block = { 1;};
             object addMethod: methodName :using: block;
-            object a equals: 1;
+            object a isEqualTo: 1;
             """);
    }
    /****************************************************************************
@@ -226,14 +226,14 @@ public class DynamicObjectUseCases extends UseCaseBase {
             object addField: "a";
             !ten = 10;
             object a: ten;
-            object a equals: 10;
+            object a isEqualTo: 10;
             """);
       assertSSTrue("""
             !object = Object new;
             !fieldName = "a";
             !value = 10;
             object addField: fieldName :withValue: value;
-            object a equals: 10;
+            object a isEqualTo: 10;
             """);
    }
    /****************************************************************************
@@ -248,7 +248,7 @@ public class DynamicObjectUseCases extends UseCaseBase {
                this addField: "test" :withValue: true;
             };
             object a; #calling inexisting method
-            object test equals: true;
+            object test isEqualTo: true;
             """);
    }
    /****************************************************************************
@@ -314,7 +314,7 @@ public class DynamicObjectUseCases extends UseCaseBase {
             old addField: "test" :withValue: "a";
             !new = old clone;
             new test: "b";
-            (old test equals: "a") and: (new test equals: "b");
+            (old test isEqualTo: "a") and: (new test isEqualTo: "b");
             """);
    }
    /****************************************************************************
@@ -329,7 +329,7 @@ public class DynamicObjectUseCases extends UseCaseBase {
                   old try: {
                      old test;
                   } :catch: {!e |
-                     (e nature equals: "exception") and: (e message equals: "Method 'test' is not defined.");
+                     (e nature isEqualTo: "exception") and: (e message isEqualTo: "Method 'test' is not defined.");
                   };
                   """);
    }
@@ -341,7 +341,7 @@ public class DynamicObjectUseCases extends UseCaseBase {
 
       assertSSTrue("""
                !methods = Object new methods;
-               (methods size isGreaterThan: 0) and: (methods nature equals: "set");
+               (methods size isGreaterThan: 0) and: (methods nature isEqualTo: "set");
             """);
    }
    /****************************************************************************
@@ -351,7 +351,7 @@ public class DynamicObjectUseCases extends UseCaseBase {
    public void method_resturnsBlock() throws Exception {
 
       assertSSTrue("""
-               true method: "ifTrue:" nature equals: "block";
+               true method: "ifTrue:" nature isEqualTo: "block";
             """);
    }
 
@@ -363,7 +363,7 @@ public class DynamicObjectUseCases extends UseCaseBase {
 
       assertSSTrue("""
                !fields = Object new fields;
-               (fields size equals: 0) and: (fields nature equals: "set");
+               (fields size isEqualTo: 0) and: (fields nature isEqualTo: "set");
             """);
    }
    /****************************************************************************
@@ -373,7 +373,7 @@ public class DynamicObjectUseCases extends UseCaseBase {
    public void invoke_invekesMethodByName() throws Exception {
 
       assertSSTrue("""
-               "abc" invoke: "size" :with: (List new) equals: 3;
+               "abc" invoke: "size" :with: (List new) isEqualTo: 3;
             """);
    }
    
@@ -384,7 +384,7 @@ public class DynamicObjectUseCases extends UseCaseBase {
    public void close_doesNothing_andReturnsThis() throws Exception {
 
       assertSSTrue("""
-               Object close equals: Object;
+               Object close isEqualTo: Object;
             """);
    }
    /****************************************************************************
@@ -394,84 +394,84 @@ public class DynamicObjectUseCases extends UseCaseBase {
    public void builtInMethods_returnArgumentLists() throws Exception {
 
       assertSSTrue("""
-            Object method: "invoke::with:" arguments equals: (List append: "method" append: "argList");
+            Object method: "invoke::with:" arguments isEqualTo: (List append: "method" append: "argList");
             """);
       assertSSTrue("""
-            Object method: "addField:" arguments equals: (List append: "name");
+            Object method: "addField:" arguments isEqualTo: (List append: "name");
             """);
       assertSSTrue("""
-            Object method: "addField::withValue:" arguments equals: (List append: "name" append: "value");
+            Object method: "addField::withValue:" arguments isEqualTo: (List append: "name" append: "value");
             """);
       assertSSTrue("""
-            Object method: "addMethod::using:" arguments equals: (List append: "name" append: "block");
+            Object method: "addMethod::using:" arguments isEqualTo: (List append: "name" append: "block");
             """);
       assertSSTrue("""
-            Object method: "asString" arguments equals: (List new);
+            Object method: "asString" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            Object method: "at:" arguments equals: (List append: "index");
+            Object method: "at:" arguments isEqualTo: (List append: "index");
             """);
       assertSSTrue("""
-            Object method: "clone" arguments equals: (List new);
+            Object method: "clone" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            Object method: "close" arguments equals: (List new);
+            Object method: "close" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            Object method: "collectTo:" arguments equals: (List append: "collector");
+            Object method: "collectTo:" arguments isEqualTo: (List append: "collector");
             """);
       assertSSTrue("""
-            Object method: "doesNotUnderstand:" arguments equals: (List append: "message");
+            Object method: "doesNotUnderstand:" arguments isEqualTo: (List append: "message");
             """);
       assertSSTrue("""
-            Object method: "equals:" arguments equals: (List append: "other");
+            Object method: "isEqualTo:" arguments isEqualTo: (List append: "other");
             """);
       assertSSTrue("""
-            Object method: "execute" arguments equals: (List new);
+            Object method: "execute" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            Object method: "fields" arguments equals: (List new);
+            Object method: "fields" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            Object method: "forEach:" arguments equals: (List append: "block");
+            Object method: "forEach:" arguments isEqualTo: (List append: "block");
             """);
       assertSSTrue("""
-            Object method: "method:" arguments equals: (List append: "name");
+            Object method: "method:" arguments isEqualTo: (List append: "name");
             """);
       assertSSTrue("""
-            Object method: "methods" arguments equals: (List new);
+            Object method: "methods" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            Object method: "nature" arguments equals: (List new);
+            Object method: "nature" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            Object method: "hash" arguments equals: (List new);
+            Object method: "hash" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            Object method: "isNotEqualTo:" arguments equals: (List append: "other");
+            Object method: "isNotEqualTo:" arguments isEqualTo: (List append: "other");
             """);
       assertSSTrue("""
-            Object method: "orDefault:" arguments equals: (List append: "default");
+            Object method: "orDefault:" arguments isEqualTo: (List append: "default");
             """);
       assertSSTrue("""
-            Object method: "size" arguments equals: (List new);
+            Object method: "size" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            Object method: "selectIf:" arguments equals: (List append: "block");
+            Object method: "selectIf:" arguments isEqualTo: (List append: "block");
             """);
       assertSSTrue("""
-            Object method: "throw" arguments equals: (List new);
+            Object method: "throw" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            Object method: "transformUsing:" arguments equals: (List append: "block");
+            Object method: "transformUsing:" arguments isEqualTo: (List append: "block");
             """);
       assertSSTrue("""
-            Object method: "try::catch:" arguments equals: (List append: "tryBlock" append: "catchBlock");
+            Object method: "try::catch:" arguments isEqualTo: (List append: "tryBlock" append: "catchBlock");
             """);
       
       assertSSTrue("""
             Object addField: "xyz";
-            Object method: "xyz:" arguments equals: (List append: "value");
+            Object method: "xyz:" arguments isEqualTo: (List append: "value");
             """);
    }
    /****************************************************************************

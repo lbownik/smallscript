@@ -26,16 +26,16 @@ public class DoubleUseCases extends UseCaseBase {
    @Test
    public void doubleHasSetBasicProperties() throws Exception {
 
-      assertSSTrue("1.0 asString equals: \"1.0\";");
-      assertSSTrue("1.0 hash equals: 1072693248;");
+      assertSSTrue("1.0 asString isEqualTo: \"1.0\";");
+      assertSSTrue("1.0 hash isEqualTo: 1072693248;");
 
-      assertSSTrue("1.0 asDouble equals: 1.0;");
-      assertSSTrue("1.0 asLong equals: 1;");
-      assertSSTrue("1.0 size equals: 1;");
-      assertSSTrue("1.0 nature equals: \"number\";");
+      assertSSTrue("1.0 asDouble isEqualTo: 1.0;");
+      assertSSTrue("1.0 asLong isEqualTo: 1;");
+      assertSSTrue("1.0 size isEqualTo: 1;");
+      assertSSTrue("1.0 nature isEqualTo: \"number\";");
       assertSSTrue("""
             !o = 1.0;
-            o orDefault: "a" equals: o;
+            o orDefault: "a" isEqualTo: o;
             """);
    }
    /****************************************************************************
@@ -44,10 +44,10 @@ public class DoubleUseCases extends UseCaseBase {
    @Test
    public void doubleEualsOnlyToItself() throws Exception {
 
-      assertSSTrue("1.0 equals: 1.0;");
-      assertSSFalse("1.0 equals: 1;");
-      assertSSFalse("1.0 equals: 2.0;");
-      assertSSFalse("1.0 equals: null;");
+      assertSSTrue("1.0 isEqualTo: 1.0;");
+      assertSSFalse("1.0 isEqualTo: 1;");
+      assertSSFalse("1.0 isEqualTo: 2.0;");
+      assertSSFalse("1.0 isEqualTo: null;");
       assertSSFalse("1.0 isNotEqualTo: 1.0;");
       assertSSTrue("1.0 isNotEqualTo: 2.0;");
       assertSSTrue("1.0 isLessOrEqualTo: 1.0;");
@@ -88,8 +88,8 @@ public class DoubleUseCases extends UseCaseBase {
                1.0 plus: true;
                false;
             } :catch: {!e|
-               (e nature equals: "exception") and:
-               (e message equals: "Cannot cast object to number.");
+               (e nature isEqualTo: "exception") and:
+               (e message isEqualTo: "Cannot cast object to number.");
             };
             """);
       assertSSTrue("""
@@ -97,8 +97,8 @@ public class DoubleUseCases extends UseCaseBase {
                1.0 minus: true;
                false;
             } :catch: {!e|
-               (e nature equals: "exception") and:
-               (e message equals: "Cannot cast object to number.");
+               (e nature isEqualTo: "exception") and:
+               (e message isEqualTo: "Cannot cast object to number.");
             };
             """);
       assertSSTrue("""
@@ -106,8 +106,8 @@ public class DoubleUseCases extends UseCaseBase {
                1.0 multipliedBy: true;
                false;
             } :catch: {!e|
-               (e nature equals: "exception") and:
-               (e message equals: "Cannot cast object to number.");
+               (e nature isEqualTo: "exception") and:
+               (e message isEqualTo: "Cannot cast object to number.");
             };
             """);
       assertSSTrue("""
@@ -115,8 +115,8 @@ public class DoubleUseCases extends UseCaseBase {
                1.0 dividedBy: true;
                false;
             } :catch: {!e|
-               (e nature equals: "exception") and:
-               (e message equals: "Cannot cast object to number.");
+               (e nature isEqualTo: "exception") and:
+               (e message isEqualTo: "Cannot cast object to number.");
             };
             """);
    }
@@ -126,13 +126,13 @@ public class DoubleUseCases extends UseCaseBase {
    @Test
    public void doubleCanBeCloned() throws Exception {
 
-      assertSSTrue("1.0 clone equals: 1.0;");
+      assertSSTrue("1.0 clone isEqualTo: 1.0;");
       assertSSTrue("""
             !old = 1.0;
             old addField: "test" :withValue: 1;
             !new = old clone;
             new test: 2;
-            old test equals: 1;
+            old test isEqualTo: 1;
             """);
    }
    /****************************************************************************
@@ -142,37 +142,37 @@ public class DoubleUseCases extends UseCaseBase {
    public void builtInMethods_returnArgumentLists() throws Exception {
 
       assertSSTrue("""
-            1.0 method: "asDouble" arguments equals: (List new);
+            1.0 method: "asDouble" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            1.0 method: "asLong" arguments equals: (List new);
+            1.0 method: "asLong" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            1.0 method: "clone" arguments equals: (List new);
+            1.0 method: "clone" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            1.0 method: "dividedBy:" arguments equals: (List append: "number");
+            1.0 method: "dividedBy:" arguments isEqualTo: (List append: "number");
             """);
       assertSSTrue("""
-            1.0 method: "isGreaterThan:" arguments equals: (List append: "number");
+            1.0 method: "isGreaterThan:" arguments isEqualTo: (List append: "number");
             """);
       assertSSTrue("""
-            1.0 method: "isGreaterOrEqualTo:" arguments equals: (List append: "number");
+            1.0 method: "isGreaterOrEqualTo:" arguments isEqualTo: (List append: "number");
             """);
       assertSSTrue("""
-            1.0 method: "isLessThan:" arguments equals: (List append: "number");
+            1.0 method: "isLessThan:" arguments isEqualTo: (List append: "number");
             """);
       assertSSTrue("""
-            1.0 method: "isLessOrEqualTo:" arguments equals: (List append: "number");
+            1.0 method: "isLessOrEqualTo:" arguments isEqualTo: (List append: "number");
             """);
       assertSSTrue("""
-            1.0 method: "minus:" arguments equals: (List append: "number");
+            1.0 method: "minus:" arguments isEqualTo: (List append: "number");
             """);
       assertSSTrue("""
-            1.0 method: "multipliedBy:" arguments equals: (List append: "number");
+            1.0 method: "multipliedBy:" arguments isEqualTo: (List append: "number");
             """);
       assertSSTrue("""
-            1.0 method: "plus:" arguments equals: (List append: "number");
+            1.0 method: "plus:" arguments isEqualTo: (List append: "number");
             """);
    }
    /****************************************************************************

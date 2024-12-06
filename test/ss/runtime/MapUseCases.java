@@ -26,9 +26,9 @@ public class MapUseCases extends UseCaseBase {
    @Test
    public void mapHasMapBasicProperties() throws Exception {
 
-      assertSSTrue("Map new size equals: 0;");
-      assertSSTrue("Map new nature equals: \"map\";");
-      assertSSTrue("Map new asString equals: \"{}\";");
+      assertSSTrue("Map new size isEqualTo: 0;");
+      assertSSTrue("Map new nature isEqualTo: \"map\";");
+      assertSSTrue("Map new asString isEqualTo: \"{}\";");
       assertSSTrue("Map hash isGreaterThan: 0;");
    }
    /****************************************************************************
@@ -37,15 +37,15 @@ public class MapUseCases extends UseCaseBase {
    @Test
    public void mapEualsOnlyToIdenticalMap() throws Exception {
 
-      assertSSTrue("Map new equals: (Map new);");
+      assertSSTrue("Map new isEqualTo: (Map new);");
       assertSSFalse("Map new isNotEqualTo: (Map new);");
 
-      assertSSFalse("Map new equals: null;");
+      assertSSFalse("Map new isEqualTo: null;");
       assertSSTrue("Map new isNotEqualTo: null;");
 
-      assertSSTrue("Map at: \"A\" :put: \"B\" equals: (Map at: \"A\" :put: \"B\");");
+      assertSSTrue("Map at: \"A\" :put: \"B\" isEqualTo: (Map at: \"A\" :put: \"B\");");
       assertSSFalse(
-            "Map at: \"A\" :put: \"B\" equals: (Map at: \"A\" :put: \"B\" at: \"C\" :put: \"D\");");
+            "Map at: \"A\" :put: \"B\" isEqualTo: (Map at: \"A\" :put: \"B\" at: \"C\" :put: \"D\");");
       assertSSTrue("Map at: \"A\" :put: \"B\" isNotEqualTo: (Map at: \"A\" :put: \"B\" at: \"C\" :put: \"D\");");
    }
    /****************************************************************************
@@ -54,9 +54,9 @@ public class MapUseCases extends UseCaseBase {
    @Test
    public void executingMapDoesNothingAndReturnNull() throws Exception {
 
-      assertSSTrue("Map execute equals: Map;");
-      assertSSTrue("Map new execute equals: (Map new);");
-      assertSSTrue("Map at: \"A\" :put: \"B\" execute equals: (Map at: \"A\" :put: \"B\");");
+      assertSSTrue("Map execute isEqualTo: Map;");
+      assertSSTrue("Map new execute isEqualTo: (Map new);");
+      assertSSTrue("Map at: \"A\" :put: \"B\" execute isEqualTo: (Map at: \"A\" :put: \"B\");");
    }
    /****************************************************************************
     * 
@@ -71,7 +71,7 @@ public class MapUseCases extends UseCaseBase {
                counter = counter plus: 1;
                innerItem = item;
             };
-            counter equals: 0;
+            counter isEqualTo: 0;
             """);
    }
    /****************************************************************************
@@ -80,10 +80,10 @@ public class MapUseCases extends UseCaseBase {
    @Test
    public void nonEmptyMapGrows() throws Exception {
 
-      assertSSTrue("Map at: \"A\" :put: \"B\" size equals: 1;");
-      assertSSTrue("Map at: \"A\" :put: \"B\" at: \"C\" :put: \"D\" size equals: 2;");
+      assertSSTrue("Map at: \"A\" :put: \"B\" size isEqualTo: 1;");
+      assertSSTrue("Map at: \"A\" :put: \"B\" at: \"C\" :put: \"D\" size isEqualTo: 2;");
       
-      assertSSTrue("Map at: \"A\" :put: \"B\" at: \"A\" equals: \"B\";");
+      assertSSTrue("Map at: \"A\" :put: \"B\" at: \"A\" isEqualTo: \"B\";");
    }
    /****************************************************************************
     * 
@@ -91,7 +91,7 @@ public class MapUseCases extends UseCaseBase {
    @Test
    public void valuesAddedToMapCanBeRetireved() throws Exception {
       
-      assertSSTrue("Map at: \"A\" :put: \"B\" at: \"A\" equals: \"B\";");
+      assertSSTrue("Map at: \"A\" :put: \"B\" at: \"A\" isEqualTo: \"B\";");
    }
    /****************************************************************************
     * 
@@ -99,7 +99,7 @@ public class MapUseCases extends UseCaseBase {
    @Test
    public void retrievingNonExistentValueReturnNull() throws Exception {
       
-      assertSSTrue("Map new at: \"A\" equals: null;");
+      assertSSTrue("Map new at: \"A\" isEqualTo: null;");
    }
    /****************************************************************************
     * 
@@ -107,7 +107,7 @@ public class MapUseCases extends UseCaseBase {
    @Test
    public void addingElementsIsIdempotent() throws Exception {
 
-      assertSSTrue("Map at: \"A\" :put: \"B\" at: \"A\" :put: \"D\" equals: (Map at: \"A\" :put: \"D\");");
+      assertSSTrue("Map at: \"A\" :put: \"B\" at: \"A\" :put: \"D\" isEqualTo: (Map at: \"A\" :put: \"D\");");
    }
    /****************************************************************************
     * 
@@ -117,11 +117,11 @@ public class MapUseCases extends UseCaseBase {
 
       assertSSTrue("""
             !map = Map new;
-            map at: \"A\" :put: \"B\" :andGetPreviousValue equals: null;
+            map at: \"A\" :put: \"B\" :andGetPreviousValue isEqualTo: null;
             """);
       assertSSTrue("""
             !map = Map  at: \"A\" :put: \"X\";
-            map at: \"A\" :put: \"B\" :andGetPreviousValue equals: \"X\";
+            map at: \"A\" :put: \"B\" :andGetPreviousValue isEqualTo: \"X\";
             """);
    }
    /****************************************************************************
@@ -132,11 +132,11 @@ public class MapUseCases extends UseCaseBase {
 
       assertSSTrue("""
             !map = Map new;
-            map removeAt: \"A\" :andGetRemovedValue equals: null;
+            map removeAt: \"A\" :andGetRemovedValue isEqualTo: null;
             """);
       assertSSTrue("""
             !map = Map  at: \"A\" :put: \"X\";
-            map removeAt: \"A\" :andGetRemovedValue equals: \"X\";
+            map removeAt: \"A\" :andGetRemovedValue isEqualTo: \"X\";
             """);
    }
    /****************************************************************************
@@ -149,7 +149,7 @@ public class MapUseCases extends UseCaseBase {
             !items = Map new;
             Map at: \"A\" :put: \"B\" at: \"A\" :put: \"D\" forEach: {!key !value |
                items at: key :put: value;
-            } equals: items;
+            } isEqualTo: items;
             """);
    }
    /****************************************************************************
@@ -158,8 +158,8 @@ public class MapUseCases extends UseCaseBase {
    @Test
    public void elementsCanBeRemovedFromNonEptyMap() throws Exception {
 
-      assertSSTrue("Map at: \"A\" :put: \"B\" at: \"C\" :put: \"D\" removeAt: \"C\" equals: (Map at: \"A\" :put: \"B\");");
-      assertSSTrue("Map at: \"A\" :put: \"B\" removeAt: \"A\" equals: (Map new);");
+      assertSSTrue("Map at: \"A\" :put: \"B\" at: \"C\" :put: \"D\" removeAt: \"C\" isEqualTo: (Map at: \"A\" :put: \"B\");");
+      assertSSTrue("Map at: \"A\" :put: \"B\" removeAt: \"A\" isEqualTo: (Map new);");
    }
    /****************************************************************************
     * 
@@ -169,14 +169,14 @@ public class MapUseCases extends UseCaseBase {
 
       assertSSTrue("""
             !keys = Map new keys;
-            (keys nature equals: "set") and: (keys size equals: 0);
+            (keys nature isEqualTo: "set") and: (keys size isEqualTo: 0);
             """);
       assertSSTrue("""
             !keys = Map at: "a" :put: "b" keys;
             !list = List new;
             keys forEach: {!key | list append: key;};
-            (keys nature equals: "set") and: (keys size equals: 1)
-            and: (list at: 0 equals: "a");
+            (keys nature isEqualTo: "set") and: (keys size isEqualTo: 1)
+            and: (list at: 0 isEqualTo: "a");
             """);
    }
    /****************************************************************************
@@ -186,86 +186,86 @@ public class MapUseCases extends UseCaseBase {
    public void builtInMethods_returnArgumentLists() throws Exception {
 
       assertSSTrue("""
-            Map new method: "invoke::with:" arguments equals: (List append: "method" append: "argList");
+            Map new method: "invoke::with:" arguments isEqualTo: (List append: "method" append: "argList");
             """);
       assertSSTrue("""
-            Map new method: "addField:" arguments equals: (List append: "name");
+            Map new method: "addField:" arguments isEqualTo: (List append: "name");
             """);
       assertSSTrue("""
-            Map new method: "addField::withValue:" arguments equals: (List append: "name" append: "value");
+            Map new method: "addField::withValue:" arguments isEqualTo: (List append: "name" append: "value");
             """);
       assertSSTrue("""
-            Map new method: "addMethod::using:" arguments equals: (List append: "name" append: "block");
+            Map new method: "addMethod::using:" arguments isEqualTo: (List append: "name" append: "block");
             """);
       assertSSTrue("""
-            Map new method: "asString" arguments equals: (List new);
+            Map new method: "asString" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            Map new method: "at:" arguments equals: (List append: "key");
+            Map new method: "at:" arguments isEqualTo: (List append: "key");
             """);
       assertSSTrue("""
-            Map new method: "clone" arguments equals: (List new);
+            Map new method: "clone" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            Map new method: "collectTo:" arguments equals: (List append: "collector");
+            Map new method: "collectTo:" arguments isEqualTo: (List append: "collector");
             """);
       assertSSTrue("""
-            Map new method: "equals:" arguments equals: (List append: "other");
+            Map new method: "isEqualTo:" arguments isEqualTo: (List append: "other");
             """);
       assertSSTrue("""
-            Map new method: "execute" arguments equals: (List new);
+            Map new method: "execute" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            Map new method: "fields" arguments equals: (List new);
+            Map new method: "fields" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            Map new method: "forEach:" arguments equals: (List append: "block");
+            Map new method: "forEach:" arguments isEqualTo: (List append: "block");
             """);
       assertSSTrue("""
-            Map new method: "method:" arguments equals: (List append: "name");
+            Map new method: "method:" arguments isEqualTo: (List append: "name");
             """);
       assertSSTrue("""
-            Map new method: "methods" arguments equals: (List new);
+            Map new method: "methods" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            Map new method: "nature" arguments equals: (List new);
+            Map new method: "nature" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            Map new method: "hash" arguments equals: (List new);
+            Map new method: "hash" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            Map new method: "isNotEqualTo:" arguments equals: (List append: "other");
+            Map new method: "isNotEqualTo:" arguments isEqualTo: (List append: "other");
             """);
       assertSSTrue("""
-            Map new method: "orDefault:" arguments equals: (List append: "default");
+            Map new method: "orDefault:" arguments isEqualTo: (List append: "default");
             """);
       assertSSTrue("""
-            Map new method: "size" arguments equals: (List new);
+            Map new method: "size" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            Map new method: "selectIf:" arguments equals: (List append: "block");
+            Map new method: "selectIf:" arguments isEqualTo: (List append: "block");
             """);
       assertSSTrue("""
-            Map new method: "throw" arguments equals: (List new);
+            Map new method: "throw" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            Map new method: "transformUsing:" arguments equals: (List append: "block");
+            Map new method: "transformUsing:" arguments isEqualTo: (List append: "block");
             """);
       assertSSTrue("""
-            Map new method: "try::catch:" arguments equals: (List append: "tryBlock" append: "catchBlock");
+            Map new method: "try::catch:" arguments isEqualTo: (List append: "tryBlock" append: "catchBlock");
             """);
       
       assertSSTrue("""
-            Map new method: "at::put:" arguments equals: (List append: "key" append: "value");
+            Map new method: "at::put:" arguments isEqualTo: (List append: "key" append: "value");
             """);
       assertSSTrue("""
-            Map new method: "at::put::andGetPreviousValue" arguments equals: (List append: "key" append: "value");
+            Map new method: "at::put::andGetPreviousValue" arguments isEqualTo: (List append: "key" append: "value");
             """);
       assertSSTrue("""
-            Map new method: "removeAt:" arguments equals: (List append: "key");
+            Map new method: "removeAt:" arguments isEqualTo: (List append: "key");
             """);
       assertSSTrue("""
-            Map new method: "removeAt::andGetRemovedValue" arguments equals: (List append: "key");
+            Map new method: "removeAt::andGetRemovedValue" arguments isEqualTo: (List append: "key");
             """);
    }
    /****************************************************************************

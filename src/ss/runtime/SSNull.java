@@ -36,7 +36,7 @@ public final class SSNull implements SSObject {
 
       return switch (method) {
          case "asString" -> new SSString(toString());
-         case "equals:" -> stack.get(this.equals(args.get(0).evaluate(stack)));
+         case "isEqualTo:" -> stack.get(this.equals(args.get(0).evaluate(stack)));
          case "hash" -> new SSLong(hashCode());
          case "isNotEqualTo:" ->
             stack.get(!this.equals(args.get(0).evaluate(stack)));

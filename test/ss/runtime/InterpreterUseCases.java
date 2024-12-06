@@ -32,15 +32,15 @@ public class InterpreterUseCases extends UseCaseBase {
       assertResultEquals(new SSLong(3569038), "true asString hash;");
       assertResultEquals(new SSString("3569038"), "true asString hash asString;");
       assertResultEquals(new SSString("3569038"),
-            "1 equals: 1 asString hash asString;");
+            "1 isEqualTo: 1 asString hash asString;");
       assertResultEquals(new SSString("3569038"),
-            "1 asString equals: \"1\" asString hash asString;");
+            "1 asString isEqualTo: \"1\" asString hash asString;");
       assertResultEquals(new SSString("true"),
-            "1 asString equals: \"1\" equals: true asString;");
+            "1 asString isEqualTo: \"1\" isEqualTo: true asString;");
       assertResultEquals(new SSString("true"),
-            "1 asString equals: \"1\" ifTrue: true :ifFalse: false asString;");
+            "1 asString isEqualTo: \"1\" ifTrue: true :ifFalse: false asString;");
       assertResultEquals(new SSString("true"),
-            "!x = 1 asString equals: \"1\" ifTrue: (1 equals: 1) :ifFalse: {!x = 1; false;} asString; x;");
+            "!x = 1 asString isEqualTo: \"1\" ifTrue: (1 isEqualTo: 1) :ifFalse: {!x = 1; false;} asString; x;");
       assertResultEquals(new SSLong(1),
             "true addMethod: \"a::b\" :using: {!this !param | param;}; true a: 1 :b;");
       assertResultEquals(new SSString("1"),
@@ -53,7 +53,7 @@ public class InterpreterUseCases extends UseCaseBase {
       assertResultEquals(new SSLong(4), "({2 multipliedBy: 1;} execute) plus: 2;");
       assertResultEquals(new SSLong(6), "2 multipliedBy: ({1 plus: 2;} execute);");
       assertResultEquals(new SSLong(2), "(2 isGreaterThan: 1) ifTrue: 2;");
-      assertSSTrue("(2 isGreaterThan: 1) ifFalse: 2 equals: null;");
+      assertSSTrue("(2 isGreaterThan: 1) ifFalse: 2 isEqualTo: null;");
       assertResultEquals(new SSLong(2),
             "(2 isGreaterThan: 1) ifTrue: 2 :ifFalse: 3;");
       assertResultEquals(new SSLong(7),
@@ -80,7 +80,7 @@ public class InterpreterUseCases extends UseCaseBase {
    public void exceptions_workProperly() throws Exception {
       
       assertSSTrue("""
-            null try: { true} :catch: {!e | false} equals: null;
+            null try: { true} :catch: {!e | false} isEqualTo: null;
             """);
       
       assertSSTrue("""

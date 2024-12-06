@@ -27,13 +27,13 @@ public class TrueUseCases  extends UseCaseBase {
    @Test
    public void trueHasSetBasicProperties() throws Exception {
 
-      assertSSTrue("true size equals: 1;");
-      assertSSTrue("true nature equals: \"object\";");
-      assertSSTrue("true asString equals: \"true\";");
-      assertSSTrue("true hash equals: 2;");
+      assertSSTrue("true size isEqualTo: 1;");
+      assertSSTrue("true nature isEqualTo: \"object\";");
+      assertSSTrue("true asString isEqualTo: \"true\";");
+      assertSSTrue("true hash isEqualTo: 2;");
       assertSSTrue("""
             !o = true;
-            o orDefault: "a" equals: o;
+            o orDefault: "a" isEqualTo: o;
             """);
    }
    /****************************************************************************
@@ -42,12 +42,12 @@ public class TrueUseCases  extends UseCaseBase {
    @Test
    public void trueEualsOnlyToItself() throws Exception {
 
-      assertSSTrue("true equals: true;");
+      assertSSTrue("true isEqualTo: true;");
       assertSSTrue("true isNotEqualTo: false;");
       assertSSTrue("true isNotEqualTo: null;");
 
-      assertSSFalse("true equals: false;");
-      assertSSFalse("true equals: null;");
+      assertSSFalse("true isEqualTo: false;");
+      assertSSFalse("true isEqualTo: null;");
       assertSSFalse("true isNotEqualTo: true;");
    }
    /****************************************************************************
@@ -79,8 +79,8 @@ public class TrueUseCases  extends UseCaseBase {
               true test; 
               false;
             } :catch: {!e |
-              (e nature equals: "exception") and:
-              (e message equals: "Method 'test' is not defined.");
+              (e nature isEqualTo: "exception") and:
+              (e message isEqualTo: "Method 'test' is not defined.");
             };
             """);
    }
@@ -121,8 +121,8 @@ public class TrueUseCases  extends UseCaseBase {
              true orElse: 1;
              false;
            } :catch: {!e |
-             (e nature equals: "exception") and:
-             (e message equals: "Method 'not' is not defined.");
+             (e nature isEqualTo: "exception") and:
+             (e message isEqualTo: "Method 'not' is not defined.");
            };
            """);
    }
@@ -145,7 +145,7 @@ public class TrueUseCases  extends UseCaseBase {
       assertSSTrue("""
             !x = null;
             true ifFalse: { x = 0;};
-            x equals: null;
+            x isEqualTo: null;
             """);
    }
    /****************************************************************************
@@ -157,7 +157,7 @@ public class TrueUseCases  extends UseCaseBase {
       assertSSTrue("""
             !x = null;
             !y = true ifTrue: {0} :ifFalse: { x = 0;};
-            (x equals: null) and: (y equals: 0);
+            (x isEqualTo: null) and: (y isEqualTo: 0);
             """);
    }
    /****************************************************************************
@@ -167,12 +167,12 @@ public class TrueUseCases  extends UseCaseBase {
    public void true_cannotBeCloned() throws Exception {
 
       assertSSTrue("true clone;");
-      assertSSTrue("true clone equals: true;");
+      assertSSTrue("true clone isEqualTo: true;");
       assertSSTrue("""
             true addField: "test" :withValue: 1;
             !new = true clone;
             true test: 2;
-            new test equals: 2;
+            new test isEqualTo: 2;
             """);
    }
    /****************************************************************************

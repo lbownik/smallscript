@@ -34,7 +34,7 @@ public class SmallUnitUseCases extends UseCaseBase {
             
             suite addTestNamed: "test1" :using: { 
             
-               assert that: 10 :equals: 10;
+               assert that: 10 :isEqualTo: 10;
             };
             
             suite addTestNamed: "test2" :using: { 
@@ -44,8 +44,8 @@ public class SmallUnitUseCases extends UseCaseBase {
             
             suite run;
             
-            (suite tests at: 0 result equals: "Passed") and:
-            (suite tests at: 1 result equals: "Failed: abc");
+            (suite tests at: 0 result isEqualTo: "Passed") and:
+            (suite tests at: 1 result isEqualTo: "Failed: abc");
             """);
    }
    /****************************************************************************

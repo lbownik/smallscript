@@ -80,7 +80,7 @@ public class SSDynamicObject implements SSObject {
             bb(SSDynamicObject::collectTo, List.of("collector")));
       methods.add("doesNotUnderstand:",
             bb(SSDynamicObject::doesNotUnderstand, List.of("message")));
-      methods.add("equals:", bb(SSDynamicObject::isEqualTo, List.of("other")));
+      methods.add("isEqualTo:", bb(SSDynamicObject::isEqualTo, List.of("other")));
       methods.add("execute", bb(SSDynamicObject::evaluate));
       methods.add("fields", bb(SSDynamicObject::getFields));
       methods.add("forEach:", bb(SSDynamicObject::forEach, listOfBlock));

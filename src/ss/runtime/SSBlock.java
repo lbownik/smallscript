@@ -64,7 +64,7 @@ public class SSBlock extends SSDynamicObject {
 
       methods.add("arguments", bb(SSBlock::getArguments));
       methods.add("clone", bb(SSBlock::clone));
-      methods.add("equals:", bb(SSBlock::equals, listOfOther));
+      methods.add("isEqualTo:", bb(SSBlock::equals, listOfOther));
       methods.add("isNotEqualTo:", bb(SSBlock::isNotEqualTo, listOfOther));
       methods.add("nature", bb((s, a) -> nature));
       methods.add("whileTrue:", bb(SSBlock::whileTrue, List.of("block")));

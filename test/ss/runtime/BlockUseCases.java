@@ -30,11 +30,11 @@ public class BlockUseCases extends UseCaseBase {
    public void emptyBlock_evaluatesToNull() throws Exception {
 
       assertSSTrue("{} isNotEqualTo: null;");
-      assertSSTrue("{} execute equals: null;");
+      assertSSTrue("{} execute isEqualTo: null;");
       assertSSTrue("""
             {
                #comment
-            } execute equals: null;
+            } execute isEqualTo: null;
             """);
    }
    /****************************************************************************
@@ -45,10 +45,10 @@ public class BlockUseCases extends UseCaseBase {
    
       assertSSTrue("""
             !block = {};
-            block equals: block;
+            block isEqualTo: block;
             """);
-      assertSSFalse("{} equals: null;");
-      assertSSFalse("{} equals: {};");
+      assertSSFalse("{} isEqualTo: null;");
+      assertSSFalse("{} isEqualTo: {};");
       
       assertSSFalse("""
             !block = {};
@@ -63,7 +63,7 @@ public class BlockUseCases extends UseCaseBase {
    @Test
    public void blockWithAVariableName_evaluatesToTheVariableValue() throws Exception {
 
-      assertSSTrue("{true } execute equals: true;");
+      assertSSTrue("{true } execute isEqualTo: true;");
    }
    /****************************************************************************
    * 
@@ -156,7 +156,7 @@ public class BlockUseCases extends UseCaseBase {
                };
             } execute;
 
-            closure execute equals: "abc";
+            closure execute isEqualTo: "abc";
             """);
       
       assertSSTrue("""
@@ -169,7 +169,7 @@ public class BlockUseCases extends UseCaseBase {
                };
             } execute;
 
-            closure execute execute equals: "abc";
+            closure execute execute isEqualTo: "abc";
             """);
    }
    /****************************************************************************
@@ -182,7 +182,7 @@ public class BlockUseCases extends UseCaseBase {
       assertSSTrue("""
             !block1 = {};
             !block2 = block1 clone;
-            (block1 isNotEqualTo: block2) and: (block1 arguments equals: (block2 arguments));
+            (block1 isNotEqualTo: block2) and: (block1 arguments isEqualTo: (block2 arguments));
             """);
    }
    /****************************************************************************
@@ -205,12 +205,12 @@ public class BlockUseCases extends UseCaseBase {
       
       assertSSTrue("""
             !args = { } arguments;
-            args size equals: 0;
+            args size isEqualTo: 0;
             """);
       
       assertSSTrue("""
             !args = { !a !b | null; } arguments;
-            (args size equals: 2) and: (args at: 0 equals: "a") and: (args at: 1 equals: "b");
+            (args size isEqualTo: 2) and: (args at: 0 isEqualTo: "a") and: (args at: 1 isEqualTo: "b");
             """);
    }
    /****************************************************************************
@@ -222,14 +222,14 @@ public class BlockUseCases extends UseCaseBase {
       assertSSTrue("""
             !block = {};
             block addField: "field" :withValue: 2;
-            block field equals: 2;
+            block field isEqualTo: 2;
             """);
       
       assertSSTrue("""
             !block = {};
             block addField: "field" :withValue: 2;
             block field: 3;
-             block field equals: 3;
+             block field isEqualTo: 3;
             """);
       
       assertResultEquals(new SSLong(2), """
@@ -266,7 +266,7 @@ public class BlockUseCases extends UseCaseBase {
                block return: 2;
                false;
             } :catch: { !e |
-               clonedBlock return: 2 equals: 2;
+               clonedBlock return: 2 isEqualTo: 2;
             };
             """);
    }
@@ -286,7 +286,7 @@ public class BlockUseCases extends UseCaseBase {
                block field;
                false;
             } :catch: { !e |
-               clonedBlock field equals: 2;
+               clonedBlock field isEqualTo: 2;
             };
             """);
    }

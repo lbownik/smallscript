@@ -26,12 +26,12 @@ public class NullUseCases extends UseCaseBase {
    @Test
    public void nullHasSetBasicProperties() throws Exception {
 
-      assertSSTrue("null size equals: 0;");
-      assertSSTrue("null nature equals: \"null\";");
-      assertSSTrue("null asString equals: \"null\";");
-      assertSSTrue("null hash equals: 0;");
-      assertSSTrue("null orDefault: 10 equals: 10;");
-      assertSSTrue("null orDefault: {5 plus: 5} equals: 10;");
+      assertSSTrue("null size isEqualTo: 0;");
+      assertSSTrue("null nature isEqualTo: \"null\";");
+      assertSSTrue("null asString isEqualTo: \"null\";");
+      assertSSTrue("null hash isEqualTo: 0;");
+      assertSSTrue("null orDefault: 10 isEqualTo: 10;");
+      assertSSTrue("null orDefault: {5 plus: 5} isEqualTo: 10;");
    }
    /****************************************************************************
     * 
@@ -39,10 +39,10 @@ public class NullUseCases extends UseCaseBase {
    @Test
    public void nullEualsOnlyToItself() throws Exception {
 
-      assertSSTrue("null equals: null;");
+      assertSSTrue("null isEqualTo: null;");
       assertSSFalse("null isNotEqualTo: null;");
 
-      assertSSFalse("null equals: true;");
+      assertSSFalse("null isEqualTo: true;");
       assertSSTrue("null isNotEqualTo: true;");
    }
    /****************************************************************************
@@ -77,8 +77,8 @@ public class NullUseCases extends UseCaseBase {
    public void nullIsEquivalentToEmptyList()
          throws Exception {
 
-      assertSSTrue("null size equals: 0;");
-      assertSSTrue("null at: 0 equals: null;");
+      assertSSTrue("null size isEqualTo: 0;");
+      assertSSTrue("null at: 0 isEqualTo: null;");
       assertSSTrue("""
             !counter = 0;
             !innerItem = null;
@@ -86,14 +86,14 @@ public class NullUseCases extends UseCaseBase {
                counter = counter plus: 1;
                innerItem = item;
             };
-            (counter equals: 0) and: (result equals: null) and: (innerItem equals: null);
+            (counter isEqualTo: 0) and: (result isEqualTo: null) and: (innerItem isEqualTo: null);
             """);
       assertSSTrue("""
             !result = null selectIf: {!item | item startsWith: "x"} 
                            transformUsing: {!item | item size }
                            collectTo: List;
                            
-            result equals: null;
+            result isEqualTo: null;
             """);
       
    }
@@ -104,7 +104,7 @@ public class NullUseCases extends UseCaseBase {
    public void builtInMethods_returnNullAsArgumentLists() throws Exception {
       
       assertSSTrue("""
-            null method: "asString" arguments equals: null;
+            null method: "asString" arguments isEqualTo: null;
             """);
    }
    /****************************************************************************
@@ -117,7 +117,7 @@ public class NullUseCases extends UseCaseBase {
             Object try: {
                null throw;
             } :catch: { !e |
-               e equals: null;
+               e isEqualTo: null;
             };
             """);
    }

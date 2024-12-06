@@ -26,13 +26,13 @@ public class LongUseCases extends UseCaseBase {
    @Test
    public void longHasSetBasicProperties() throws Exception {
 
-      assertSSTrue("1 asString equals: \"1\";");
+      assertSSTrue("1 asString isEqualTo: \"1\";");
       assertResultEquals(new SSLong(1), "1 hash;");
 
-      assertSSTrue("1 asDouble equals: 1.0;");
-      assertSSTrue("1 asLong equals: 1;");
-      assertSSTrue("1 size equals: 1;");
-      assertSSTrue("1 nature equals: \"number\";");
+      assertSSTrue("1 asDouble isEqualTo: 1.0;");
+      assertSSTrue("1 asLong isEqualTo: 1;");
+      assertSSTrue("1 size isEqualTo: 1;");
+      assertSSTrue("1 nature isEqualTo: \"number\";");
    }
    /****************************************************************************
     * 
@@ -40,10 +40,10 @@ public class LongUseCases extends UseCaseBase {
    @Test
    public void longEualsOnlyToItself() throws Exception {
 
-      assertSSTrue("1 equals: 1;");
-      assertSSFalse("1 equals: 1.0;");
-      assertSSFalse("1 equals: 2;");
-      assertSSFalse("1 equals: null;");
+      assertSSTrue("1 isEqualTo: 1;");
+      assertSSFalse("1 isEqualTo: 1.0;");
+      assertSSFalse("1 isEqualTo: 2;");
+      assertSSFalse("1 isEqualTo: null;");
       assertSSFalse("1 isNotEqualTo: 1;");
       assertSSTrue("1 isNotEqualTo: 1.0;");
       assertSSTrue("1 isNotEqualTo: 2;");
@@ -87,8 +87,8 @@ public class LongUseCases extends UseCaseBase {
                1 plus: true;
                false;
             } :catch: {!e|
-               (e nature equals: "exception") and:
-               (e message equals: "Cannot cast object to number.");
+               (e nature isEqualTo: "exception") and:
+               (e message isEqualTo: "Cannot cast object to number.");
             };
             """);
       assertSSTrue("""
@@ -96,8 +96,8 @@ public class LongUseCases extends UseCaseBase {
                1 minus: true;
                false;
             } :catch: {!e|
-               (e nature equals: "exception") and:
-               (e message equals: "Cannot cast object to number.");
+               (e nature isEqualTo: "exception") and:
+               (e message isEqualTo: "Cannot cast object to number.");
             };
             """);
       assertSSTrue("""
@@ -105,8 +105,8 @@ public class LongUseCases extends UseCaseBase {
                1 multipliedBy: true;
                false;
             } :catch: {!e|
-               (e nature equals: "exception") and:
-               (e message equals: "Cannot cast object to number.");
+               (e nature isEqualTo: "exception") and:
+               (e message isEqualTo: "Cannot cast object to number.");
             };
             """);
       assertSSTrue("""
@@ -114,8 +114,8 @@ public class LongUseCases extends UseCaseBase {
                1 dividedBy: true;
                false;
             } :catch: {!e|
-               (e nature equals: "exception") and:
-               (e message equals: "Cannot cast object to number.");
+               (e nature isEqualTo: "exception") and:
+               (e message isEqualTo: "Cannot cast object to number.");
             };
             """);
    }
@@ -125,13 +125,13 @@ public class LongUseCases extends UseCaseBase {
    @Test
    public void longCanBeCloned() throws Exception {
 
-      assertSSTrue("1 clone equals: 1;");
+      assertSSTrue("1 clone isEqualTo: 1;");
       assertSSTrue("""
             !old = 1;
             old addField: "test" :withValue: 1;
             !new = old clone;
             new test: 2;
-            old test equals: 1;
+            old test isEqualTo: 1;
             """);
    }
    /****************************************************************************
@@ -145,8 +145,8 @@ public class LongUseCases extends UseCaseBase {
             
             1 to: 3 forEach: {!item | list append: item};
             
-            (list size equals: 2) and: (list at: 0 equals: 1) and:
-            (list at: 1 equals: 2);
+            (list size isEqualTo: 2) and: (list at: 0 isEqualTo: 1) and:
+            (list at: 1 isEqualTo: 2);
             """);
    }
    /****************************************************************************
@@ -160,8 +160,8 @@ public class LongUseCases extends UseCaseBase {
             
             !result = 2 times: {list append: 0};
             
-            (list size equals: 2) and: (list at: 0 equals: 0) and:
-            (list at: 1 equals: 0) and: (result nature equals: "list");
+            (list size isEqualTo: 2) and: (list at: 0 isEqualTo: 0) and:
+            (list at: 1 isEqualTo: 0) and: (result nature isEqualTo: "list");
             """);
    }
    /****************************************************************************
@@ -171,46 +171,46 @@ public class LongUseCases extends UseCaseBase {
    public void builtInMethods_returnArgumentLists() throws Exception {
 
       assertSSTrue("""
-            1 method: "asDouble" arguments equals: (List new);
+            1 method: "asDouble" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            1 method: "asLong" arguments equals: (List new);
+            1 method: "asLong" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            1 method: "clone" arguments equals: (List new);
+            1 method: "clone" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            1 method: "incremented" arguments equals: (List new);
+            1 method: "incremented" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            1 method: "dividedBy:" arguments equals: (List append: "number");
+            1 method: "dividedBy:" arguments isEqualTo: (List append: "number");
             """);
       assertSSTrue("""
-            1 method: "isGreaterThan:" arguments equals: (List append: "number");
+            1 method: "isGreaterThan:" arguments isEqualTo: (List append: "number");
             """);
       assertSSTrue("""
-            1 method: "isGreaterOrEqualTo:" arguments equals: (List append: "number");
+            1 method: "isGreaterOrEqualTo:" arguments isEqualTo: (List append: "number");
             """);
       assertSSTrue("""
-            1 method: "isLessThan:" arguments equals: (List append: "number");
+            1 method: "isLessThan:" arguments isEqualTo: (List append: "number");
             """);
       assertSSTrue("""
-            1 method: "isLessOrEqualTo:" arguments equals: (List append: "number");
+            1 method: "isLessOrEqualTo:" arguments isEqualTo: (List append: "number");
             """);
       assertSSTrue("""
-            1 method: "minus:" arguments equals: (List append: "number");
+            1 method: "minus:" arguments isEqualTo: (List append: "number");
             """);
       assertSSTrue("""
-            1 method: "multipliedBy:" arguments equals: (List append: "number");
+            1 method: "multipliedBy:" arguments isEqualTo: (List append: "number");
             """);
       assertSSTrue("""
-            1 method: "plus:" arguments equals: (List append: "number");
+            1 method: "plus:" arguments isEqualTo: (List append: "number");
             """);
       assertSSTrue("""
-            1 method: "times:" arguments equals: (List append: "block");
+            1 method: "times:" arguments isEqualTo: (List append: "block");
             """);
       assertSSTrue("""
-            1 method: "to:" arguments equals: (List append: "number");
+            1 method: "to:" arguments isEqualTo: (List append: "number");
             """);
    }
    /****************************************************************************

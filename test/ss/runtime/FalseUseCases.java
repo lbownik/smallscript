@@ -27,13 +27,13 @@ public class FalseUseCases extends UseCaseBase {
    @Test
    public void falseHasSetBasicProperties() throws Exception {
 
-      assertSSTrue("false size equals: 1;");
-      assertSSTrue("false nature equals: \"object\";");
-      assertSSTrue("false asString equals: \"false\";");
-      assertSSTrue("false hash equals: 1;");
+      assertSSTrue("false size isEqualTo: 1;");
+      assertSSTrue("false nature isEqualTo: \"object\";");
+      assertSSTrue("false asString isEqualTo: \"false\";");
+      assertSSTrue("false hash isEqualTo: 1;");
       assertSSTrue("""
             !o = false;
-            o orDefault: "a" equals: false;
+            o orDefault: "a" isEqualTo: false;
             """);
    }
    /****************************************************************************
@@ -42,12 +42,12 @@ public class FalseUseCases extends UseCaseBase {
    @Test
    public void falseEualsOnlyToItself() throws Exception {
 
-      assertSSTrue("false equals: false;");
+      assertSSTrue("false isEqualTo: false;");
       assertSSTrue("false isNotEqualTo: true;");
       assertSSTrue("false isNotEqualTo: null;");
 
-      assertSSFalse("false equals: true;");
-      assertSSFalse("false equals: null;");
+      assertSSFalse("false isEqualTo: true;");
+      assertSSFalse("false isEqualTo: null;");
       assertSSFalse("false isNotEqualTo: false;");
    }
    /****************************************************************************
@@ -90,8 +90,8 @@ public class FalseUseCases extends UseCaseBase {
               false test; 
               false;
             } :catch: {!e |
-              (e nature equals: "exception") and:
-              (e message equals: "Method 'test' is not defined.");
+              (e nature isEqualTo: "exception") and:
+              (e message isEqualTo: "Method 'test' is not defined.");
             };
             """);
    }
@@ -127,7 +127,7 @@ public class FalseUseCases extends UseCaseBase {
       assertSSTrue("""
             !x = null;
             false ifTrue: { x = 0;};
-            x equals: null;
+            x isEqualTo: null;
             """);
    }
    /****************************************************************************
@@ -148,7 +148,7 @@ public class FalseUseCases extends UseCaseBase {
       assertSSTrue("""
             !x = null;
             !y = false ifTrue: { x = 0;} :ifFalse: {0};
-            (x equals: null) and: (y equals: 0);
+            (x isEqualTo: null) and: (y isEqualTo: 0);
             """);
    }
    /****************************************************************************
@@ -158,12 +158,12 @@ public class FalseUseCases extends UseCaseBase {
    public void false_cannotBeCloned() throws Exception {
 
       assertSSFalse("false clone;");
-      assertSSTrue("false clone equals: false;");
+      assertSSTrue("false clone isEqualTo: false;");
       assertSSTrue("""
             false addField: "test" :withValue: 1;
             !new = false clone;
             false test: 2;
-            new test equals: 2;
+            new test isEqualTo: 2;
             """);
    }
    /****************************************************************************

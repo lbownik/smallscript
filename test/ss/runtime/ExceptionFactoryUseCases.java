@@ -26,8 +26,8 @@ public class ExceptionFactoryUseCases extends UseCaseBase {
    @Test
    public void exceptioFactoryHasSetBasicProperties() throws Exception {
 
-      assertSSTrue("Exception size equals: 1;");
-      assertSSTrue("Exception nature equals: \"object\";");
+      assertSSTrue("Exception size isEqualTo: 1;");
+      assertSSTrue("Exception nature isEqualTo: \"object\";");
       assertSSTrue("Exception asString startsWith: \"object#\";");
       assertSSTrue("Exception hash isGreaterThan: 0;");
    }
@@ -39,13 +39,13 @@ public class ExceptionFactoryUseCases extends UseCaseBase {
 
       assertSSTrue("""
             !e = Exception withMessage: "abc";
-            (e nature equals: "exception")  and: (e message equals: "abc")
-             and: (e method: "cause" equals: null);
+            (e nature isEqualTo: "exception")  and: (e message isEqualTo: "abc")
+             and: (e method: "cause" isEqualTo: null);
             """);
       assertSSTrue("""
             !e = Exception withCause: "X" :andMessage: "abc";
-            (e nature equals: "exception")  and: (e message equals: "abc")
-             and: (e cause equals: "X");
+            (e nature isEqualTo: "exception")  and: (e message isEqualTo: "abc")
+             and: (e cause isEqualTo: "X");
             """);
    }
    /****************************************************************************

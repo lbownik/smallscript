@@ -25,8 +25,8 @@ public class BinaryBlockUseCases extends UseCaseBase {
    @Test
    public void blockHasSetBasicProperties() throws Exception {
 
-      assertSSTrue("Object method: \"asString\" size equals: 1;");
-      assertSSTrue("Object method: \"asString\" nature equals: \"binaryBlock\";");
+      assertSSTrue("Object method: \"asString\" size isEqualTo: 1;");
+      assertSSTrue("Object method: \"asString\" nature isEqualTo: \"binaryBlock\";");
       assertSSTrue(
             "Object method: \"asString\" asString startsWith: \"binaryBlock#\";");
       assertSSTrue("Object method: \"asString\" hash isGreaterThan: 0;");
@@ -38,9 +38,9 @@ public class BinaryBlockUseCases extends UseCaseBase {
    public void blockIsEqualOnlyToSelf() throws Exception {
 
       assertSSTrue(
-            "Object method: \"asString\" equals: (Object method: \"asString\");");
+            "Object method: \"asString\" isEqualTo: (Object method: \"asString\");");
       assertSSFalse(
-            "Object method: \"asString\" equals: (Object method: \"hash\");");
+            "Object method: \"asString\" isEqualTo: (Object method: \"hash\");");
 
       assertSSFalse(
             "Object method: \"asString\" isNotEqualTo: (Object method: \"asString\");");
@@ -55,7 +55,7 @@ public class BinaryBlockUseCases extends UseCaseBase {
 
       assertSSTrue("""
             !block = Object method: "asString";
-            block executeWith: true equals: "true";
+            block executeWith: true isEqualTo: "true";
             """);
    }
    /****************************************************************************
@@ -69,8 +69,8 @@ public class BinaryBlockUseCases extends UseCaseBase {
                true try: {
                   block test;
                } :catch: {!e |
-                  (e nature equals: "exception") and:
-                  (e message equals: "Method 'test' is not defined.");
+                  (e nature isEqualTo: "exception") and:
+                  (e message isEqualTo: "Method 'test' is not defined.");
                };
             """);
    }
@@ -87,7 +87,7 @@ public class BinaryBlockUseCases extends UseCaseBase {
               outerBlock = this;
               block throw;
             } :catch: {!e |
-              (e equals: block) and: (outerBlock equals: block);
+              (e isEqualTo: block) and: (outerBlock isEqualTo: block);
             };
             """);
    }

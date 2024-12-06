@@ -26,9 +26,9 @@ public class ListUseCases extends UseCaseBase {
    @Test
    public void listHasSetBasicProperties() throws Exception {
 
-      assertSSTrue("List new size equals: 0;");
-      assertSSTrue("List new nature equals: \"list\";");
-      assertSSTrue("List new asString equals: \"[]\";");
+      assertSSTrue("List new size isEqualTo: 0;");
+      assertSSTrue("List new nature isEqualTo: \"list\";");
+      assertSSTrue("List new asString isEqualTo: \"[]\";");
       assertSSTrue("List hash isGreaterThan: 0;");
    }
    /****************************************************************************
@@ -37,14 +37,14 @@ public class ListUseCases extends UseCaseBase {
    @Test
    public void listEualsOnlyToIdenticalList() throws Exception {
 
-      assertSSTrue("List new equals: (List new);");
+      assertSSTrue("List new isEqualTo: (List new);");
       assertSSFalse("List new isNotEqualTo: (List new);");
 
-      assertSSFalse("List new equals: null;");
+      assertSSFalse("List new isEqualTo: null;");
       assertSSTrue("List new isNotEqualTo: null;");
       
-      assertSSTrue("List append: 1 equals: (List append: 1);");
-      assertSSFalse("List append: 1 equals: (List append: 1 append: 2);");
+      assertSSTrue("List append: 1 isEqualTo: (List append: 1);");
+      assertSSFalse("List append: 1 isEqualTo: (List append: 1 append: 2);");
       assertSSTrue("List append: 1 isNotEqualTo: (List append: 1 append: 2);");
    }
    /****************************************************************************
@@ -53,9 +53,9 @@ public class ListUseCases extends UseCaseBase {
    @Test
    public void executingListDoesNothingAndReturnNull() throws Exception {
 
-      assertSSTrue("List execute equals: List;");
-      assertSSTrue("List new execute equals: (List new);");
-      assertSSTrue("List append: 1 execute equals: (List append: 1);");
+      assertSSTrue("List execute isEqualTo: List;");
+      assertSSTrue("List new execute isEqualTo: (List new);");
+      assertSSTrue("List append: 1 execute isEqualTo: (List append: 1);");
    }
    /****************************************************************************
     * 
@@ -69,8 +69,8 @@ public class ListUseCases extends UseCaseBase {
             l try: {
               l at: 0;
             } :catch: {!e |
-              (e nature equals: "exception") and:
-              (e message equals: "Index 0 out of bounds.");
+              (e nature isEqualTo: "exception") and:
+              (e message isEqualTo: "Index 0 out of bounds.");
             };
             """);
       assertSSTrue("""
@@ -80,7 +80,7 @@ public class ListUseCases extends UseCaseBase {
                counter = counter plus: 1;
                innerItem = item;
             };
-            counter equals: 0;
+            counter isEqualTo: 0;
             """);
    }
    /****************************************************************************
@@ -90,8 +90,8 @@ public class ListUseCases extends UseCaseBase {
    public void nonEmptyListReturnsElementsAtIndex()
          throws Exception {
 
-      assertSSTrue("List append: 10 at: 0 equals: 10;");
-      assertSSTrue("List append: 10 add: 11 at: 1 equals: 11;");
+      assertSSTrue("List append: 10 at: 0 isEqualTo: 10;");
+      assertSSTrue("List append: 10 add: 11 at: 1 isEqualTo: 11;");
    }
    /****************************************************************************
     * 
@@ -106,7 +106,7 @@ public class ListUseCases extends UseCaseBase {
             !result = list forEach: {!item |
                items add: item;
             };
-            (items equals: list) and: (result equals: list);
+            (items isEqualTo: list) and: (result isEqualTo: list);
             """);
    }
    /****************************************************************************
@@ -116,10 +116,10 @@ public class ListUseCases extends UseCaseBase {
    public void elementsCanBeRemovedFromNonEptyList()
          throws Exception {
 
-      assertSSTrue("List append: 10 append: 11 removeAt: 1 equals: (List append: 10);");
-      assertSSTrue("List append: 10 append: 11 removeAt: 0 equals: (List append: 11);");
-      assertSSTrue("List append: 10 removeAt: 0 equals: (List new);");
-      assertSSTrue("List append: 10 removeAt: 0 :andReturnRemovedItem equals: 10;");
+      assertSSTrue("List append: 10 append: 11 removeAt: 1 isEqualTo: (List append: 10);");
+      assertSSTrue("List append: 10 append: 11 removeAt: 0 isEqualTo: (List append: 11);");
+      assertSSTrue("List append: 10 removeAt: 0 isEqualTo: (List new);");
+      assertSSTrue("List append: 10 removeAt: 0 :andReturnRemovedItem isEqualTo: 10;");
    }
    /****************************************************************************
     * 
@@ -128,8 +128,8 @@ public class ListUseCases extends UseCaseBase {
    public void elementsCanBePutAtSepcifiedIndex()
          throws Exception {
 
-      assertSSTrue("List append: 10 at: 0 :put: 11 equals: (List append: 11);");
-      assertSSTrue("List append: 10 at: 0 :put: 11 :andReturnPreviousItem equals: 10;");
+      assertSSTrue("List append: 10 at: 0 :put: 11 isEqualTo: (List append: 11);");
+      assertSSTrue("List append: 10 at: 0 :put: 11 :andReturnPreviousItem isEqualTo: 10;");
    }
    /****************************************************************************
     * 
@@ -142,10 +142,10 @@ public class ListUseCases extends UseCaseBase {
             !source = List append: "abc" append: "abcd" append: "xy";
             !result = List new;
             source selectIf: { !item | item startsWith: "ab" }
-                   selectIf: { !item | item equals: "abc" } 
+                   selectIf: { !item | item isEqualTo: "abc" } 
                    transformUsing: { !item | item size }
                    forEach: { !item | result append: item };
-            (result size equals: 1) and: (result at: 0 equals: 3);
+            (result size isEqualTo: 1) and: (result at: 0 isEqualTo: 3);
             """);
    }
    /****************************************************************************
@@ -158,9 +158,9 @@ public class ListUseCases extends UseCaseBase {
       assertSSTrue("""
             !source = List append: "abc" append: "abcd" append: "xy";
             !result = source selectIf: { !item | item startsWith: "ab" }
-                             selectIf: { !item | item equals: "abc" } 
+                             selectIf: { !item | item isEqualTo: "abc" } 
                              collectTo: List;
-            (result size equals: 1) and: (result at: 0 equals: "abc");
+            (result size isEqualTo: 1) and: (result at: 0 isEqualTo: "abc");
             """);
    }
    /****************************************************************************
@@ -170,92 +170,92 @@ public class ListUseCases extends UseCaseBase {
    public void builtInMethods_returnArgumentLists() throws Exception {
 
       assertSSTrue("""
-            List new method: "invoke::with:" arguments equals: (List append: "method" append: "argList");
+            List new method: "invoke::with:" arguments isEqualTo: (List append: "method" append: "argList");
             """);
       assertSSTrue("""
-            List new method: "addField:" arguments equals: (List append: "name");
+            List new method: "addField:" arguments isEqualTo: (List append: "name");
             """);
       assertSSTrue("""
-            List new method: "addField::withValue:" arguments equals: (List append: "name" append: "value");
+            List new method: "addField::withValue:" arguments isEqualTo: (List append: "name" append: "value");
             """);
       assertSSTrue("""
-            List new method: "addMethod::using:" arguments equals: (List append: "name" append: "block");
+            List new method: "addMethod::using:" arguments isEqualTo: (List append: "name" append: "block");
             """);
       assertSSTrue("""
-            List new method: "asString" arguments equals: (List new);
+            List new method: "asString" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            List new method: "at:" arguments equals: (List append: "index");
+            List new method: "at:" arguments isEqualTo: (List append: "index");
             """);
       assertSSTrue("""
-            List new method: "clone" arguments equals: (List new);
+            List new method: "clone" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            List new method: "collectTo:" arguments equals: (List append: "collector");
+            List new method: "collectTo:" arguments isEqualTo: (List append: "collector");
             """);
       assertSSTrue("""
-            List new method: "equals:" arguments equals: (List append: "other");
+            List new method: "isEqualTo:" arguments isEqualTo: (List append: "other");
             """);
       assertSSTrue("""
-            List new method: "execute" arguments equals: (List new);
+            List new method: "execute" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            List new method: "fields" arguments equals: (List new);
+            List new method: "fields" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            List new method: "forEach:" arguments equals: (List append: "block");
+            List new method: "forEach:" arguments isEqualTo: (List append: "block");
             """);
       assertSSTrue("""
-            List new method: "method:" arguments equals: (List append: "name");
+            List new method: "method:" arguments isEqualTo: (List append: "name");
             """);
       assertSSTrue("""
-            List new method: "methods" arguments equals: (List new);
+            List new method: "methods" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            List new method: "nature" arguments equals: (List new);
+            List new method: "nature" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            List new method: "hash" arguments equals: (List new);
+            List new method: "hash" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            List new method: "isNotEqualTo:" arguments equals: (List append: "other");
+            List new method: "isNotEqualTo:" arguments isEqualTo: (List append: "other");
             """);
       assertSSTrue("""
-            List new method: "orDefault:" arguments equals: (List append: "default");
+            List new method: "orDefault:" arguments isEqualTo: (List append: "default");
             """);
       assertSSTrue("""
-            List new method: "size" arguments equals: (List new);
+            List new method: "size" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            List new method: "selectIf:" arguments equals: (List append: "block");
+            List new method: "selectIf:" arguments isEqualTo: (List append: "block");
             """);
       assertSSTrue("""
-            List new method: "throw" arguments equals: (List new);
+            List new method: "throw" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            List new method: "transformUsing:" arguments equals: (List append: "block");
+            List new method: "transformUsing:" arguments isEqualTo: (List append: "block");
             """);
       assertSSTrue("""
-            List new method: "try::catch:" arguments equals: (List append: "tryBlock" append: "catchBlock");
+            List new method: "try::catch:" arguments isEqualTo: (List append: "tryBlock" append: "catchBlock");
             """);
       
       assertSSTrue("""
-            List new method: "add:" arguments equals: (List append: "item");
+            List new method: "add:" arguments isEqualTo: (List append: "item");
             """);
       assertSSTrue("""
-            List new method: "append:" arguments equals: (List append: "item");
+            List new method: "append:" arguments isEqualTo: (List append: "item");
             """);
       assertSSTrue("""
-            List new method: "at::put:" arguments equals: (List append: "index" append: "item");
+            List new method: "at::put:" arguments isEqualTo: (List append: "index" append: "item");
             """);
       assertSSTrue("""
-            List new method: "at::put::andReturnPreviousItem" arguments equals: (List append: "index" append: "item");
+            List new method: "at::put::andReturnPreviousItem" arguments isEqualTo: (List append: "index" append: "item");
             """);
       assertSSTrue("""
-            List new method: "removeAt:" arguments equals: (List append: "index");
+            List new method: "removeAt:" arguments isEqualTo: (List append: "index");
             """);
       assertSSTrue("""
-            List new method: "removeAt::andReturnRemovedItem" arguments equals: (List append: "index");
+            List new method: "removeAt::andReturnRemovedItem" arguments isEqualTo: (List append: "index");
             """);
    }
    /****************************************************************************

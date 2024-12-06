@@ -26,9 +26,9 @@ public class SetUseCases extends UseCaseBase {
    @Test
    public void setHasSetBasicProperties() throws Exception {
 
-      assertSSTrue("Set new size equals: 0;");
-      assertSSTrue("Set new nature equals: \"set\";");
-      assertSSTrue("Set new asString equals: \"[]\";");
+      assertSSTrue("Set new size isEqualTo: 0;");
+      assertSSTrue("Set new nature isEqualTo: \"set\";");
+      assertSSTrue("Set new asString isEqualTo: \"[]\";");
       assertSSTrue("Set hash isGreaterThan: 0;");
    }
    /****************************************************************************
@@ -37,14 +37,14 @@ public class SetUseCases extends UseCaseBase {
    @Test
    public void setEualsOnlyToIdenticalSet() throws Exception {
 
-      assertSSTrue("Set new equals: (Set new);");
+      assertSSTrue("Set new isEqualTo: (Set new);");
       assertSSFalse("Set new isNotEqualTo: (Set new);");
 
-      assertSSFalse("Set new equals: null;");
+      assertSSFalse("Set new isEqualTo: null;");
       assertSSTrue("Set new isNotEqualTo: null;");
 
-      assertSSTrue("Set append: 1 equals: (Set append: 1);");
-      assertSSFalse("Set append: 1 equals: (Set append: 1 append: 2);");
+      assertSSTrue("Set append: 1 isEqualTo: (Set append: 1);");
+      assertSSFalse("Set append: 1 isEqualTo: (Set append: 1 append: 2);");
       assertSSTrue("Set append: 1 isNotEqualTo: (Set append: 1 append: 2);");
    }
    /****************************************************************************
@@ -53,9 +53,9 @@ public class SetUseCases extends UseCaseBase {
    @Test
    public void executingSetDoesNothingAndReturnNull() throws Exception {
 
-      assertSSTrue("Set execute equals: Set;");
-      assertSSTrue("Set new execute equals: (Set new);");
-      assertSSTrue("Set append: 1 execute equals: (Set append: 1);");
+      assertSSTrue("Set execute isEqualTo: Set;");
+      assertSSTrue("Set new execute isEqualTo: (Set new);");
+      assertSSTrue("Set append: 1 execute isEqualTo: (Set append: 1);");
    }
    /****************************************************************************
     * 
@@ -70,7 +70,7 @@ public class SetUseCases extends UseCaseBase {
                counter = counter plus: 1;
                innerItem = item;
             };
-            counter equals: 0;
+            counter isEqualTo: 0;
             """);
    }
    /****************************************************************************
@@ -79,9 +79,9 @@ public class SetUseCases extends UseCaseBase {
    @Test
    public void nonEmptySetGrows() throws Exception {
 
-      assertSSTrue("Set append: 10 size equals: 1;");
-      assertSSTrue("Set append: 10 size equals: 1;");
-      assertSSTrue("Set append: 10 add: 11 size equals: 2;");
+      assertSSTrue("Set append: 10 size isEqualTo: 1;");
+      assertSSTrue("Set append: 10 size isEqualTo: 1;");
+      assertSSTrue("Set append: 10 add: 11 size isEqualTo: 2;");
    }
    /****************************************************************************
     * 
@@ -89,7 +89,7 @@ public class SetUseCases extends UseCaseBase {
    @Test
    public void addingElementsIsIdempotent() throws Exception {
 
-      assertSSTrue("Set append: 10 append: 10 equals: (Set append: 10);");
+      assertSSTrue("Set append: 10 append: 10 isEqualTo: (Set append: 10);");
    }
    /****************************************************************************
     * 
@@ -97,7 +97,7 @@ public class SetUseCases extends UseCaseBase {
    @Test
    public void removingElementsWorks() throws Exception {
 
-      assertSSTrue("Set append: 10 append: 11 remove: 10 size equals: 1;");
+      assertSSTrue("Set append: 10 append: 11 remove: 10 size isEqualTo: 1;");
    }
    /****************************************************************************
     * 
@@ -109,7 +109,7 @@ public class SetUseCases extends UseCaseBase {
             !items = Set new;
             Set append: 10 append: 11 forEach: {!item |
                items append: item;
-            } equals: items;
+            } isEqualTo: items;
             """);
    }
    /****************************************************************************
@@ -123,10 +123,10 @@ public class SetUseCases extends UseCaseBase {
             !source = Set append: "abc" append: "abcd" append: "xy";
             !result = List new;
             source selectIf: { !item | item startsWith: "ab" }
-                   selectIf: { !item | item equals: "abc" } 
+                   selectIf: { !item | item isEqualTo: "abc" } 
                    transformUsing: { !item | item size }
                    forEach: { !item | result append: item };
-            (result size equals: 1) and: (result at: 0 equals: 3);
+            (result size isEqualTo: 1) and: (result at: 0 isEqualTo: 3);
             """);
    }
    /****************************************************************************
@@ -139,9 +139,9 @@ public class SetUseCases extends UseCaseBase {
       assertSSTrue("""
             !source = Set append: "abc" append: "abcd" append: "xy";
             !result = source selectIf: { !item | item startsWith: "ab" }
-                             selectIf: { !item | item equals: "abc" } 
+                             selectIf: { !item | item isEqualTo: "abc" } 
                              collectTo: Set;
-            (result size equals: 1);
+            (result size isEqualTo: 1);
             """);
    }
    /****************************************************************************
@@ -151,83 +151,83 @@ public class SetUseCases extends UseCaseBase {
    public void builtInMethods_returnArgumentLists() throws Exception {
 
       assertSSTrue("""
-            Set new method: "invoke::with:" arguments equals: (List append: "method" append: "argList");
+            Set new method: "invoke::with:" arguments isEqualTo: (List append: "method" append: "argList");
             """);
       assertSSTrue("""
-            Set new method: "addField:" arguments equals: (List append: "name");
+            Set new method: "addField:" arguments isEqualTo: (List append: "name");
             """);
       assertSSTrue("""
-            Set new method: "addField::withValue:" arguments equals: (List append: "name" append: "value");
+            Set new method: "addField::withValue:" arguments isEqualTo: (List append: "name" append: "value");
             """);
       assertSSTrue("""
-            Set new method: "addMethod::using:" arguments equals: (List append: "name" append: "block");
+            Set new method: "addMethod::using:" arguments isEqualTo: (List append: "name" append: "block");
             """);
       assertSSTrue("""
-            Set new method: "asString" arguments equals: (List new);
+            Set new method: "asString" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            Set new method: "at:" arguments equals: (List append: "index");
+            Set new method: "at:" arguments isEqualTo: (List append: "index");
             """);
       assertSSTrue("""
-            Set new method: "clone" arguments equals: (List new);
+            Set new method: "clone" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            Set new method: "collectTo:" arguments equals: (List append: "collector");
+            Set new method: "collectTo:" arguments isEqualTo: (List append: "collector");
             """);
       assertSSTrue("""
-            Set new method: "equals:" arguments equals: (List append: "other");
+            Set new method: "isEqualTo:" arguments isEqualTo: (List append: "other");
             """);
       assertSSTrue("""
-            Set new method: "execute" arguments equals: (List new);
+            Set new method: "execute" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            Set new method: "fields" arguments equals: (List new);
+            Set new method: "fields" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            Set new method: "forEach:" arguments equals: (List append: "block");
+            Set new method: "forEach:" arguments isEqualTo: (List append: "block");
             """);
       assertSSTrue("""
-            Set new method: "method:" arguments equals: (List append: "name");
+            Set new method: "method:" arguments isEqualTo: (List append: "name");
             """);
       assertSSTrue("""
-            Set new method: "methods" arguments equals: (List new);
+            Set new method: "methods" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            Set new method: "nature" arguments equals: (List new);
+            Set new method: "nature" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            Set new method: "hash" arguments equals: (List new);
+            Set new method: "hash" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            Set new method: "isNotEqualTo:" arguments equals: (List append: "other");
+            Set new method: "isNotEqualTo:" arguments isEqualTo: (List append: "other");
             """);
       assertSSTrue("""
-            Set new method: "orDefault:" arguments equals: (List append: "default");
+            Set new method: "orDefault:" arguments isEqualTo: (List append: "default");
             """);
       assertSSTrue("""
-            Set new method: "size" arguments equals: (List new);
+            Set new method: "size" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            Set new method: "selectIf:" arguments equals: (List append: "block");
+            Set new method: "selectIf:" arguments isEqualTo: (List append: "block");
             """);
       assertSSTrue("""
-            Set new method: "throw" arguments equals: (List new);
+            Set new method: "throw" arguments isEqualTo: (List new);
             """);
       assertSSTrue("""
-            Set new method: "transformUsing:" arguments equals: (List append: "block");
+            Set new method: "transformUsing:" arguments isEqualTo: (List append: "block");
             """);
       assertSSTrue("""
-            Set new method: "try::catch:" arguments equals: (List append: "tryBlock" append: "catchBlock");
+            Set new method: "try::catch:" arguments isEqualTo: (List append: "tryBlock" append: "catchBlock");
             """);
       
       assertSSTrue("""
-            Set new method: "add:" arguments equals: (List append: "item");
+            Set new method: "add:" arguments isEqualTo: (List append: "item");
             """);
       assertSSTrue("""
-            Set new method: "append:" arguments equals: (List append: "item");
+            Set new method: "append:" arguments isEqualTo: (List append: "item");
             """);
       assertSSTrue("""
-            Set new method: "remove:" arguments equals: (List append: "item");
+            Set new method: "remove:" arguments isEqualTo: (List append: "item");
             """);
    }
    /****************************************************************************

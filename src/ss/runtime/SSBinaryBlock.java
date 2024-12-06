@@ -70,7 +70,7 @@ public class SSBinaryBlock implements SSObject {
             case "clone" -> new SSBinaryBlock(this);
             case "close" -> this;
             case "hash" -> new SSLong(hashCode());
-            case "equals:" -> stack.get(this.equals(args.get(0).evaluate(stack)));
+            case "isEqualTo:" -> stack.get(this.equals(args.get(0).evaluate(stack)));
             case "isNotEqualTo:" ->
                stack.get(!this.equals(args.get(0).evaluate(stack)));
             case "nature" -> new SSString("binaryBlock");

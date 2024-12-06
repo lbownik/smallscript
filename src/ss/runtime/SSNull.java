@@ -40,7 +40,7 @@ public final class SSNull implements SSObject {
          case "hash" -> new SSLong(hashCode());
          case "isNotEqualTo:" ->
             stack.get(!this.equals(args.get(0).evaluate(stack)));
-         case "orDefault:" -> args.get(0);
+         case "orDefault:" -> args.get(0).execute(stack);
          case "nature" -> new SSString(name);
          case "size" -> new SSLong(0);
          case "throw" -> throw new AuxiliaryException(this);

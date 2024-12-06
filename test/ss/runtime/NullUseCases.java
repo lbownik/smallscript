@@ -31,6 +31,7 @@ public class NullUseCases extends UseCaseBase {
       assertSSTrue("null asString equals: \"null\";");
       assertSSTrue("null hash equals: 0;");
       assertSSTrue("null orDefault: 10 equals: 10;");
+      assertSSTrue("null orDefault: {5 plus: 5} equals: 10;");
    }
    /****************************************************************************
     * 

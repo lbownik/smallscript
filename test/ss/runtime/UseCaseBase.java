@@ -51,9 +51,9 @@ public class UseCaseBase {
          throws IOException {
 
       var stack = this.interpreter.getStack();
-      var expectedStr = o.invoke(stack.pushNewFrame(), "asString");
+      var expectedStr = o.invoke(stack, "asString");
       var actual = this.interpreter.execute(program);
-      var actualStr = actual.invoke(stack.pushNewFrame(), "asString");
+      var actualStr = actual.invoke(stack, "asString");
       assertEquals("Expected: " + expectedStr + " but was: " + actualStr, o, actual);
    }
    /****************************************************************************

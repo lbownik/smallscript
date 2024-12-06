@@ -91,7 +91,7 @@ public final class Parser {
          }
          if (currentChar == '#') {
             skipComment();
-            currentChar = read();
+            currentChar = consumeWhitespace(read());
          } else if (currentChar == '}' | currentChar == ')') {
             throwUnexpected(currentChar);
          } else if (currentChar != ';') {

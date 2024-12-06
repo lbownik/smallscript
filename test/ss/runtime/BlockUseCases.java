@@ -41,7 +41,7 @@ public class BlockUseCases extends UseCaseBase {
     * 
     ****************************************************************************/
    @Test
-   public void block_equalsOnlyToItself() throws Exception {
+   public void blockEqualsOnlyToItself() throws Exception {
    
       assertSSTrue("""
             !block = {};
@@ -69,7 +69,7 @@ public class BlockUseCases extends UseCaseBase {
    * 
    ****************************************************************************/
    @Test
-   public void block_execute_exacutesStatementsInBlock_forProperInvocation()
+   public void execute_exacutesStatementsInBlock_forProperInvocation()
          throws Exception {
 
       assertResultEquals(new SSLong(2), "!y = 1; {!x | x plus: 1;} executeWith: y;");
@@ -118,7 +118,7 @@ public class BlockUseCases extends UseCaseBase {
    * 
    ****************************************************************************/
    @Test
-   public void block_whileTrue_iteratesProperly_forProperInvocation()
+   public void whileTrue_iteratesProperly_forProperInvocation()
          throws Exception {
 
       assertResultEquals(new SSLong(10), """
@@ -216,4 +216,78 @@ public class BlockUseCases extends UseCaseBase {
    /****************************************************************************
     * 
     ****************************************************************************/
+   @Test
+   public void blockCanGetAssignedNewFields() throws Exception {
+      
+      assertSSTrue("""
+            !block = {};
+            block addField: "field" :withValue: 2;
+            block field equals: 2;
+            """);
+      
+      assertSSTrue("""
+            !block = {};
+            block addField: "field" :withValue: 2;
+            block field: 3;
+             block field equals: 3;
+            """);
+      
+      assertResultEquals(new SSLong(2), """
+            !block = {};
+            block addMethod: "return:" :using: { !this !value | value };
+            block return: 2;
+            """);
+   }
+   /****************************************************************************
+    * 
+    ****************************************************************************/
+   @Test
+   public void blockCanGetAssignedNewMethods() throws Exception {
+      
+      assertResultEquals(new SSLong(2), """
+            !block = {};
+            block addMethod: "return:" :using: { !this !value | value };
+            block return: 2;
+            """);
+   }
+   /****************************************************************************
+    * 
+    ****************************************************************************/
+   @Test
+   public void methodsAssignedToClonedBlock_areNotAssignedToOriginaBlock() 
+         throws Exception {
+      
+      assertSSTrue("""
+            !block = {};
+            !clonedBlock = block clone;
+            clonedBlock addMethod: "return:" :using: { !this !value | value };
+            
+            block try: {
+               block return: 2;
+               false;
+            } :catch: { !e |
+               clonedBlock return: 2 equals: 2;
+            };
+            """);
+   }
+   /****************************************************************************
+    * 
+    ****************************************************************************/
+   @Test
+   public void fieldsAssignedToClonedBlock_areNotAssignedToOriginaBlock() 
+         throws Exception {
+      
+      assertSSTrue("""
+            !block = {};
+            !clonedBlock = block clone;
+            clonedBlock addField: "field" :withValue: 2;
+            
+            block try: {
+               block field;
+               false;
+            } :catch: { !e |
+               clonedBlock field equals: 2;
+            };
+            """);
+   }
 }

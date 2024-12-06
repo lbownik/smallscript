@@ -71,6 +71,26 @@ public class ParserUseCases {
    * 
    ****************************************************************************/
    @Test
+   public void returnsEmptySequence_ForEmptyBlock() throws Exception {
+
+      assertEmptyBlock("{};");
+      assertEmptyBlock("{\r};");
+      assertEmptyBlock("{\n};");
+      assertEmptyBlock("{\r\n};");
+      
+      assertEmptyBlock("#comment\r{};");
+      assertEmptyBlock("#comment\n{};");
+      assertEmptyBlock("#comment\r\n{};");
+      
+      assertEmptyBlock("{#comment\r};");
+      assertEmptyBlock("{#comment\n};");
+      assertEmptyBlock("{#comment\r\n};");
+      assertEmptyBlock("#before\r{#comment\r\n};#after");
+   }
+   /****************************************************************************
+   * 
+   ****************************************************************************/
+   @Test
    public void returnsEmptySequence_ForSemicolon() throws Exception {
 
       assertEmptySequence(";");
@@ -259,7 +279,6 @@ public class ParserUseCases {
    /****************************************************************************
    * 
    ****************************************************************************/
-
    private void assertUnexpected(final String str, final char unexpectedChar)
          throws IOException {
 
@@ -295,9 +314,22 @@ public class ParserUseCases {
    private void assertStringEquals(final String expected, final String str)
          throws Exception {
 
-      final var number = parse(str).execute(Stack.create());
+      final var s = parse(str).execute(Stack.create());
 
-      assertEquals(new SSString(expected), number);
+      assertEquals(new SSString(expected), s);
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   private void assertEmptyBlock(final String str)
+         throws Exception {
+
+      final Stack stack = Stack.create();
+      stack.addVariable(Stack.NULL, SSNull.instance());
+      
+      final var block = (SSBlock)parse(str).execute(stack);
+
+      assertEquals(stack.getNull(), block.execute(stack));
    }
    /****************************************************************************
     * 

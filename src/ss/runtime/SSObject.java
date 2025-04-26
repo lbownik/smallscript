@@ -15,10 +15,8 @@
 //------------------------------------------------------------------------------
 package ss.runtime;
 
-import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 
-import java.util.List;
 import java.util.Set;
 
 /*******************************************************************************
@@ -32,7 +30,7 @@ public interface SSObject {
     * @param stack a clean stack frame
     ***************************************************************************/
    default public SSObject invoke(final Stack stack, final String method,
-         final List<SSObject> args) {
+         final SSObject[] args) {
 
       return evaluate(stack).invoke(stack, method, args);
    }
@@ -44,7 +42,7 @@ public interface SSObject {
     ***************************************************************************/
    default public SSObject invoke(final Stack stack, final String method) {
 
-      return evaluate(stack).invoke(stack, method, emptyList());
+      return evaluate(stack).invoke(stack, method, emptyArgs);
    }
    /****************************************************************************
     * Executes encompassed object performing necessary computations if needed.
@@ -60,7 +58,7 @@ public interface SSObject {
     * 
     * @param stack a clean stack frame
     ***************************************************************************/
-   default public SSObject execute(final Stack stack, final List<SSObject> args) {
+   default public SSObject execute(final Stack stack, final SSObject[] args) {
 
       return invoke(stack, "execute", args);
    }
@@ -91,4 +89,5 @@ public interface SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
+   final static SSObject[] emptyArgs = new SSObject[0];
 }

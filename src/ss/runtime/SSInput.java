@@ -19,7 +19,6 @@ import static ss.runtime.SSBinaryBlock.bb;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.util.List;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
  ******************************************************************************/
@@ -43,16 +42,16 @@ public final class SSInput extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject clone(final Stack stack, final List<SSObject> args) {
+   private static SSObject clone(final Stack stack, final SSObject[] args) {
 
-      return args.get(0);
+      return args[0];
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject readLine(final Stack stack, final List<SSObject> args) {
+   private static SSObject readLine(final Stack stack, final SSObject[] args) {
 
-      final var subject = (SSInput) args.get(0);
+      final var subject = (SSInput) args[0];
       try {
          final var line = subject.reader.readLine();
          return line != null ? new SSString(line) : stack.getNull();

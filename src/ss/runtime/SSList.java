@@ -69,104 +69,104 @@ public final class SSList extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject append(final Stack stack, final List<SSObject> args) {
+   private static SSObject append(final Stack stack, final SSObject[] args) {
 
-      final var subject = (SSList) args.get(0);
-      subject.elements.add(args.get(1).evaluate(stack));
+      final var subject = (SSList) args[0];
+      subject.elements.add(args[1].evaluate(stack));
       return subject;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject at(final Stack stack, final List<SSObject> args) {
+   private static SSObject at(final Stack stack, final SSObject[] args) {
 
-      final var subject = (SSList) args.get(0);
-      final var index = ((SSLong) args.get(1).evaluate(stack)).intValue();
+      final var subject = (SSList) args[0];
+      final var index = ((SSLong) args[1].evaluate(stack)).intValue();
 
       try {
          return subject.elements.get(index);
       } catch (final IndexOutOfBoundsException e) {
-         return throwException(stack, args.get(1),
+         return throwException(stack, args[1],
                "Index " + index + " out of bounds.");
       }
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject atPut(final Stack stack, final List<SSObject> args) {
+   private static SSObject atPut(final Stack stack, final SSObject[] args) {
 
       atPutAndReturnPreviousItem(stack, args);
-      return args.get(0);
+      return args[0];
    }
    /****************************************************************************
     * 
    ****************************************************************************/
    private static SSObject atPutAndReturnPreviousItem(final Stack stack,
-         final List<SSObject> args) {
+         final SSObject[] args) {
 
-      final var subject = (SSList) args.get(0);
-      final var index = ((SSLong) args.get(1).evaluate(stack)).intValue();
-      final var value = args.get(2).evaluate(stack);
+      final var subject = (SSList) args[0];
+      final var index = ((SSLong) args[1].evaluate(stack)).intValue();
+      final var value = args[2].evaluate(stack);
 
       try {
          return subject.elements.set(index, value);
       } catch (final IndexOutOfBoundsException e) {
-         return throwException(stack, args.get(1),
+         return throwException(stack, args[1],
                "Index " + index + " out of bounds.");
       }
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject removeAt(final Stack stack, final List<SSObject> args) {
+   private static SSObject removeAt(final Stack stack, final SSObject[] args) {
 
       removeAtAndReturnRemovedItem(stack, args);
-      return args.get(0);
+      return args[0];
    }
    /****************************************************************************
     * 
    ****************************************************************************/
    private static SSObject removeAtAndReturnRemovedItem(final Stack stack,
-         final List<SSObject> args) {
+         final SSObject[] args) {
 
-      final var subject = (SSList) args.get(0);
-      final var index = ((SSLong) args.get(1).evaluate(stack)).intValue();
+      final var subject = (SSList) args[0];
+      final var index = ((SSLong) args[1].evaluate(stack)).intValue();
 
       try {
          return subject.elements.remove(index);
       } catch (final IndexOutOfBoundsException e) {
-         return throwException(stack, args.get(1),
+         return throwException(stack, args[1],
                "Index " + index + " out of bounds.");
       }
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject forEach(final Stack stack, final List<SSObject> args) {
+   private static SSObject forEach(final Stack stack, final SSObject[] args) {
 
-      final var subject = (SSList) args.get(0);
+      final var subject = (SSList) args[0];
       for (var item : subject.elements) {
-         args.get(1).invoke(stack, "executeWith:", List.of(item.evaluate(stack)));
+         args[1].invoke(stack, "executeWith:", new SSObject[] {item.evaluate(stack)});
       }
       return subject;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject size(final Stack stack, final List<SSObject> args) {
+   private static SSObject size(final Stack stack, final SSObject[] args) {
 
-      final var subject = (SSList) args.get(0);
+      final var subject = (SSList) args[0];
       return new SSLong(subject.elements.size());
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject selectIf(final Stack stack, final List<SSObject> args) {
+   private static SSObject selectIf(final Stack stack, final SSObject[] args) {
 
-      final var subject = (SSList) args.get(0);
+      final var subject = (SSList) args[0];
       final var newStream = subject.elements.stream().filter(item -> {
-         var result = args.get(1).invoke(stack, "executeWith:",
-               List.of(item.evaluate(stack)));
+         var result = args[1].invoke(stack, "executeWith:",
+               new SSObject[] {item.evaluate(stack)});
          return result == stack.getTrue();
       });
       return new SSStream(newStream);
@@ -175,11 +175,11 @@ public final class SSList extends SSDynamicObject {
     * 
    ****************************************************************************/
    private static SSObject transformUsing(final Stack stack,
-         final List<SSObject> args) {
+         final SSObject[] args) {
 
-      final var subject = (SSList) args.get(0);
-      final var newStream = subject.elements.stream().map(item -> args.get(1)
-            .invoke(stack, "executeWith:", List.of(item.evaluate(stack))));
+      final var subject = (SSList) args[0];
+      final var newStream = subject.elements.stream().map(item -> args[1]
+            .invoke(stack, "executeWith:", new SSObject[] {item.evaluate(stack)}));
       return new SSStream(newStream);
    }
    /****************************************************************************
@@ -229,10 +229,10 @@ public final class SSList extends SSDynamicObject {
       /*************************************************************************
        * 
       *************************************************************************/
-      private static SSObject append(final Stack stack, final List<SSObject> args) {
+      private static SSObject append(final Stack stack, final SSObject[] args) {
 
          final var result = new SSList();
-         result.elements.add(args.get(1).evaluate(stack));
+         result.elements.add(args[1].evaluate(stack));
          return result;
       }
    }

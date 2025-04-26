@@ -15,7 +15,9 @@
 //-----------------------------------------------------------------------------
 package ss.runtime;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
+
 import java.util.List;
 import java.util.function.BiFunction;
 /*******************************************************************************
@@ -25,14 +27,14 @@ public class SSBinaryBlock implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSBinaryBlock bb(final BiFunction<Stack, List<SSObject>, SSObject> code) {
+   static SSBinaryBlock bb(final BiFunction<Stack, SSObject[], SSObject> code) {
 
       return new SSBinaryBlock(code, emptyList());
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSBinaryBlock bb(final BiFunction<Stack, List<SSObject>, SSObject> code,
+   static SSBinaryBlock bb(final BiFunction<Stack, SSObject[], SSObject> code,
          final List<String> argumentNames) {
 
       return new SSBinaryBlock(code, argumentNames);
@@ -40,7 +42,7 @@ public class SSBinaryBlock implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public SSBinaryBlock(final BiFunction<Stack, List<SSObject>, SSObject> code, 
+   public SSBinaryBlock(final BiFunction<Stack, SSObject[], SSObject> code, 
          final List<String> argumentNames) {
 
       this.code = code;
@@ -59,7 +61,7 @@ public class SSBinaryBlock implements SSObject {
    ****************************************************************************/
    @Override
    public SSObject invoke(final Stack stack, final String method,
-         final List<SSObject> args) {
+         final SSObject[] args) {
 
       if (method.startsWith("execute")) {
          return this.code.apply(stack, args);
@@ -70,13 +72,13 @@ public class SSBinaryBlock implements SSObject {
             case "clone" -> new SSBinaryBlock(this);
             case "close" -> this;
             case "hash" -> new SSLong(hashCode());
-            case "isEqualTo:" -> stack.get(this.equals(args.get(0).evaluate(stack)));
+            case "isEqualTo:" -> stack.get(this.equals(args[0].evaluate(stack)));
             case "isNotEqualTo:" ->
-               stack.get(!this.equals(args.get(0).evaluate(stack)));
+               stack.get(!this.equals(args[0].evaluate(stack)));
             case "nature" -> new SSString("binaryBlock");
             case "size" -> new SSLong(1);
             case "throw" -> throw new AuxiliaryException(this);
-            case "try:" -> args.get(0).invoke(stack, "execute", List.of(this));
+            case "try:" -> args[0].invoke(stack, "execute", new SSObject[]{this});
             case "try::catch:" -> tryCatch(stack, args);
             default -> doesNotUnderstand(stack, method, args);
          };
@@ -90,7 +92,7 @@ public class SSBinaryBlock implements SSObject {
    @Override
    public SSObject execute(final Stack stack) {
 
-      return this.code.apply(stack, emptyList());
+      return this.code.apply(stack, emptyArgs);
    }
    /****************************************************************************
     * Executes encompassed object performing necessary computations if needed.
@@ -98,7 +100,7 @@ public class SSBinaryBlock implements SSObject {
     * @param stack a clean stack frame
     ***************************************************************************/
    @Override
-   public SSObject execute(final Stack stack, final List<SSObject> args) {
+   public SSObject execute(final Stack stack, SSObject[] args) {
 
       return this.code.apply(stack, args);
    }
@@ -106,24 +108,24 @@ public class SSBinaryBlock implements SSObject {
     * 
    ****************************************************************************/
    private SSObject doesNotUnderstand(final Stack stack, final String method,
-         final List<SSObject> args) {
+         final SSObject[] args) {
 
       final var message = new SSDynamicObject();
       message.addField(stack, "nature", new SSString("message"));
       message.addField(stack, "method", new SSString(method));
-      message.addField(stack, "args", new SSList(args));
+      message.addField(stack, "args", new SSList(asList(args)));
 
-      return SSDynamicObject.doesNotUnderstand(stack, List.of(this, message));
+      return SSDynamicObject.doesNotUnderstand(stack, new SSObject[]{this, message});
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSObject tryCatch(final Stack stack, final List<SSObject> args) {
+   private SSObject tryCatch(final Stack stack, final SSObject[] args) {
 
       try {
-         return args.get(0).invoke(stack, "execute", List.of(this));
+         return args[0].invoke(stack, "execute", new SSObject[]{this});
       } catch (final AuxiliaryException e) {
-         return args.get(1).invoke(stack, "execute", List.of(e.object));
+         return args[1].invoke(stack, "execute", new SSObject[]{e.object});
       } 
    }
    /****************************************************************************
@@ -155,6 +157,6 @@ public class SSBinaryBlock implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private final BiFunction<Stack, List<SSObject>, SSObject> code;
+   private final BiFunction<Stack, SSObject[], SSObject> code;
    private final List<String> argumentNames;
 }

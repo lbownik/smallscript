@@ -38,7 +38,7 @@ public final class SSClosure implements SSObject {
     ****************************************************************************/
    @Override
    public SSObject invoke(final Stack stack, final String method,
-         final List<SSObject> args) {
+         final SSObject[] args) {
 
       return this.target.invoke(stack.combine(this.enclosedStack), method, args);
    }

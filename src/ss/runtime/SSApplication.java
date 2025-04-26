@@ -15,12 +15,12 @@
 //-----------------------------------------------------------------------------
 package ss.runtime;
 
+import static ss.runtime.SSBinaryBlock.bb;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.util.List;
 import java.util.stream.Stream;
-import static ss.runtime.SSBinaryBlock.bb;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
  ******************************************************************************/
@@ -56,28 +56,28 @@ public final class SSApplication extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject clone(final Stack stack, final List<SSObject> args) {
+   private static SSObject clone(final Stack stack, final SSObject[] args) {
 
-      return args.get(0);
+      return args[0];
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject exit(final Stack stack, final List<SSObject> args) {
+   private static SSObject exit(final Stack stack, final SSObject[] args) {
 
-      System.exit(((SSLong) args.get(1)).intValue());
+      System.exit(((SSLong) args[1]).intValue());
       return stack.getNull();
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject load(final Stack stack, final List<SSObject> args) {
+   private static SSObject load(final Stack stack, final SSObject[] args) {
 
       try {
-         final var app = (SSApplication) args.get(0);
-         return app.interpreter.load(stack, args.get(1).toString());
+         final var app = (SSApplication) args[0];
+         return app.interpreter.load(stack, args[1].toString());
       } catch (final Exception e) {
-         return throwException(stack, args.get(0), e.getMessage());
+         return throwException(stack, args[0], e.getMessage());
       }
    }
    /****************************************************************************

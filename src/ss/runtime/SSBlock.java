@@ -15,7 +15,6 @@
 //------------------------------------------------------------------------------
 package ss.runtime;
 
-import static java.util.Collections.emptyList;
 import static java.util.Collections.emptySet;
 import static ss.runtime.SSBinaryBlock.bb;
 import static ss.runtime.Stack.isTopLevelVariable;
@@ -79,14 +78,14 @@ public class SSBlock extends SSDynamicObject {
    @Override
    public SSObject execute(final Stack stack) {
 
-      return execute(stack, emptyList());
+      return execute(stack, emptyArgs);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
    @Override
    public SSObject invoke(final Stack stack, final String method,
-         final List<SSObject> args) {
+         final SSObject[] args) {
 
       if (method.startsWith("execute")) {
          return execute(stack, args);
@@ -126,17 +125,17 @@ public class SSBlock extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject clone(final Stack stack, final List<SSObject> args) {
+   private static SSObject clone(final Stack stack, final SSObject[] args) {
 
-      return new SSBlock((SSBlock) args.get(0));
+      return new SSBlock((SSBlock) args[0]);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject equals(final Stack stack, final List<SSObject> args) {
+   private static SSObject equals(final Stack stack, final SSObject[] args) {
 
-      var subject = args.get(0);
-      var arg = args.get(1).evaluate(stack);
+      var subject = args[0];
+      var arg = args[1].evaluate(stack);
 
       if (arg instanceof SSClosure c) {
          return stack.get(subject.equals(c.target));
@@ -148,10 +147,10 @@ public class SSBlock extends SSDynamicObject {
     * 
    ****************************************************************************/
    private static SSObject isNotEqualTo(final Stack stack,
-         final List<SSObject> args) {
+         final SSObject[] args) {
 
-      var subject = args.get(0);
-      var arg = args.get(1).evaluate(stack);
+      var subject = args[0];
+      var arg = args[1].evaluate(stack);
 
       if (arg instanceof SSClosure c) {
          return stack.get(!subject.equals(c.target));
@@ -163,23 +162,23 @@ public class SSBlock extends SSDynamicObject {
     * 
    ****************************************************************************/
    private static SSObject getArguments(final Stack stack,
-         final List<SSObject> args) {
+         final SSObject[] args) {
 
-      final var subject = (SSBlock) args.get(0);
+      final var subject = (SSBlock) args[0];
       return new SSList(subject.argumentNames.stream().map(SSString::new).toList());
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject whileTrue(final Stack stack, final List<SSObject> args) {
+   private static SSObject whileTrue(final Stack stack, final SSObject[] args) {
 
       var result = stack.getNull();
-      final var subject = (SSBlock) args.get(0);
-      final var block = args.get(1);
+      final var subject = (SSBlock) args[0];
+      final var block = args[1];
       final var trueObject = stack.getTrue();
 
       for (;;) {
-         if (subject.execute(stack, emptyList()).equals(trueObject)) {
+         if (subject.execute(stack, emptyArgs).equals(trueObject)) {
             result = block.execute(stack);
          } else {
             return result;
@@ -190,11 +189,11 @@ public class SSBlock extends SSDynamicObject {
     * 
    ****************************************************************************/
    private void initiateLocalVariables(final Stack stack,
-         final List<SSObject> args) {
+         final SSObject[] args) {
 
       for (int index = 0; index < this.argumentNames.size(); ++index) {
          stack.addVariable(this.argumentNames.get(index),
-               args.get(index).evaluate(stack));
+               args[index].evaluate(stack));
       }
    }
    /****************************************************************************
@@ -203,7 +202,7 @@ public class SSBlock extends SSDynamicObject {
     * @param stack a clean stack frame
     ***************************************************************************/
    @Override
-   public SSObject execute(Stack stack, final List<SSObject> args) {
+   public SSObject execute(Stack stack, final SSObject[] args) {
 
       if (this.declaresVariables) {
          stack = stack.pushNewFrame();

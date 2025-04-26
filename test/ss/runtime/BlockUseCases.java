@@ -17,8 +17,6 @@ package ss.runtime;
 
 import static org.junit.Assert.assertEquals;
 
-import java.util.List;
-
 import org.junit.Test;
 
 public class BlockUseCases extends UseCaseBase {
@@ -195,7 +193,7 @@ public class BlockUseCases extends UseCaseBase {
       SSString arg = new SSString("abc");
       Stack stack = Stack.create();
       
-      assertEquals(arg, block.execute(stack, List.of(arg)));
+      assertEquals(arg, block.execute(stack, new SSObject[] {arg}));
    }
    /****************************************************************************
     * 

@@ -49,40 +49,40 @@ public final class SSStream extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject collectTo(final Stack stack, final List<SSObject> args) {
+   private static SSObject collectTo(final Stack stack, final SSObject[] args) {
 
-      final var subject = (SSStream) args.get(0);
+      final var subject = (SSStream) args[0];
       subject.stream.forEach(item -> {
-         var newTarget = args.get(1).invoke(stack, "append:",
-               List.of(item.evaluate(stack)));
-         args.set(1, newTarget);
+         var newTarget = args[1].invoke(stack, "append:",
+               new SSObject[] {item.evaluate(stack)});
+         args[1] = newTarget;
       });
-      return args.get(1);
+      return args[1];
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject forEach(final Stack stack, final List<SSObject> args) {
+   private static SSObject forEach(final Stack stack, final SSObject[] args) {
 
-      final var subject = (SSStream) args.get(0);
-      final var target = args.get(1);
+      final var subject = (SSStream) args[0];
+      final var target = args[1];
 
       subject.stream.forEach(item -> {
          target.invoke(stack, "executeWith:",
-               List.of(item.evaluate(stack)));
+               new SSObject[] {item.evaluate(stack)});
       });
       return stack.getNull();
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject selectIf(final Stack stack, final List<SSObject> args) {
+   private static SSObject selectIf(final Stack stack, final SSObject[] args) {
 
-      final var subject = (SSStream) args.get(0);
-      final var target = args.get(1);
+      final var subject = (SSStream) args[0];
+      final var target = args[1];
       final var newStream = subject.stream.filter(item -> {
          var result = target.invoke(stack, "executeWith:",
-               List.of(item.evaluate(stack)));
+               new SSObject[] {item.evaluate(stack)});
          return result == stack.getTrue();
       });
       return new SSStream(newStream);
@@ -91,13 +91,13 @@ public final class SSStream extends SSDynamicObject {
     * 
    ****************************************************************************/
    private static SSObject transformUsing(final Stack stack,
-         final List<SSObject> args) {
+         final SSObject[] args) {
 
-      final var subject = (SSStream) args.get(0);
-      final var target = args.get(1);
+      final var subject = (SSStream) args[0];
+      final var target = args[1];
       final var newStream = subject.stream
             .map(item -> target.invoke(stack, "executeWith:",
-                  List.of(item.evaluate(stack))));
+                  new SSObject[] {item.evaluate(stack)}));
       return new SSStream(newStream);
    }
    /****************************************************************************

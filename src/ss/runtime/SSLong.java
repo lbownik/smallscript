@@ -75,10 +75,10 @@ public final class SSLong extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSObject calc(final Stack stack, final List<SSObject> args,
+   private SSObject calc(final Stack stack, final SSObject[] args,
          final LongBinaryOperator opLong, final DoubleBinaryOperator opDouble) {
 
-      final var arg = args.get(1).evaluate(stack);
+      final var arg = args[1].evaluate(stack);
 
       if (arg instanceof SSLong l) {
          return new SSLong(opLong.applyAsLong(this.value, l.value));
@@ -93,116 +93,116 @@ public final class SSLong extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static long evaluateSecond(final List<SSObject> args, final Stack stack) {
+   private static long evaluateSecond(final SSObject[] args, final Stack stack) {
 
-      return ((SSLong) args.get(1).evaluate(stack)).value;
+      return ((SSLong) args[1].evaluate(stack)).value;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject asDouble(final Stack stack, final List<SSObject> args) {
+   private static SSObject asDouble(final Stack stack, final SSObject[] args) {
 
-      final var subject = (SSLong) args.get(0);
+      final var subject = (SSLong) args[0];
       return new SSDouble((double) subject.value);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject clone(final Stack stack, final List<SSObject> args) {
+   private static SSObject clone(final Stack stack, final SSObject[] args) {
 
-      return new SSLong((SSLong) args.get(0));
+      return new SSLong((SSLong) args[0]);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
    private static SSObject incremented(final Stack stack,
-         final List<SSObject> args) {
+         final SSObject[] args) {
 
-      final var subject = (SSLong) args.get(0);
+      final var subject = (SSLong) args[0];
       return new SSLong(subject.value + 1);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject asLong(final Stack stack, final List<SSObject> args) {
+   private static SSObject asLong(final Stack stack, final SSObject[] args) {
 
-      return args.get(0);
+      return args[0];
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject dividedBy(final Stack stack, final List<SSObject> args) {
+   private static SSObject dividedBy(final Stack stack, final SSObject[] args) {
 
-      final var subject = (SSLong) args.get(0);
+      final var subject = (SSLong) args[0];
       return subject.calc(stack, args, (x, y) -> x / y, (x, y) -> x / y);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
    private static SSObject isGreaterThan(final Stack stack,
-         final List<SSObject> args) {
+         final SSObject[] args) {
 
-      final var subject = (SSLong) args.get(0);
+      final var subject = (SSLong) args[0];
       return stack.get(subject.value > evaluateSecond(args, stack));
    }
    /****************************************************************************
     * 
    ****************************************************************************/
    private static SSObject isGreaterOrEqualTo(final Stack stack,
-         final List<SSObject> args) {
+         final SSObject[] args) {
 
-      final var subject = (SSLong) args.get(0);
+      final var subject = (SSLong) args[0];
       return stack.get(subject.value >= evaluateSecond(args, stack));
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject isLessThan(final Stack stack, final List<SSObject> args) {
+   private static SSObject isLessThan(final Stack stack, final SSObject[] args) {
 
-      final var subject = (SSLong) args.get(0);
+      final var subject = (SSLong) args[0];
       return stack.get(subject.value < evaluateSecond(args, stack));
    }
    /****************************************************************************
     * 
    ****************************************************************************/
    private static SSObject isLessOrEqualTo(final Stack stack,
-         final List<SSObject> args) {
+         final SSObject[] args) {
 
-      final var subject = (SSLong) args.get(0);
+      final var subject = (SSLong) args[0];
       return stack.get(subject.value <= evaluateSecond(args, stack));
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject minus(final Stack stack, final List<SSObject> args) {
+   private static SSObject minus(final Stack stack, final SSObject[] args) {
 
-      final var subject = (SSLong) args.get(0);
+      final var subject = (SSLong) args[0];
       return subject.calc(stack, args, (x, y) -> x - y, (x, y) -> x - y);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
    private static SSObject multipliedBy(final Stack stack,
-         final List<SSObject> args) {
+         final SSObject[] args) {
 
-      final var subject = (SSLong) args.get(0);
+      final var subject = (SSLong) args[0];
       return subject.calc(stack, args, (x, y) -> x * y, (x, y) -> x * y);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject plus(final Stack stack, final List<SSObject> args) {
+   private static SSObject plus(final Stack stack, final SSObject[] args) {
 
-      final var subject = (SSLong) args.get(0);
+      final var subject = (SSLong) args[0];
       return subject.calc(stack, args, (x, y) -> x + y, (x, y) -> x + y);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject times(final Stack stack, final List<SSObject> args) {
+   private static SSObject times(final Stack stack, final SSObject[] args) {
 
-      var value = ((SSLong) args.get(0)).value;
-      final var block = args.get(1);
+      var value = ((SSLong) args[0]).value;
+      final var block = args[1];
       SSObject result = stack.getNull();
 
       while (value-- > 0) {
@@ -213,10 +213,10 @@ public final class SSLong extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject to(final Stack stack, final List<SSObject> args) {
+   private static SSObject to(final Stack stack, final SSObject[] args) {
 
-      final var startInclusive = ((SSLong) args.get(0)).value;
-      final var endExclusive = ((SSLong) args.get(1)).value;
+      final var startInclusive = ((SSLong) args[0]).value;
+      final var endExclusive = ((SSLong) args[1]).value;
       return new SSStream(
             LongStream.range(startInclusive, endExclusive).mapToObj(SSLong::new));
    }

@@ -32,7 +32,7 @@ public class SSExpression implements SSObject {
 
       this.object = object;
       this.method = method;
-      this.args = args;
+      this.args = args.toArray(emptyArgs);
    }
    /****************************************************************************
    * 
@@ -57,7 +57,9 @@ public class SSExpression implements SSObject {
 
       final var result = new HashSet<String>();
       result.addAll(this.object.referencedVariables());
-      this.args.forEach(arg -> result.addAll(arg.referencedVariables()));
+      for(final SSObject arg : this.args) {
+         result.addAll(arg.referencedVariables());
+      }
       
       return result;
    }
@@ -69,7 +71,9 @@ public class SSExpression implements SSObject {
 
       final var result = new HashSet<String>();
       result.addAll(this.object.declaredVariables());
-      this.args.forEach(arg -> result.addAll(arg.declaredVariables()));
+      for(final SSObject arg : this.args) {
+         result.addAll(arg.declaredVariables());
+      }
       
       return result;
    }
@@ -86,5 +90,5 @@ public class SSExpression implements SSObject {
    ****************************************************************************/
    private final SSObject object;
    private final String method;
-   private final List<SSObject> args;
+   private final SSObject[] args;
 }

@@ -27,7 +27,7 @@ public final class SSSet extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public  SSSet() {
+   public SSSet() {
 
       this(new HashSet<>());
    }
@@ -46,7 +46,7 @@ public final class SSSet extends SSDynamicObject {
 
       final var listOfItem = List.of("item");
       final var listOfBlock = List.of("block");
-      
+
       methods.add("add:", bb(SSSet::append, listOfItem));
       methods.add("append:", bb(SSSet::append, listOfItem));
       methods.add("forEach:", bb(SSSet::forEach, listOfBlock));
@@ -55,56 +55,57 @@ public final class SSSet extends SSDynamicObject {
       methods.add("size", bb(SSSet::size));
       methods.add("selectIf:", bb(SSSet::selectIf, listOfBlock));
       methods.add("transformUsing:", bb(SSSet::transformUsing, listOfBlock));
-      
+
       return methods;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject append(final Stack stack, final List<SSObject> args) {
+   private static SSObject append(final Stack stack, final SSObject[] args) {
 
-      final var subject = (SSSet) args.get(0);
-      subject.elements.add(args.get(1).evaluate(stack));
+      final var subject = (SSSet) args[0];
+      subject.elements.add(args[1].evaluate(stack));
       return subject;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject remove(final Stack stack, final List<SSObject> args) {
+   private static SSObject remove(final Stack stack, final SSObject[] args) {
 
-      final var subject = (SSSet) args.get(0);
+      final var subject = (SSSet) args[0];
 
-      subject.elements.remove(args.get(1).evaluate(stack));
+      subject.elements.remove(args[1].evaluate(stack));
       return subject;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject forEach(final Stack stack, final List<SSObject> args) {
+   private static SSObject forEach(final Stack stack, final SSObject[] args) {
 
-      final var subject = (SSSet) args.get(0);
+      final var subject = (SSSet) args[0];
       for (var item : subject.elements) {
-         args.get(1).invoke(stack, "executeWith:", List.of(item.evaluate(stack)));
+         args[1].invoke(stack, "executeWith:",
+               new SSObject[] { item.evaluate(stack) });
       }
       return subject;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject size(final Stack stack, final List<SSObject> args) {
+   private static SSObject size(final Stack stack, final SSObject[] args) {
 
-      final var subject = (SSSet) args.get(0);
+      final var subject = (SSSet) args[0];
       return new SSLong(subject.elements.size());
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject selectIf(final Stack stack, final List<SSObject> args) {
+   private static SSObject selectIf(final Stack stack, final SSObject[] args) {
 
-      final var subject = (SSSet) args.get(0);
+      final var subject = (SSSet) args[0];
       final var newStream = subject.elements.stream().filter(item -> {
-         var result = args.get(1).invoke(stack, "executeWith:",
-               List.of(item.evaluate(stack)));
+         var result = args[1].invoke(stack, "executeWith:",
+               new SSObject[] { item.evaluate(stack) });
          return result == stack.getTrue();
       });
       return new SSStream(newStream);
@@ -112,12 +113,11 @@ public final class SSSet extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject transformUsing(final Stack stack,
-         final List<SSObject> args) {
+   private static SSObject transformUsing(final Stack stack, final SSObject[] args) {
 
-      final var subject = (SSSet) args.get(0);
-      final var newStream = subject.elements.stream().map(item -> args.get(1)
-            .invoke(stack, "executeWith:", List.of(item.evaluate(stack))));
+      final var subject = (SSSet) args[0];
+      final var newStream = subject.elements.stream().map(item -> args[1]
+            .invoke(stack, "executeWith:", new SSObject[] { item.evaluate(stack) }));
       return new SSStream(newStream);
    }
    /****************************************************************************
@@ -148,7 +148,7 @@ public final class SSSet extends SSDynamicObject {
     * 
    ****************************************************************************/
    private final HashSet<SSObject> elements;
-   
+
    final static MethodMap sharedMethods = putMethods(
          new MethodMap(SSDynamicObject.sharedMethods, true));
    private final static SSString nature = new SSString("set");
@@ -167,10 +167,10 @@ public final class SSSet extends SSDynamicObject {
       /*************************************************************************
        * 
       *************************************************************************/
-      private static SSObject append(final Stack stack, final List<SSObject> args) {
+      private static SSObject append(final Stack stack, final SSObject[] args) {
 
          final var result = new SSSet();
-         result.elements.add(args.get(1).evaluate(stack));
+         result.elements.add(args[1].evaluate(stack));
          return result;
       }
    }

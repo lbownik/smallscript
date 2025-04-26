@@ -15,10 +15,10 @@
 //-----------------------------------------------------------------------------
 package ss.runtime;
 
-import java.io.PrintStream;
-import static java.util.Collections.emptyList;
-import java.util.List;
 import static ss.runtime.SSBinaryBlock.bb;
+
+import java.io.PrintStream;
+import java.util.List;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
  ******************************************************************************/
@@ -39,18 +39,18 @@ public final class SSOutput extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject clone(final Stack stack, final List<SSObject> args) {
+   private static SSObject clone(final Stack stack, final SSObject[] args) {
 
-      return args.get(0);
+      return args[0];
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject writeLine(final Stack stack, final List<SSObject> args) {
+   private static SSObject writeLine(final Stack stack, final SSObject[] args) {
 
-      final var subject = (SSOutput) args.get(0);
+      final var subject = (SSOutput) args[0];
       try {
-         subject.out.println(args.get(1).invoke(stack, "asString", emptyList()));
+         subject.out.println(args[1].invoke(stack, "asString", emptyArgs));
          return subject;
       } catch (final Exception e) {
          return throwException(stack, subject, e.getMessage());
@@ -59,11 +59,11 @@ public final class SSOutput extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject append(final Stack stack, final List<SSObject> args) {
+   private static SSObject append(final Stack stack, final SSObject[] args) {
 
-      final var subject = (SSOutput) args.get(0);
+      final var subject = (SSOutput) args[0];
       try {
-         subject.out.print(args.get(1).invoke(stack, "asString", emptyList()));
+         subject.out.print(args[1].invoke(stack, "asString", emptyArgs));
          return subject;
       } catch (final Exception e) {
          return throwException(stack, subject, e.getMessage());

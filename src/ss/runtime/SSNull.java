@@ -15,7 +15,6 @@
 //-----------------------------------------------------------------------------
 package ss.runtime;
 
-import java.util.List;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
  ******************************************************************************/
@@ -32,15 +31,15 @@ public final class SSNull implements SSObject {
    ****************************************************************************/
    @Override
    public SSObject invoke(final Stack stack, final String method,
-         final List<SSObject> args) {
+         final SSObject[] args) {
 
       return switch (method) {
          case "asString" -> new SSString(toString());
-         case "isEqualTo:" -> stack.get(this.equals(args.get(0).evaluate(stack)));
+         case "isEqualTo:" -> stack.get(this.equals(args[0].evaluate(stack)));
          case "hash" -> new SSLong(hashCode());
          case "isNotEqualTo:" ->
-            stack.get(!this.equals(args.get(0).evaluate(stack)));
-         case "orDefault:" -> args.get(0).execute(stack);
+            stack.get(!this.equals(args[0].evaluate(stack)));
+         case "orDefault:" -> args[0].execute(stack);
          case "nature" -> new SSString(name);
          case "size" -> new SSLong(0);
          case "throw" -> throw new AuxiliaryException(this);

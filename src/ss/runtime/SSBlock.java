@@ -176,9 +176,10 @@ public class SSBlock extends SSDynamicObject {
       var result = stack.getNull();
       final var subject = (SSBlock) args.get(0);
       final var block = args.get(1);
+      final var trueObject = stack.getTrue();
 
       for (;;) {
-         if (subject.execute(stack, emptyList()).equals(stack.getTrue())) {
+         if (subject.execute(stack, emptyList()).equals(trueObject)) {
             result = block.execute(stack);
          } else {
             return result;

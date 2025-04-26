@@ -26,7 +26,7 @@ public class SSNewVariableAssignment implements SSObject {
    ****************************************************************************/
    public SSNewVariableAssignment(final String variableName, final SSObject arg) {
 
-      this.variableName = variableName;
+      this.variableName = variableName.intern();
       this.arg = arg;
    }
    /****************************************************************************

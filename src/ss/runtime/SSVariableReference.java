@@ -26,7 +26,7 @@ public class SSVariableReference implements SSObject {
    ****************************************************************************/
    public SSVariableReference(final String variableName) {
 
-      this.variableName = variableName;
+      this.variableName = variableName.intern();
    }
    /****************************************************************************
     * 

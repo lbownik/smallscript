@@ -249,7 +249,7 @@ public final class Parser {
       } while (!isEndOfValue(currentChar));
 
       unread(currentChar);
-      return new Symbol(new String(this.buffer, 0, this.bufIndex));
+      return new Symbol(new String(this.buffer, 0, this.bufIndex).intern());
    }
    /****************************************************************************
    * 

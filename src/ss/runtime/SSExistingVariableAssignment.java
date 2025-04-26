@@ -27,7 +27,7 @@ public class SSExistingVariableAssignment implements SSObject {
    public SSExistingVariableAssignment(final String variableName,
          final SSObject arg) {
 
-      this.variableName = variableName;
+      this.variableName = variableName.intern();
       this.arg = arg;
    }
    /****************************************************************************

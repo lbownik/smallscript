@@ -285,7 +285,7 @@ public class SSDynamicObject implements SSObject {
    private static SSObject addField(final Stack stack, final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
-      final var name = args.get(1).evaluate(stack).toString();
+      final var name = args.get(1).evaluate(stack).toString().intern();
       return subject.addField(stack, name, stack.getNull());
    }
    /****************************************************************************
@@ -295,22 +295,23 @@ public class SSDynamicObject implements SSObject {
          final List<SSObject> args) {
 
       final var subject = (SSDynamicObject) args.get(0);
-      final var name = args.get(1).evaluate(stack).toString();
+      final var name = args.get(1).evaluate(stack).toString().intern();
       final var value = args.get(2).evaluate(stack);
       return subject.addField(stack, name, value);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   SSObject addField(final Stack stack, final String name, final SSObject value) {
+   SSObject addField(final Stack stack, String name, final SSObject value) {
 
-      addMethod(name, bb((s, a) -> getField(s, name, a)));
-      addMethod(name + ":", bb((s, a) -> setField(s, name, a), List.of("value")));
+      final String iName = name.intern();
+      addMethod(name, bb((s, a) -> getField(s, iName, a)));
+      addMethod(name + ":", bb((s, a) -> setField(s, iName, a), List.of("value")));
 
       if (this.fields == null) {
          this.fields = new HashMap<>();
       }
-      return setField(stack, name, value);
+      return setField(stack, iName, value);
    }
    /****************************************************************************
     * 

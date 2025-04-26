@@ -100,7 +100,7 @@ public class SSBinaryBlock implements SSObject {
     * @param stack a clean stack frame
     ***************************************************************************/
    @Override
-   public SSObject execute(final Stack stack, SSObject[] args) {
+   public SSObject execute(final Stack stack, final SSObject[] args) {
 
       return this.code.apply(stack, args);
    }

@@ -22,6 +22,10 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
+import static ss.runtime.SSBoolean.createFalse;
+import static ss.runtime.SSBoolean.createTrue;
+import static ss.runtime.SSException.createException;
 import static ss.runtime.Stack.*;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
@@ -42,12 +46,12 @@ public class Interpreter {
       this.args = args;
       stack.addVariable(OBJECT, new SSDynamicObject.Factory());
       stack.addVariable(NULL, SSNull.instance());
-      stack.addVariable(TRUE, load(this.stack, "True.ss"));
-      stack.addVariable(FALSE, load(this.stack, "False.ss"));
+      stack.addVariable(TRUE, createTrue());
+      stack.addVariable(FALSE, createFalse());
       stack.addVariable(LIST, new SSList.Factory());
       stack.addVariable(MAP, new SSMap.Factory());
       stack.addVariable(SET, new SSSet.Factory());
-      stack.addVariable(EXCEPTION, load(this.stack, "Exception.ss"));
+      stack.addVariable(EXCEPTION, createException());
       stack.addVariable(APPLICATION, new SSApplication(this));
    }
    /****************************************************************************

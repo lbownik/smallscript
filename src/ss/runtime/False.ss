@@ -13,16 +13,16 @@
 #See the License for the specific language governing permissions and
 #limitations under the License.
 #-------------------------------------------------------------------------------
-Object new addMethod: "and:"     :using: {!this | this }
+Object new addMethod: "and:"     :using: {!this !other | this }
            addMethod: "clone"    :using: {!this | this }
            addMethod: "ifFalse:" :using: {!this !fBlock | fBlock execute }
-           addMethod: "ifTrue:"  :using: {null }
+           addMethod: "ifTrue:"  :using: {!this !tBlock | null }
            addMethod: "ifTrue::ifFalse:" :using: 
                                          {!this !tBlock !fBlock | fBlock execute }
-           addMethod: "not"      :using: {true }
+           addMethod: "not"      :using: {!this | true }
            addMethod: "or:"      :using: {!this !other | other }
            addMethod: "orElse:"  :using: {!this !other | other }
-           addMethod: "asString" :using: {"false" }
-           addMethod: "hash"     :using: {1 };
+           addMethod: "asString" :using: {!this | "false" }
+           addMethod: "hash"     :using: {!this | 1 };
            
            

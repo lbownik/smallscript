@@ -31,7 +31,7 @@ public class SSExpression implements SSObject {
          final List<SSObject> args) {
 
       this.object = object;
-      this.method = method;
+      this.method = method.intern();
       this.args = args.toArray(emptyArgs);
    }
    /****************************************************************************

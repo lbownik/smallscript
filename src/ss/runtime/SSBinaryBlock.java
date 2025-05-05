@@ -23,7 +23,7 @@ import java.util.function.BiFunction;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
-public class SSBinaryBlock implements SSObject {
+public class SSBinaryBlock extends SSNativeObject {
    /****************************************************************************
     * 
    ****************************************************************************/
@@ -68,19 +68,23 @@ public class SSBinaryBlock implements SSObject {
       } else {
          return switch (method) {
             case "arguments" -> argumentNames();
-            case "asString" -> new SSString(toString());
+            case "asString" -> asString(stack, prependThisTo(emptyArgs));
+            case "at:" -> at(stack, prependThisTo(args));
             case "clone" -> new SSBinaryBlock(this);
-            case "close" -> this;
-            case "hash" -> new SSLong(hashCode());
-            case "isEqualTo:" -> stack.get(this.equals(args[0].evaluate(stack)));
-            case "isNotEqualTo:" ->
-               stack.get(!this.equals(args[0].evaluate(stack)));
+            case "close" -> returnThis(stack, prependThisTo(emptyArgs));
+            case "collectTo:" -> collectTo(stack, prependThisTo(args));
+            case "forEach:" -> forEach(stack, prependThisTo(args));
+            case "hash" -> hashCode(stack, prependThisTo(emptyArgs));
+            case "isEqualTo:" -> isEqualTo(stack, prependThisTo(args));
+            case "isNotEqualTo:" -> isNotEqualTo(stack, prependThisTo(args));
             case "nature" -> new SSString("binaryBlock");
+            case "selectIf:" -> selectIf(stack, prependThisTo(args));
             case "size" -> new SSLong(1);
-            case "throw" -> throw new AuxiliaryException(this);
-            case "try:" -> args[0].invoke(stack, "execute", new SSObject[]{this});
-            case "try::catch:" -> tryCatch(stack, args);
-            default -> doesNotUnderstand(stack, method, args);
+            case "throw" -> throwThis(stack, prependThisTo(emptyArgs));
+            case "transformUsing:" -> transformUsing(stack, prependThisTo(args));
+            case "try:" -> try_(stack, prependThisTo(args));
+            case "try::catch:" -> tryCatch(stack, prependThisTo(args));
+            default -> doesNotUnderstand(stack, method, prependThisTo(args));
          };
       }
    }
@@ -116,19 +120,6 @@ public class SSBinaryBlock implements SSObject {
       message.addField(stack, "args", new SSList(asList(args)));
 
       return SSDynamicObject.doesNotUnderstand(stack, new SSObject[]{this, message});
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private SSObject tryCatch(final Stack stack, final SSObject[] args) {
-
-      try {
-         return args[0].invoke(stack, "execute", new SSObject[]{this});
-      } catch (final AuxiliaryException e) {
-         return args[1].invoke(stack, "execute", new SSObject[]{e.object});
-      } finally {
-         args[0].invoke(stack, "close");
-      }
    }
    /****************************************************************************
     * Returns an object which can accept method calls performing necessary

@@ -35,6 +35,39 @@ public class BinaryBlockUseCases extends UseCaseBase {
     * 
     ***************************************************************************/
    @Test
+   public void at0_returnsTheBlockItself() throws Exception {
+      assertSSTrue("""
+            !block = Object method: "asString";
+            block isEqualTo: block at: 0;
+            """);
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void forEach_executesOnlyForItself() throws Exception {
+      assertSSTrue("""
+            !outerBlock = null;
+            !block = Object method: "asString";
+            block forEach: { !item | outerBlock = item;};
+            block isEqualTo: outerBlock;
+            """);
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void selectIf_transformUsing_collectTo_operateonThisBlock() throws Exception {
+      assertSSTrue("""
+            !block = Object method: "asString";
+            !list = block selectIf: {!item | true} transformUsing: {!item | item} collectTo: List;
+            (list size isEqualTo: 1) and: (list at: 0 isEqualTo: block);
+            """);
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
    public void blockIsEqualOnlyToSelf() throws Exception {
 
       assertSSTrue(

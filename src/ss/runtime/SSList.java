@@ -78,7 +78,7 @@ public final class SSList extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject at(final Stack stack, final SSObject[] args) {
+   static SSObject at(final Stack stack, final SSObject[] args) {
 
       final var subject = (SSList) args[0];
       final var index = ((SSLong) args[1].evaluate(stack)).intValue();
@@ -142,7 +142,7 @@ public final class SSList extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject forEach(final Stack stack, final SSObject[] args) {
+   static SSObject forEach(final Stack stack, final SSObject[] args) {
 
       final var subject = (SSList) args[0];
       for (var item : subject.elements) {
@@ -161,7 +161,7 @@ public final class SSList extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject selectIf(final Stack stack, final SSObject[] args) {
+   static SSObject selectIf(final Stack stack, final SSObject[] args) {
 
       final var subject = (SSList) args[0];
       final var newStream = subject.elements.stream().filter(item -> {
@@ -174,7 +174,7 @@ public final class SSList extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject transformUsing(final Stack stack,
+   static SSObject transformUsing(final Stack stack,
          final SSObject[] args) {
 
       final var subject = (SSList) args[0];

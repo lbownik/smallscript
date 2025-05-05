@@ -146,7 +146,7 @@ public class SSBlock extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject isNotEqualTo(final Stack stack,
+   static SSObject isNotEqualTo(final Stack stack,
          final SSObject[] args) {
 
       var subject = args[0];

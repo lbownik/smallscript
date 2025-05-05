@@ -64,7 +64,7 @@ public final class SSMap extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject at(final Stack stack, final SSObject[] args) {
+   static SSObject at(final Stack stack, final SSObject[] args) {
 
       final var subject = (SSMap) args[0];
       final var key = args[1].evaluate(stack);
@@ -115,7 +115,7 @@ public final class SSMap extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject forEach(final Stack stack, final SSObject[] args) {
+   static SSObject forEach(final Stack stack, final SSObject[] args) {
 
       final var subject = (SSMap) args[0];
       for (var item : subject.elements.entrySet()) {

@@ -80,7 +80,7 @@ public final class SSSet extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject forEach(final Stack stack, final SSObject[] args) {
+   static SSObject forEach(final Stack stack, final SSObject[] args) {
 
       final var subject = (SSSet) args[0];
       for (var item : subject.elements) {
@@ -100,7 +100,7 @@ public final class SSSet extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject selectIf(final Stack stack, final SSObject[] args) {
+   static SSObject selectIf(final Stack stack, final SSObject[] args) {
 
       final var subject = (SSSet) args[0];
       final var newStream = subject.elements.stream().filter(item -> {
@@ -113,7 +113,7 @@ public final class SSSet extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject transformUsing(final Stack stack, final SSObject[] args) {
+   static SSObject transformUsing(final Stack stack, final SSObject[] args) {
 
       final var subject = (SSSet) args[0];
       final var newStream = subject.elements.stream().map(item -> args[1]

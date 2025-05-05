@@ -57,7 +57,7 @@ public final class SSString extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject at(final Stack stack, final SSObject[] args) {
+   static SSObject at(final Stack stack, final SSObject[] args) {
 
       final var subject = (SSString) args[0];
       final var index = ((SSLong) args[1]).intValue();

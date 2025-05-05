@@ -49,7 +49,7 @@ public final class SSStream extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject collectTo(final Stack stack, final SSObject[] args) {
+   static SSObject collectTo(final Stack stack, final SSObject[] args) {
 
       final var subject = (SSStream) args[0];
       subject.stream.forEach(item -> {
@@ -62,7 +62,7 @@ public final class SSStream extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject forEach(final Stack stack, final SSObject[] args) {
+   static SSObject forEach(final Stack stack, final SSObject[] args) {
 
       final var subject = (SSStream) args[0];
       final var target = args[1];
@@ -76,7 +76,7 @@ public final class SSStream extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject selectIf(final Stack stack, final SSObject[] args) {
+   static SSObject selectIf(final Stack stack, final SSObject[] args) {
 
       final var subject = (SSStream) args[0];
       final var target = args[1];
@@ -90,7 +90,7 @@ public final class SSStream extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject transformUsing(final Stack stack,
+   static SSObject transformUsing(final Stack stack,
          final SSObject[] args) {
 
       final var subject = (SSStream) args[0];

@@ -15,7 +15,6 @@
 //------------------------------------------------------------------------------
 package ss.runtime;
 
-import static java.lang.System.arraycopy;
 import static java.util.Arrays.asList;
 import static java.util.stream.Collectors.toSet;
 import static ss.runtime.SSBinaryBlock.bb;
@@ -25,7 +24,7 @@ import java.util.List;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
-public class SSDynamicObject implements SSObject {
+public class SSDynamicObject extends SSNativeObject {
 
    /****************************************************************************
     * 
@@ -133,27 +132,10 @@ public class SSDynamicObject implements SSObject {
    }
    /****************************************************************************
     * 
-   ****************************************************************************/
-   private SSObject[] prependThisTo(final SSObject[] args) {
-      
-        final SSObject[] result = new SSObject[args.length + 1];
-        result[0] = this;
-        arraycopy(args, 0, result, 1, args.length);
-        return result;
-   }
-   /****************************************************************************
-    * 
     ****************************************************************************/
    private static SSObject evaluate(final Stack stack, final SSObject[] args) {
 
       return args[0].evaluate(stack);
-   }
-   /****************************************************************************
-    * 
-    ****************************************************************************/
-   private static SSObject returnThis(final Stack stack, final SSObject[] args) {
-
-      return args[0];
    }
    /****************************************************************************
     * 
@@ -177,79 +159,10 @@ public class SSDynamicObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject asString(final Stack stack, final SSObject[] args) {
-
-      return new SSString(args[0].toString());
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject hashCode(final Stack stack, final SSObject[] args) {
-
-      return new SSLong(args[0].hashCode());
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
    private static SSObject clone(final Stack stack, final SSObject[] args) {
 
       final var subject = (SSDynamicObject) args[0];
       return new SSDynamicObject(subject);
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject throwThis(final Stack stack, final SSObject[] args) {
-
-      throw new AuxiliaryException(args[0]);
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject tryCatch(final Stack stack, final SSObject[] args) {
-
-      final var subject = args[0];
-      try {
-         return args[1].invoke(stack, "execute", new SSObject[]{subject});
-      } catch (final AuxiliaryException e) {
-         return args[2].invoke(stack, "execute", new SSObject[]{e.object});
-      } finally {
-         subject.invoke(stack, "close");
-      }
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject try_(final Stack stack, final SSObject[] args) {
-
-      final var subject = args[0];
-      try {
-         return args[1].invoke(stack, "execute", new SSObject[]{subject});
-      } finally {
-         subject.invoke(stack, "close");
-      }
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject at(final Stack stack, final SSObject[] args) {
-
-      final var index = ((SSLong) args[1]).intValue();
-      if (index == 0) {
-         return args[0];
-      } else {
-         return throwException(stack, args[1],
-               "Index " + index + " out of bounds.");
-      }
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject forEach(final Stack stack, final SSObject[] args) {
-
-      final var subject = (SSDynamicObject) args[0];
-      args[1].invoke(stack, "executeWith:", new SSObject[]{subject});
-      return subject;
    }
    /****************************************************************************
     * 
@@ -353,74 +266,6 @@ public class SSDynamicObject implements SSObject {
 
       this.fields.put(name, value.evaluate(stack));
       return this;
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject isNotEqualTo(final Stack stack,
-         final SSObject[] args) {
-
-      return stack.get(!args[0].equals(args[1].evaluate(stack)));
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject isEqualTo(final Stack stack, final SSObject[] args) {
-
-      return stack.get(args[0].equals(args[1].evaluate(stack)));
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   static SSObject doesNotUnderstand(final Stack stack, final SSObject[] args) {
-
-      final var message = args[1];
-      final var method = message.invoke(stack, "method");
-      return throwException(stack, message,
-            "Method '" + method + "' is not defined.");
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject selectIf(final Stack stack, final SSObject[] args) {
-
-      final var subject = args[0];
-
-      var result = args[1].invoke(stack, "executeWith:",
-            new SSObject[]{subject.evaluate(stack)});
-
-      return result == stack.getTrue() ? subject : stack.getNull();
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject transformUsing(final Stack stack,
-         final SSObject[] args) {
-
-      final var subject = args[0];
-
-      return args[1].invoke(stack, "executeWith:",
-            new SSObject[]{subject.evaluate(stack)});
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject collectTo(final Stack stack, final SSObject[] args) {
-
-      return args[1].invoke(stack, "append:",
-            new SSObject[]{args[0].evaluate(stack)});
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   static SSObject throwException(final Stack stack, final SSObject cause,
-         final String message) {
-
-      final var exception = new SSDynamicObject();
-      exception.addField(stack, "nature", new SSString("exception"));
-      exception.addField(stack, "cause", cause);
-      exception.addField(stack, "message", new SSString(message));
-      throw new AuxiliaryException(exception);
    }
    /****************************************************************************
     * 

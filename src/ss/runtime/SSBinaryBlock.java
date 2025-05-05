@@ -126,7 +126,9 @@ public class SSBinaryBlock implements SSObject {
          return args[0].invoke(stack, "execute", new SSObject[]{this});
       } catch (final AuxiliaryException e) {
          return args[1].invoke(stack, "execute", new SSObject[]{e.object});
-      } 
+      } finally {
+         args[0].invoke(stack, "close");
+      }
    }
    /****************************************************************************
     * Returns an object which can accept method calls performing necessary

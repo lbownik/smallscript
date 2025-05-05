@@ -46,6 +46,8 @@ public class BinaryBlockUseCases extends UseCaseBase {
             "Object method: \"asString\" isNotEqualTo: (Object method: \"asString\");");
       assertSSTrue(
             "Object method: \"asString\" isNotEqualTo: (Object method: \"hash\");");
+      assertSSTrue(
+            "Object method: \"asString\" isNotEqualTo: (Object method: null);");
    }
    /****************************************************************************
     * 
@@ -92,15 +94,46 @@ public class BinaryBlockUseCases extends UseCaseBase {
             """);
    }
    /****************************************************************************
+    * 
+    ****************************************************************************/
+   @Test
+   public void blockArguments_canBeListed() throws Exception {
+
+      assertSSTrue("""
+            !args = Object method: "hash" arguments;
+            args size isEqualTo: 0;
+            """);
+
+      assertSSTrue("""
+            !args = Object method: "addField::withValue:" arguments;
+            (args size isEqualTo: 2) and: (args at: 0 isEqualTo: "name") 
+               and: (args at: 1 isEqualTo: "value");
+            """);
+   }
+   /****************************************************************************
    * 
    ***************************************************************************/
    @Test
-   public void cloaning_returnNewInstanceOfBlock() throws Exception {
+   public void cloning_returnNewInstanceOfBlock() throws Exception {
 
       assertSSTrue("""
             !block = Object method: "asString";
             (block clone isNotEqualTo: block) and:
             (block clone isNotEqualTo: null);
+            """);
+   }
+
+   /****************************************************************************
+   * 
+   ***************************************************************************/
+   @Test
+   public void clonedBinaryBlock_presentsTheSameArgumentListAsOriginalBlock()
+         throws Exception {
+
+      assertSSTrue("""
+            !args = Object method: "addField::withValue:" clone arguments;
+            (args size isEqualTo: 2) and: (args at: 0 isEqualTo: "name") 
+               and: (args at: 1 isEqualTo: "value");
             """);
    }
 }

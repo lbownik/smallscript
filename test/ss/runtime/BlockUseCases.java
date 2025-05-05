@@ -170,6 +170,25 @@ public class BlockUseCases extends UseCaseBase {
             closure execute execute isEqualTo: "abc";
             """);
    }
+   
+   /****************************************************************************
+    * 
+    ****************************************************************************/
+   @Test
+   public void closuresCanDefineLocalVariables() throws Exception {
+      
+      assertSSTrue("""
+            !closure = {
+               !val = "abc";
+               {
+                  !local = "def";
+                  val append: local;
+               };
+            } execute;
+
+            closure execute isEqualTo: "abcdef";
+            """);
+   }
    /****************************************************************************
     * 
     ****************************************************************************/

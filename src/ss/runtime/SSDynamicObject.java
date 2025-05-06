@@ -21,6 +21,7 @@ import static ss.runtime.SSBinaryBlock.bb;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
@@ -105,12 +106,28 @@ public class SSDynamicObject extends SSNativeObject {
    /****************************************************************************
     * 
    ****************************************************************************/
+   @Override
    protected void addMethod(final String name, final SSObject block) {
 
       if (this.methods.isShared()) {
          this.methods = new MethodMap(this.methods, false);
       }
       this.methods.add(name, block);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   @Override
+   protected SSObject getMethod(final String name, final SSObject defaultValue) {
+      return this.methods.getOrDefault(name, defaultValue);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   @Override
+   protected Set<SSObject> getMethods() {
+      
+      return this.methods.keySet().stream().map(SSString::new).collect(toSet());
    }
    /****************************************************************************
     * 
@@ -132,29 +149,11 @@ public class SSDynamicObject extends SSNativeObject {
    }
    /****************************************************************************
     * 
-    ****************************************************************************/
-   private static SSObject evaluate(final Stack stack, final SSObject[] args) {
-
-      return args[0].evaluate(stack);
-   }
-   /****************************************************************************
-    * 
    ****************************************************************************/
    @Override
    public String toString() {
 
       return Factory.nature.toString() + "#" + hashCode();
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject invokeWith(final Stack stack, final SSObject[] args) {
-
-      final var subject = (SSDynamicObject) args[0];
-      final var method = args[1].evaluate(stack).toString();
-      final var argList = ((SSList) args[2].evaluate(stack)).elements.toArray(emptyArgs);
-
-      return subject.invoke(stack, method, argList);
    }
    /****************************************************************************
     * 
@@ -167,112 +166,6 @@ public class SSDynamicObject extends SSNativeObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject addMethod(final Stack stack, final SSObject[] args) {
-
-      final var subject = (SSDynamicObject) args[0];
-      final var name = args[1].evaluate(stack).toString();
-      final var block = args[2].evaluate(stack);
-
-      subject.addMethod(name, block);
-      return subject;
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject getMethod(final Stack stack, final SSObject[] args) {
-
-      final var subject = (SSDynamicObject) args[0];
-      return subject.methods.getOrDefault(args[1].toString(), stack.getNull());
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject getMethods(final Stack stack, final SSObject[] args) {
-
-      final var subject = (SSDynamicObject) args[0];
-      return new SSSet(
-            subject.methods.keySet().stream().map(SSString::new).collect(toSet()));
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject addField(final Stack stack, final SSObject[] args) {
-
-      final var subject = (SSDynamicObject) args[0];
-      final var name = args[1].evaluate(stack).toString().intern();
-      return subject.addField(stack, name, stack.getNull());
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject addFieldWithValue(final Stack stack,
-         final SSObject[] args) {
-
-      final var subject = (SSDynamicObject) args[0];
-      final var name = args[1].evaluate(stack).toString().intern();
-      final var value = args[2].evaluate(stack);
-      return subject.addField(stack, name, value);
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   SSObject addField(final Stack stack, String name, final SSObject value) {
-
-      final String iName = name.intern();
-      addMethod(name, bb((s, a) -> getField(s, iName, a)));
-      addMethod(name + ":", bb((s, a) -> setField(s, iName, a), List.of("value")));
-
-      if (this.fields == null) {
-         this.fields = new HashMap<>();
-      }
-      return setField(stack, iName, value);
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject getField(final Stack stack, final String name,
-         final SSObject[] args) {
-
-      final var subject = (SSDynamicObject) args[0];
-      return subject.fields.getOrDefault(name, stack.getNull());
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject getFields(final Stack stack, final SSObject[] args) {
-
-      final var subject = (SSDynamicObject) args[0];
-      if (subject.fields != null) {
-         return new SSSet(
-               subject.fields.keySet().stream().map(SSString::new).collect(toSet()));
-      } else {
-         return new SSSet();
-      }
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject setField(final Stack stack, final String name,
-         final SSObject[] args) {
-
-      final var subject = (SSDynamicObject) args[0];
-
-      return subject.setField(stack, name, args[1]);
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   SSObject setField(final Stack stack, final String name, final SSObject value) {
-
-      this.fields.put(name, value.evaluate(stack));
-      return this;
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   protected MethodMap methods;
-   private HashMap<String, SSObject> fields;
-
    final static MethodMap sharedMethods = putMethods(new MethodMap());
    public final static SSString nature = new SSString("object");
    /****************************************************************************

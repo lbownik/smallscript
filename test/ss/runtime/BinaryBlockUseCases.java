@@ -30,6 +30,7 @@ public class BinaryBlockUseCases extends UseCaseBase {
       assertSSTrue(
             "Object method: \"asString\" asString startsWith: \"binaryBlock#\";");
       assertSSTrue("Object method: \"asString\" hash isGreaterThan: 0;");
+      assertSSTrue("Object method: \"asString\" fields size isEqualTo: 0;");
    }
    /****************************************************************************
     * 
@@ -57,12 +58,14 @@ public class BinaryBlockUseCases extends UseCaseBase {
     * 
     ***************************************************************************/
    @Test
-   public void selectIf_transformUsing_collectTo_operateonThisBlock() throws Exception {
-      assertSSTrue("""
-            !block = Object method: "asString";
-            !list = block selectIf: {!item | true} transformUsing: {!item | item} collectTo: List;
-            (list size isEqualTo: 1) and: (list at: 0 isEqualTo: block);
-            """);
+   public void selectIf_transformUsing_collectTo_operateonThisBlock()
+         throws Exception {
+      assertSSTrue(
+            """
+                  !block = Object method: "asString";
+                  !list = block selectIf: {!item | true} transformUsing: {!item | item} collectTo: List;
+                  (list size isEqualTo: 1) and: (list at: 0 isEqualTo: block);
+                  """);
    }
    /****************************************************************************
     * 
@@ -111,7 +114,7 @@ public class BinaryBlockUseCases extends UseCaseBase {
    }
    /****************************************************************************
    * 
-   ***************************************************************************/
+   ****************************************************************************/
    @Test
    public void blockCanThrowItself_andExceuteTryCach() throws Exception {
 
@@ -128,7 +131,7 @@ public class BinaryBlockUseCases extends UseCaseBase {
    }
    /****************************************************************************
     * 
-    ****************************************************************************/
+    ***************************************************************************/
    @Test
    public void blockArguments_canBeListed() throws Exception {
 
@@ -139,13 +142,13 @@ public class BinaryBlockUseCases extends UseCaseBase {
 
       assertSSTrue("""
             !args = Object method: "addField::withValue:" arguments;
-            (args size isEqualTo: 2) and: (args at: 0 isEqualTo: "name") 
+            (args size isEqualTo: 2) and: (args at: 0 isEqualTo: "name")
                and: (args at: 1 isEqualTo: "value");
             """);
    }
    /****************************************************************************
    * 
-   ***************************************************************************/
+   ****************************************************************************/
    @Test
    public void cloning_returnNewInstanceOfBlock() throws Exception {
 
@@ -155,17 +158,16 @@ public class BinaryBlockUseCases extends UseCaseBase {
             (block clone isNotEqualTo: null);
             """);
    }
-
    /****************************************************************************
    * 
-   ***************************************************************************/
+   ****************************************************************************/
    @Test
    public void clonedBinaryBlock_presentsTheSameArgumentListAsOriginalBlock()
          throws Exception {
 
       assertSSTrue("""
             !args = Object method: "addField::withValue:" clone arguments;
-            (args size isEqualTo: 2) and: (args at: 0 isEqualTo: "name") 
+            (args size isEqualTo: 2) and: (args at: 0 isEqualTo: "name")
                and: (args at: 1 isEqualTo: "value");
             """);
    }

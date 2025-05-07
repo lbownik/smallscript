@@ -171,4 +171,41 @@ public class BinaryBlockUseCases extends UseCaseBase {
                and: (args at: 1 isEqualTo: "value");
             """);
    }
+   /****************************************************************************
+    * 
+    ****************************************************************************/
+   @Test
+   public void blockCanGetAssignedNewFields() throws Exception {
+      
+      assertSSTrue("""
+            !block = Object method: "asString";
+            block addField: "field" :withValue: 2;
+            block field isEqualTo: 2;
+            """);
+      
+      assertSSTrue("""
+            !block = Object method: "asString";
+            block addField: "field" :withValue: 2;
+            block field: 3;
+             block field isEqualTo: 3;
+            """);
+      
+      assertResultEquals(new SSLong(2), """
+            !block = Object method: "asString";
+            block addMethod: "return:" :using: { !this !value | value };
+            block return: 2;
+            """);
+   }
+   /****************************************************************************
+    * 
+    ****************************************************************************/
+   @Test
+   public void blockCanGetAssignedNewMethods() throws Exception {
+      
+      assertResultEquals(new SSLong(2), """
+            !block = Object method: "asString";
+            block addMethod: "return:" :using: { !this !value | value };
+            block return: 2;
+            """);
+   }
 }

@@ -19,6 +19,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -44,7 +45,7 @@ public class SSBinaryBlock extends SSNativeObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public SSBinaryBlock(final BiFunction<Stack, SSObject[], SSObject> code, 
+   public SSBinaryBlock(final BiFunction<Stack, SSObject[], SSObject> code,
          final List<String> argumentNames) {
 
       this.code = code;
@@ -57,6 +58,8 @@ public class SSBinaryBlock extends SSNativeObject {
 
       this.code = other.code;
       this.argumentNames = other.argumentNames;
+      this.methods = other.methods != null ? new MethodMap(other.methods) : null;
+      this.fields = other.fields != null ? new HashMap<>(other.fields) : null;
    }
    /****************************************************************************
     * 
@@ -67,36 +70,41 @@ public class SSBinaryBlock extends SSNativeObject {
 
       if (method.startsWith("execute")) {
          return this.code.apply(stack, args);
-      } else {
-         final var thisArgs = prependThisTo(args);
-         return switch (method) {
-            case "arguments" -> argumentNames();
-            case "invoke::with:" -> invokeWith(stack, thisArgs);
-            case "addField::withValue:" -> addFieldWithValue(stack, thisArgs);
-            case "addMethod::using:" -> addMethod(stack, thisArgs);
-            case "asString" -> asString(stack, thisArgs);
-            case "at:" -> at(stack, thisArgs);
-            case "clone" -> new SSBinaryBlock(this);
-            case "close" -> returnThis(stack, thisArgs);
-            case "collectTo:" -> collectTo(stack, thisArgs);
-            case "fields" -> getFields(stack, thisArgs);
-            case "forEach:" -> forEach(stack, thisArgs);
-            case "hash" -> hashCode(stack, thisArgs);
-            case "isEqualTo:" -> isEqualTo(stack, thisArgs);
-            case "isNotEqualTo:" -> isNotEqualTo(stack, thisArgs);
-            case "method:" -> getMethod(stack, thisArgs);
-            case "methods" -> getMethods(stack, thisArgs);
-            case "nature" -> new SSString("binaryBlock");
-            case "orDefault:" -> returnThis(stack, thisArgs);
-            case "selectIf:" -> selectIf(stack, thisArgs);
-            case "size" -> new SSLong(1);
-            case "throw" -> throwThis(stack, thisArgs);
-            case "transformUsing:" -> transformUsing(stack, thisArgs);
-            case "try:" -> try_(stack, thisArgs);
-            case "try::catch:" -> tryCatch(stack, thisArgs);
-            default -> doesNotUnderstand(stack, method, thisArgs);
-         };
       }
+      final var thisArgs = prependThisTo(args);
+      if (this.methods != null) {
+         final var block = this.methods.get(method);
+         if (block != null) {
+            return block.execute(stack, thisArgs);
+         }
+      }
+      return switch (method) {
+         case "arguments" -> argumentNames();
+         case "invoke::with:" -> invokeWith(stack, thisArgs);
+         case "addField::withValue:" -> addFieldWithValue(stack, thisArgs);
+         case "addMethod::using:" -> addMethod(stack, thisArgs);
+         case "asString" -> asString(stack, thisArgs);
+         case "at:" -> at(stack, thisArgs);
+         case "clone" -> new SSBinaryBlock(this);
+         case "close" -> returnThis(stack, thisArgs);
+         case "collectTo:" -> collectTo(stack, thisArgs);
+         case "fields" -> getFields(stack, thisArgs);
+         case "forEach:" -> forEach(stack, thisArgs);
+         case "hash" -> hashCode(stack, thisArgs);
+         case "isEqualTo:" -> isEqualTo(stack, thisArgs);
+         case "isNotEqualTo:" -> isNotEqualTo(stack, thisArgs);
+         case "method:" -> getMethod(stack, thisArgs);
+         case "methods" -> getMethods(stack, thisArgs);
+         case "nature" -> new SSString("binaryBlock");
+         case "orDefault:" -> returnThis(stack, thisArgs);
+         case "selectIf:" -> selectIf(stack, thisArgs);
+         case "size" -> new SSLong(1);
+         case "throw" -> throwThis(stack, thisArgs);
+         case "transformUsing:" -> transformUsing(stack, thisArgs);
+         case "try:" -> try_(stack, thisArgs);
+         case "try::catch:" -> tryCatch(stack, thisArgs);
+         default -> doesNotUnderstand(stack, method, thisArgs);
+      };
    }
    /****************************************************************************
     * Executes encompassed object performing necessary computations if needed.
@@ -141,7 +149,7 @@ public class SSBinaryBlock extends SSNativeObject {
    ****************************************************************************/
    @Override
    protected Set<SSObject> getMethods() {
-      
+
       return Collections.emptySet();
    }
    /****************************************************************************
@@ -155,7 +163,7 @@ public class SSBinaryBlock extends SSNativeObject {
       message.addField(stack, "method", new SSString(method));
       message.addField(stack, "args", new SSList(asList(args)));
 
-      return doesNotUnderstand(stack, new SSObject[]{this, message});
+      return doesNotUnderstand(stack, new SSObject[] { this, message });
    }
    /****************************************************************************
     * Returns an object which can accept method calls performing necessary
@@ -172,7 +180,7 @@ public class SSBinaryBlock extends SSNativeObject {
     * 
    ****************************************************************************/
    private SSList argumentNames() {
-      
+
       return new SSList(this.argumentNames.stream().map(SSString::new).toList());
    }
    /****************************************************************************

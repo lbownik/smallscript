@@ -47,16 +47,9 @@ public class SSDynamicObject extends SSNativeObject {
    ****************************************************************************/
    public SSDynamicObject(final SSDynamicObject other) {
 
-      if (other.methods.isShared()) {
-         this.methods = other.methods;
-      } else {
-         this.methods = new MethodMap(other.methods);
-      }
-      if (other.fields != null) {
-         this.fields = new HashMap<>(other.fields);
-      } else {
-         this.fields = null;
-      }
+      this.methods = other.methods.isShared() ? other.methods
+            : new MethodMap(other.methods);
+      this.fields = other.fields != null ? new HashMap<>(other.fields) : null;
    }
    /****************************************************************************
     * 
@@ -126,7 +119,7 @@ public class SSDynamicObject extends SSNativeObject {
    ****************************************************************************/
    @Override
    protected Set<SSObject> getMethods() {
-      
+
       return this.methods.keySet().stream().map(SSString::new).collect(toSet());
    }
    /****************************************************************************
@@ -144,7 +137,7 @@ public class SSDynamicObject extends SSNativeObject {
          message.addField(stack, "nature", new SSString("message"));
          message.addField(stack, "method", new SSString(method));
          message.addField(stack, "args", new SSList(asList(args)));
-         return invoke(stack, "doesNotUnderstand:", new SSObject[] {message});
+         return invoke(stack, "doesNotUnderstand:", new SSObject[] { message });
       }
    }
    /****************************************************************************
@@ -184,8 +177,7 @@ public class SSDynamicObject extends SSNativeObject {
       /*************************************************************************
        * 
       *************************************************************************/
-      private static SSObject newOfNature(final Stack stack,
-            final SSObject[] args) {
+      private static SSObject newOfNature(final Stack stack, final SSObject[] args) {
 
          final var result = new SSDynamicObject();
          result.addField(stack, "nature", args[1]);

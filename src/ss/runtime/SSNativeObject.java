@@ -81,7 +81,7 @@ public abstract class SSNativeObject implements SSObject {
    ****************************************************************************/
    static SSObject addField(final Stack stack, final SSObject[] args) {
 
-      final var subject = (SSDynamicObject) args[0];
+      final var subject = (SSNativeObject) args[0];
       final var name = args[1].evaluate(stack).toString().intern();
       return subject.addField(stack, name, stack.getNull());
    }
@@ -90,7 +90,7 @@ public abstract class SSNativeObject implements SSObject {
    ****************************************************************************/
    static SSObject addFieldWithValue(final Stack stack, final SSObject[] args) {
 
-      final var subject = (SSDynamicObject) args[0];
+      final var subject = (SSNativeObject) args[0];
       final var name = args[1].evaluate(stack).toString().intern();
       final var value = args[2].evaluate(stack);
       return subject.addField(stack, name, value);

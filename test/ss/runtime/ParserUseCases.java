@@ -28,7 +28,7 @@ import org.junit.Test;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
-public class ParserUseCases {
+public class ParserUseCases  extends UseCaseBase {
    /****************************************************************************
    * 
    ****************************************************************************/
@@ -36,13 +36,13 @@ public class ParserUseCases {
    public void throwsNullPointer_ForNullArgument() throws Exception {
 
       try {
-         new Parser().parse((Reader) null);
+         new Parser(heap).parse((Reader) null);
          fail("NullPointertException failed.");
       } catch (final NullPointerException e) {
          assertTrue(true);
       }
       try {
-         new Parser().parse((String) null);
+         new Parser(heap).parse((String) null);
          fail("NullPointertException failed.");
       } catch (final NullPointerException e) {
          assertTrue(true);
@@ -296,7 +296,7 @@ public class ParserUseCases {
          throws Exception {
 
       var number = parse(str).execute(Stack.create());
-      assertEquals(new SSLong(expected), number);
+      assertEquals(this.heap.newLong(expected), number);
    }
    /****************************************************************************
     * 
@@ -306,7 +306,7 @@ public class ParserUseCases {
 
       final var number = parse(str).execute(Stack.create());
 
-      assertEquals(new SSDouble(expected), number);
+      assertEquals(createDouble(expected), number);
    }
    /****************************************************************************
     * 
@@ -316,7 +316,7 @@ public class ParserUseCases {
 
       final var s = parse(str).execute(Stack.create());
 
-      assertEquals(new SSString(expected), s);
+      assertEquals(createString(expected), s);
    }
    /****************************************************************************
     * 
@@ -325,7 +325,7 @@ public class ParserUseCases {
          throws Exception {
 
       final Stack stack = Stack.create();
-      stack.addVariable(Stack.NULL, SSNull.instance());
+      stack.addVariable(Stack.NULL, this.heap.newNull());
       
       final var block = (SSBlock)parse(str).execute(stack);
 
@@ -355,7 +355,7 @@ public class ParserUseCases {
     ***************************************************************************/
    private SSBlock parse(final String str) throws IOException {
 
-      return new Parser().parse(str);
+      return new Parser(this.heap).parse(str);
    }
    /****************************************************************************
     * 

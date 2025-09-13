@@ -15,8 +15,6 @@
 //------------------------------------------------------------------------------
 package ss.runtime;
 
-import static ss.runtime.SSBinaryBlock.bb;
-
 import java.util.ArrayList;
 import java.util.List;
 /*******************************************************************************
@@ -26,59 +24,98 @@ public final class SSList extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public SSList() {
+   SSList(final Heap heap, final MethodMap methods) {
 
-      this(new ArrayList<>());
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   public SSList(final List<? extends SSObject> elements) {
-
-      super(sharedMethods);
-      this.elements = new ArrayList<>(elements);
+      super(heap, methods);
    }
 
    /****************************************************************************
     * 
    ****************************************************************************/
-   static MethodMap putMethods(final MethodMap methods) {
+   static MethodMap putMethods(final Heap heap, final MethodMap methods) {
 
       final var listOfItem = List.of("item");
       final var listOfIndex = List.of("index");
       final var listOfBlock = List.of("block");
       final var listOfIndexItem = List.of("index", "item");
-      
-      methods.add("add:", bb(SSList::append, listOfItem));
-      methods.add("append:", bb(SSList::append, listOfItem));
-      methods.add("at:", bb(SSList::at, listOfIndex));
-      methods.add("at::put:", bb(SSList::atPut, listOfIndexItem));
-      methods.add("at::put::andReturnPreviousItem",
-            bb(SSList::atPutAndReturnPreviousItem, listOfIndexItem));
-      methods.add("forEach:", bb(SSList::forEach, listOfBlock));
-      methods.add("nature", bb((s, a) -> nature));
-      methods.add("removeAt:", bb(SSList::removeAt, listOfIndex));
+
+      methods.add("add:", heap.newBinaryBlock(SSList::append, listOfItem));
+      methods.add("append:", heap.newBinaryBlock(SSList::append, listOfItem));
+      methods.add("at:", heap.newBinaryBlock(SSList::at, listOfIndex));
+      methods.add("at::put:", heap.newBinaryBlock(SSList::atPut, listOfIndexItem));
+      methods.add("at::put::andReturnPreviousItem", heap
+            .newBinaryBlock(SSList::atPutAndReturnPreviousItem, listOfIndexItem));
+      methods.add("forEach:", heap.newBinaryBlock(SSList::forEach, listOfBlock));
+      methods.add("nature", heap.newBinaryBlock((s, h, a) -> h.newString("list")));
+      methods.add("removeAt:", heap.newBinaryBlock(SSList::removeAt, listOfIndex));
       methods.add("removeAt::andReturnRemovedItem",
-            bb(SSList::removeAtAndReturnRemovedItem, listOfIndex));
-      methods.add("size", bb(SSList::size));
-      methods.add("selectIf:", bb(SSList::selectIf, listOfBlock));
-      methods.add("transformUsing:", bb(SSList::transformUsing, listOfBlock));
+            heap.newBinaryBlock(SSList::removeAtAndReturnRemovedItem, listOfIndex));
+      methods.add("size", heap.newBinaryBlock(SSList::size));
+      methods.add("selectIf:", heap.newBinaryBlock(SSList::selectIf, listOfBlock));
+      methods.add("transformUsing:",
+            heap.newBinaryBlock(SSList::transformUsing, listOfBlock));
 
       return methods;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject append(final Stack stack, final SSObject[] args) {
+   static SSObject newFactory(final Heap heap) {
+
+      final var result = heap.newObject();
+
+      result.addMethod("new",
+            heap.newBinaryBlock((s, h, a) -> h.newList()));
+      result.addMethod("append:",
+            heap.newBinaryBlock(SSList::appendToNew, List.of("item")));
+      result.addMethod("addMethod::using:", heap
+            .newBinaryBlock(SSList::addMethodToFactory, List.of("name", "block")));
+
+      return result;
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   static SSObject addMethodToFactory(final Stack stack, final Heap heap,
+         final SSObject[] args) {
+
+      final var subject = (SSNativeObject) args[0];
+      final var name = args[1].evaluate(stack).toString();
+
+      if (name.equals("new")) {
+         return SSNativeObject.throwException(stack, heap, subject,
+               "Method 'List new' cannot be overriden.");
+      } else if (name.equals("append:")) {
+         return SSNativeObject.throwException(stack, heap, subject,
+               "Method 'List append:' cannot be overriden.");
+      } else {
+         return SSNativeObject.addMethod(stack, heap, args);
+      }
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject append(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       final var subject = (SSList) args[0];
       subject.elements.add(args[1].evaluate(stack));
       return subject;
    }
+   /*************************************************************************
+    * 
+   *************************************************************************/
+   private static SSObject appendToNew(final Stack stack, final Heap heap,
+         final SSObject[] args) {
+
+      final var result = heap.newList();
+      result.elements.add(args[1].evaluate(stack));
+      return result;
+   }
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject at(final Stack stack, final SSObject[] args) {
+   static SSObject at(final Stack stack, final Heap heap, final SSObject[] args) {
 
       final var subject = (SSList) args[0];
       final var index = ((SSLong) args[1].evaluate(stack)).intValue();
@@ -86,23 +123,24 @@ public final class SSList extends SSDynamicObject {
       try {
          return subject.elements.get(index);
       } catch (final IndexOutOfBoundsException e) {
-         return throwException(stack, args[1],
+         return throwException(stack, heap, args[1],
                "Index " + index + " out of bounds.");
       }
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject atPut(final Stack stack, final SSObject[] args) {
+   private static SSObject atPut(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
-      atPutAndReturnPreviousItem(stack, args);
+      atPutAndReturnPreviousItem(stack, heap, args);
       return args[0];
    }
    /****************************************************************************
     * 
    ****************************************************************************/
    private static SSObject atPutAndReturnPreviousItem(final Stack stack,
-         final SSObject[] args) {
+         final Heap heap, final SSObject[] args) {
 
       final var subject = (SSList) args[0];
       final var index = ((SSLong) args[1].evaluate(stack)).intValue();
@@ -111,23 +149,24 @@ public final class SSList extends SSDynamicObject {
       try {
          return subject.elements.set(index, value);
       } catch (final IndexOutOfBoundsException e) {
-         return throwException(stack, args[1],
+         return throwException(stack, heap, args[1],
                "Index " + index + " out of bounds.");
       }
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject removeAt(final Stack stack, final SSObject[] args) {
+   private static SSObject removeAt(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
-      removeAtAndReturnRemovedItem(stack, args);
+      removeAtAndReturnRemovedItem(stack, heap, args);
       return args[0];
    }
    /****************************************************************************
     * 
    ****************************************************************************/
    private static SSObject removeAtAndReturnRemovedItem(final Stack stack,
-         final SSObject[] args) {
+         final Heap heap, final SSObject[] args) {
 
       final var subject = (SSList) args[0];
       final var index = ((SSLong) args[1].evaluate(stack)).intValue();
@@ -135,52 +174,56 @@ public final class SSList extends SSDynamicObject {
       try {
          return subject.elements.remove(index);
       } catch (final IndexOutOfBoundsException e) {
-         return throwException(stack, args[1],
+         return throwException(stack, heap, args[1],
                "Index " + index + " out of bounds.");
       }
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject forEach(final Stack stack, final SSObject[] args) {
+   static SSObject forEach(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       final var subject = (SSList) args[0];
       for (var item : subject.elements) {
-         args[1].invoke(stack, "executeWith:", new SSObject[] {item.evaluate(stack)});
+         args[1].invoke(stack, "executeWith:",
+               new SSObject[] { item.evaluate(stack) });
       }
       return subject;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject size(final Stack stack, final SSObject[] args) {
+   private static SSObject size(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       final var subject = (SSList) args[0];
-      return new SSLong(subject.elements.size());
+      return heap.newLong(subject.elements.size());
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject selectIf(final Stack stack, final SSObject[] args) {
+   static SSObject selectIf(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       final var subject = (SSList) args[0];
       final var newStream = subject.elements.stream().filter(item -> {
          var result = args[1].invoke(stack, "executeWith:",
-               new SSObject[] {item.evaluate(stack)});
+               new SSObject[] { item.evaluate(stack) });
          return result == stack.getTrue();
       });
-      return new SSStream(newStream);
+      return heap.newStream(newStream);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject transformUsing(final Stack stack,
+   static SSObject transformUsing(final Stack stack, final Heap heap,
          final SSObject[] args) {
 
       final var subject = (SSList) args[0];
       final var newStream = subject.elements.stream().map(item -> args[1]
-            .invoke(stack, "executeWith:", new SSObject[] {item.evaluate(stack)}));
-      return new SSStream(newStream);
+            .invoke(stack, "executeWith:", new SSObject[] { item.evaluate(stack) }));
+      return heap.newStream(newStream);
    }
    /****************************************************************************
     * 
@@ -209,31 +252,12 @@ public final class SSList extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   final ArrayList<SSObject> elements;
-   
-   final static MethodMap sharedMethods = putMethods(
-         new MethodMap(SSDynamicObject.sharedMethods, true));
-   private final static SSString nature = new SSString("list");
+   void add(final SSObject o) {
+
+      this.elements.add(o);
+   }
    /****************************************************************************
     * 
-    ***************************************************************************/
-   public final static class Factory extends SSDynamicObject {
-      /*************************************************************************
-       * 
-      *************************************************************************/
-      public Factory() {
-
-         addMethod("new", bb((stack, args) -> new SSList()));
-         addMethod("append:", bb(SSList.Factory::append, List.of("item")));
-      }
-      /*************************************************************************
-       * 
-      *************************************************************************/
-      private static SSObject append(final Stack stack, final SSObject[] args) {
-
-         final var result = new SSList();
-         result.elements.add(args[1].evaluate(stack));
-         return result;
-      }
-   }
+   ****************************************************************************/
+   final ArrayList<SSObject> elements = new ArrayList<>();
 }

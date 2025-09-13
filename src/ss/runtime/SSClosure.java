@@ -62,9 +62,9 @@ public final class SSClosure extends SSNativeObject {
     * 
    ****************************************************************************/
    @Override
-   protected Set<SSObject> getMethods() {
+   protected Set<SSObject> getMethods(final Stack stack) {
 
-      return this.target.getMethods();
+      return this.target.getMethods(stack);
    }
    /****************************************************************************
     * 

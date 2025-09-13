@@ -145,6 +145,37 @@ public class SetUseCases extends UseCaseBase {
             """);
    }
    /****************************************************************************
+   * 
+   ****************************************************************************/
+   @Test
+   public void method_Set_new_cannotBeOverriden() throws Exception {
+
+      assertSSTrue("""
+            Object try: {
+               Set addMethod: "new" :using: {};
+               false;
+            } :catch: {!e | 
+               e message isEqualTo: "Method 'Set new' cannot be overriden.";
+            };
+            """);
+   }
+   
+   /****************************************************************************
+   * 
+   ****************************************************************************/
+   @Test
+   public void method_Set_append_cannotBeOverriden() throws Exception {
+
+      assertSSTrue("""
+            Object try: {
+               Set addMethod: "append:" :using: {};
+               false;
+            } :catch: {!e | 
+               e message isEqualTo: "Method 'Set append:' cannot be overriden.";
+            };
+            """);
+   }
+   /****************************************************************************
     * 
    ****************************************************************************/
    @Test

@@ -16,17 +16,21 @@
 package ss.runtime;
 
 import static java.lang.System.out;
+import static ss.runtime.Stack.APPLICATION;
+import static ss.runtime.Stack.EXCEPTION;
+import static ss.runtime.Stack.FALSE;
+import static ss.runtime.Stack.LIST;
+import static ss.runtime.Stack.MAP;
+import static ss.runtime.Stack.NULL;
+import static ss.runtime.Stack.OBJECT;
+import static ss.runtime.Stack.SET;
+import static ss.runtime.Stack.TRUE;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-
-import static ss.runtime.SSBoolean.createFalse;
-import static ss.runtime.SSBoolean.createTrue;
-import static ss.runtime.SSException.createException;
-import static ss.runtime.Stack.*;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
@@ -43,16 +47,21 @@ public class Interpreter {
    ****************************************************************************/
    public Interpreter(final String[] args) {
 
+      this.heap = new Heap();
+      this.parser = new Parser(this.heap);
       this.args = args;
-      stack.addVariable(OBJECT, new SSDynamicObject.Factory());
-      stack.addVariable(NULL, SSNull.instance());
-      stack.addVariable(TRUE, createTrue());
-      stack.addVariable(FALSE, createFalse());
-      stack.addVariable(LIST, new SSList.Factory());
-      stack.addVariable(MAP, new SSMap.Factory());
-      stack.addVariable(SET, new SSSet.Factory());
-      stack.addVariable(EXCEPTION, createException());
-      stack.addVariable(APPLICATION, new SSApplication(this));
+
+      this.stack = Stack.create();
+      stack.addVariable(OBJECT, SSDynamicObject.newFactory(this.heap));
+      stack.addVariable(NULL, this.heap.newNull());
+      stack.addVariable(TRUE, SSBoolean.newTrue(this.heap));
+      stack.addVariable(FALSE, SSBoolean.newFalse(this.heap));
+      stack.addVariable(LIST, SSList.newFactory(this.heap));
+      stack.addVariable(MAP, SSMap.newFactory(this.heap));
+      stack.addVariable(SET, SSSet.newFactory(this.heap));
+      stack.addVariable(EXCEPTION, SSException.newFactory(this.heap));
+      stack.addVariable(APPLICATION,
+            SSApplication.newApplication(this.heap, args, this::load));
    }
    /****************************************************************************
     * 
@@ -78,10 +87,16 @@ public class Interpreter {
    /****************************************************************************
     * 
    ****************************************************************************/
+   Heap getHeap() {
+
+      return this.heap;
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
    SSObject load(final Stack stack, final String resourceName) {
 
       try (final var reader = getResource(resourceName)) {
-
          return this.parser.parse(reader).execute(stack);
       } catch (final Exception e) {
          throw new RuntimeException(e);
@@ -136,7 +151,8 @@ public class Interpreter {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private final Parser parser = new Parser();
-   private final Stack stack = Stack.create();
+   private final Stack stack;
+   private final Heap heap;
+   private final Parser parser;
    final String[] args;
 }

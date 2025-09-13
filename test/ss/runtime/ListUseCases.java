@@ -164,6 +164,37 @@ public class ListUseCases extends UseCaseBase {
             """);
    }
    /****************************************************************************
+   * 
+   ****************************************************************************/
+   @Test
+   public void method_List_new_cannotBeOverriden() throws Exception {
+
+      assertSSTrue("""
+            Object try: {
+               List addMethod: "new" :using: {};
+               false;
+            } :catch: {!e | 
+               e message isEqualTo: "Method 'List new' cannot be overriden.";
+            };
+            """);
+   }
+   
+   /****************************************************************************
+   * 
+   ****************************************************************************/
+   @Test
+   public void method_List_append_cannotBeOverriden() throws Exception {
+
+      assertSSTrue("""
+            Object try: {
+               List addMethod: "append:" :using: {};
+               false;
+            } :catch: {!e | 
+               e message isEqualTo: "Method 'List append:' cannot be overriden.";
+            };
+            """);
+   }
+   /****************************************************************************
     * 
    ****************************************************************************/
    @Test

@@ -21,10 +21,10 @@ package ss.runtime;
 public final class SSNull implements SSObject {
    /****************************************************************************
     * 
-   ****************************************************************************/
-   public static SSNull instance() {
-
-      return instance;
+    ***************************************************************************/
+   public SSNull(final Heap heap) {
+      
+      this.heap = heap; 
    }
    /****************************************************************************
     * 
@@ -34,23 +34,17 @@ public final class SSNull implements SSObject {
          final SSObject[] args) {
 
       return switch (method) {
-         case "asString" -> new SSString(toString());
+         case "asString" -> this.heap.newString(toString());
          case "isEqualTo:" -> stack.get(this.equals(args[0].evaluate(stack)));
-         case "hash" -> new SSLong(hashCode());
+         case "hash" -> this.heap.newLong(hashCode());
          case "isNotEqualTo:" ->
             stack.get(!this.equals(args[0].evaluate(stack)));
          case "orDefault:" -> args[0].execute(stack);
-         case "nature" -> new SSString(name);
-         case "size" -> new SSLong(0);
+         case "nature" -> this.heap.newString(name);
+         case "size" -> this.heap.newLong(0);
          case "throw" -> throw new AuxiliaryException(this);
          default -> this;
       };
-   }
-   /****************************************************************************
-    * 
-    ***************************************************************************/
-   private SSNull() {
-
    }
    /****************************************************************************
     * 
@@ -71,6 +65,6 @@ public final class SSNull implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   final static SSNull instance = new SSNull();
+   private final Heap heap;
    public final static String name = "null";
 }

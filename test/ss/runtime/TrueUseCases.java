@@ -104,7 +104,7 @@ public class TrueUseCases  extends UseCaseBase {
       assertSSTrue("true and: true;");
       assertSSFalse("true and: false;");
       assertSSNull("true and: null;");
-      assertResultEquals(new SSLong(1), "true and: 1;");
+      assertResultEquals(createLong(1), "true and: 1;");
    }
    /****************************************************************************
     * 
@@ -132,8 +132,8 @@ public class TrueUseCases  extends UseCaseBase {
    @Test
    public void ifTrue_executesGivenBlock() throws Exception {
 
-      assertResultEquals(new SSLong(0), "true ifTrue: {0;};");
-      assertResultEquals(new SSLong(0), "true ifTrue: 0;");
+      assertResultEquals(createLong(0), "true ifTrue: {0;};");
+      assertResultEquals(createLong(0), "true ifTrue: 0;");
    }
    /****************************************************************************
     * 

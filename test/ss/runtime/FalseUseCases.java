@@ -104,7 +104,7 @@ public class FalseUseCases extends UseCaseBase {
       assertSSTrue("false or: true;");
       assertSSFalse("false or: false;");
       assertSSNull("false or: null;");
-      assertResultEquals(new SSLong(1), "false or: 1;");
+      assertResultEquals(createLong(1), "false or: 1;");
    }
    /****************************************************************************
     * 
@@ -115,7 +115,7 @@ public class FalseUseCases extends UseCaseBase {
       assertSSTrue("false or: true;");
       assertSSFalse("false or: false;");
       assertSSNull("false or: null;");
-      assertResultEquals(new SSLong(1), "false orElse: 1;");
+      assertResultEquals(createLong(1), "false orElse: 1;");
    }
    /****************************************************************************
     * 
@@ -136,8 +136,8 @@ public class FalseUseCases extends UseCaseBase {
    @Test
    public void ifFalse_executesGivenBlock() throws Exception {
 
-      assertResultEquals(new SSLong(0), "false ifFalse: {0;};");
-      assertResultEquals(new SSLong(0), "false ifFalse: 0;");
+      assertResultEquals(createLong(0), "false ifFalse: {0;};");
+      assertResultEquals(createLong(0), "false ifFalse: 0;");
    }
    /****************************************************************************
     * 

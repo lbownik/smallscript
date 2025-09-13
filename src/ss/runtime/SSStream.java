@@ -15,8 +15,6 @@
 //-----------------------------------------------------------------------------
 package ss.runtime;
 
-import static ss.runtime.SSBinaryBlock.bb;
-
 import java.util.List;
 import java.util.stream.Stream;
 /*******************************************************************************
@@ -27,34 +25,38 @@ public final class SSStream extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public SSStream(final Stream<SSObject> stream) {
+   public SSStream(final Heap heap, final MethodMap methods,
+         final Stream<SSObject> stream) {
 
-      super(sharedMethods);
+      super(heap, methods);
       this.stream = stream;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   static MethodMap putMethods(final MethodMap methods) {
+   static MethodMap putMethods(final Heap heap, final MethodMap methods) {
 
       final var listOfBlock = List.of("block");
-      
-      methods.add("collectTo:", bb(SSStream::collectTo, List.of("collector")));
-      methods.add("forEach:", bb(SSStream::forEach, listOfBlock));
-      methods.add("selectIf:", bb(SSStream::selectIf, listOfBlock));
-      methods.add("transformUsing:", bb(SSStream::transformUsing, listOfBlock));
-      
+
+      methods.add("collectTo:",
+            heap.newBinaryBlock(SSStream::collectTo, List.of("collector")));
+      methods.add("forEach:", heap.newBinaryBlock(SSStream::forEach, listOfBlock));
+      methods.add("selectIf:", heap.newBinaryBlock(SSStream::selectIf, listOfBlock));
+      methods.add("transformUsing:",
+            heap.newBinaryBlock(SSStream::transformUsing, listOfBlock));
+
       return methods;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject collectTo(final Stack stack, final SSObject[] args) {
+   static SSObject collectTo(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       final var subject = (SSStream) args[0];
       subject.stream.forEach(item -> {
          var newTarget = args[1].invoke(stack, "append:",
-               new SSObject[] {item.evaluate(stack)});
+               new SSObject[] { item.evaluate(stack) });
          args[1] = newTarget;
       });
       return args[1];
@@ -62,43 +64,44 @@ public final class SSStream extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject forEach(final Stack stack, final SSObject[] args) {
+   static SSObject forEach(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       final var subject = (SSStream) args[0];
       final var target = args[1];
 
       subject.stream.forEach(item -> {
          target.invoke(stack, "executeWith:",
-               new SSObject[] {item.evaluate(stack)});
+               new SSObject[] { item.evaluate(stack) });
       });
       return stack.getNull();
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject selectIf(final Stack stack, final SSObject[] args) {
+   static SSObject selectIf(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       final var subject = (SSStream) args[0];
       final var target = args[1];
       final var newStream = subject.stream.filter(item -> {
          var result = target.invoke(stack, "executeWith:",
-               new SSObject[] {item.evaluate(stack)});
+               new SSObject[] { item.evaluate(stack) });
          return result == stack.getTrue();
       });
-      return new SSStream(newStream);
+      return heap.newStream(newStream);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject transformUsing(final Stack stack,
+   static SSObject transformUsing(final Stack stack, final Heap heap,
          final SSObject[] args) {
 
       final var subject = (SSStream) args[0];
       final var target = args[1];
-      final var newStream = subject.stream
-            .map(item -> target.invoke(stack, "executeWith:",
-                  new SSObject[] {item.evaluate(stack)}));
-      return new SSStream(newStream);
+      final var newStream = subject.stream.map(item -> target.invoke(stack,
+            "executeWith:", new SSObject[] { item.evaluate(stack) }));
+      return heap.newStream(newStream);
    }
    /****************************************************************************
     * 
@@ -112,7 +115,4 @@ public final class SSStream extends SSDynamicObject {
     * 
    ****************************************************************************/
    private final Stream<SSObject> stream;
-   
-   final static MethodMap sharedMethods = putMethods(
-         new MethodMap(SSDynamicObject.sharedMethods, true));
 }

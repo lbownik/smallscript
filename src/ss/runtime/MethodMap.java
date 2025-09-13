@@ -214,6 +214,14 @@ final class MethodMap implements Methods {
    /****************************************************************************
     * 
    ****************************************************************************/
+   @Override
+   public Methods getShared() {
+      
+      return this.shared ? this : this.backup.getShared();
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
    private Node[] table;
    private int threshold;
    private int size;

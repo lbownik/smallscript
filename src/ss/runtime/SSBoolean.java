@@ -21,6 +21,7 @@ import java.util.List;
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
 final class SSBoolean {
+   
    /****************************************************************************
     Object new addMethod: "and:"     :using: {!this !other | other }
            addMethod: "clone"    :using: {!this | this }
@@ -34,20 +35,20 @@ final class SSBoolean {
            addMethod: "asString" :using: {!this | "true" }
            addMethod: "hash"     :using: {!this | 2 };
    ****************************************************************************/
-   static SSObject createTrue() {
+   static SSObject newTrue(final Heap heap) {
       
-      final var result = new SSDynamicObject();
+      final var result = heap.newObject();
       
-      result.addMethod("and:", newReturnVarBlock("other", listOfThisAndOther));
-      result.addMethod("clone", newReturnVarBlock("this", listOfThis));
-      result.addMethod("ifFalse:", newReturnVarBlock("null", listOfThisAndfBlock));
-      result.addMethod("ifTrue:", newExecuteBlock("tBlock", listOfThisAndtBlock));
-      result.addMethod("ifTrue::ifFalse:", newExecuteBlock("tBlock", List.of("this", "tBlock","fBlock")));
-      result.addMethod("not", newReturnVarBlock("false", listOfThis));
-      result.addMethod("or:", newExecuteBlock("this", listOfThisAndOther));
-      result.addMethod("orElse:", newExecuteBlock("other", "not", listOfThisAndOther));
-      result.addMethod("asString", newReturnValueBlock(new SSString("true"), listOfThis));
-      result.addMethod("hash", newReturnValueBlock(new SSLong(2), listOfThis));
+      result.addMethod("and:", heap.newReturnVarBlock("other", listOfThisAndOther));
+      result.addMethod("clone", heap.newReturnVarBlock("this", listOfThis));
+      result.addMethod("ifFalse:", heap.newReturnVarBlock("null", listOfThisAndfBlock));
+      result.addMethod("ifTrue:", heap.newExecuteBlock("tBlock", listOfThisAndtBlock));
+      result.addMethod("ifTrue::ifFalse:", heap.newExecuteBlock("tBlock", List.of("this", "tBlock","fBlock")));
+      result.addMethod("not", heap.newReturnVarBlock("false", listOfThis));
+      result.addMethod("or:", heap.newExecuteBlock("this", listOfThisAndOther));
+      result.addMethod("orElse:", heap.newExecuteBlock("other", "not", listOfThisAndOther));
+      result.addMethod("asString", heap.newReturnValueBlock(heap.newString("true"), listOfThis));
+      result.addMethod("hash", heap.newReturnValueBlock(heap.newLong(2), listOfThis));
       
       return result;
    }
@@ -64,56 +65,22 @@ final class SSBoolean {
            addMethod: "asString" :using: {!this | "false" }
            addMethod: "hash"     :using: {!this | 1 };
    ****************************************************************************/
-   static SSObject createFalse() {
+   static SSObject newFalse(final Heap heap) {
       
-      final var result = new SSDynamicObject();
+      final var result = heap.newObject();
       
-      result.addMethod("and:", newReturnVarBlock("this", listOfThisAndOther));
-      result.addMethod("clone", newReturnVarBlock("this", listOfThis));
-      result.addMethod("ifFalse:", newExecuteBlock("fBlock", listOfThisAndfBlock));
-      result.addMethod("ifTrue:", newReturnVarBlock("null", listOfThisAndtBlock));
-      result.addMethod("ifTrue::ifFalse:", newExecuteBlock("fBlock", List.of("this", "tBlock","fBlock")));
-      result.addMethod("not", newReturnVarBlock("true", listOfThis));
-      result.addMethod("or:", newReturnVarBlock("other", listOfThisAndOther));
-      result.addMethod("orElse:", newReturnVarBlock("other", listOfThisAndOther));
-      result.addMethod("asString", newReturnValueBlock(new SSString("false"), listOfThis));
-      result.addMethod("hash", newReturnValueBlock(new SSLong(1), listOfThis));
+      result.addMethod("and:", heap.newReturnVarBlock("this", listOfThisAndOther));
+      result.addMethod("clone", heap.newReturnVarBlock("this", listOfThis));
+      result.addMethod("ifFalse:", heap.newExecuteBlock("fBlock", listOfThisAndfBlock));
+      result.addMethod("ifTrue:", heap.newReturnVarBlock("null", listOfThisAndtBlock));
+      result.addMethod("ifTrue::ifFalse:", heap.newExecuteBlock("fBlock", List.of("this", "tBlock","fBlock")));
+      result.addMethod("not", heap.newReturnVarBlock("true", listOfThis));
+      result.addMethod("or:", heap.newReturnVarBlock("other", listOfThisAndOther));
+      result.addMethod("orElse:", heap.newReturnVarBlock("other", listOfThisAndOther));
+      result.addMethod("asString", heap.newReturnValueBlock(heap.newString("false"), listOfThis));
+      result.addMethod("hash", heap.newReturnValueBlock(heap.newLong(1), listOfThis));
       
       return result;
-   }
-   /****************************************************************************
-    * 
-    ****************************************************************************/
-   private static SSBlock newReturnVarBlock(final String varName,
-         final List<String> argNames) {
-
-      return new SSBlock(List.of(new SSVariableReference(varName)), argNames);
-   }
-   /****************************************************************************
-    * 
-    ****************************************************************************/
-   private static SSBlock newExecuteBlock(final String varName,
-         final List<String> argNames) {
-
-      return newExecuteBlock(varName, "execute", argNames);
-   }
-   /****************************************************************************
-    * 
-    ****************************************************************************/
-   private static SSBlock newExecuteBlock(final String varName, final String method,
-         final List<String> argNames) {
-
-      return new SSBlock(
-            List.of(new SSExpression(new SSVariableReference(varName), method)),
-            argNames);
-   }
-   /****************************************************************************
-    * 
-    ****************************************************************************/
-   private static SSBlock newReturnValueBlock(final SSObject value,
-         final List<String> argNames) {
-
-      return new SSBlock(List.of(value), argNames);
    }
    /****************************************************************************
     * 

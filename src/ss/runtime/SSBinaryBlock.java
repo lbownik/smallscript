@@ -15,14 +15,12 @@
 //-----------------------------------------------------------------------------
 package ss.runtime;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
+import static java.util.Arrays.stream;
 
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.BiFunction;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
@@ -30,25 +28,17 @@ public class SSBinaryBlock extends SSNativeObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSBinaryBlock bb(final BiFunction<Stack, SSObject[], SSObject> code) {
-
-      return new SSBinaryBlock(code, emptyList());
+   public interface Code {
+      SSObject run(Stack stack, Heap heap, SSObject[] args);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSBinaryBlock bb(final BiFunction<Stack, SSObject[], SSObject> code,
-         final List<String> argumentNames) {
-
-      return new SSBinaryBlock(code, argumentNames);
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   public SSBinaryBlock(final BiFunction<Stack, SSObject[], SSObject> code,
+   public SSBinaryBlock(final Code code, final Heap heap,
          final List<String> argumentNames) {
 
       this.code = code;
+      this.heap = heap;
       this.argumentNames = argumentNames;
    }
    /****************************************************************************
@@ -57,6 +47,7 @@ public class SSBinaryBlock extends SSNativeObject {
    public SSBinaryBlock(final SSBinaryBlock other) {
 
       this.code = other.code;
+      this.heap = other.heap;
       this.argumentNames = other.argumentNames;
       this.methods = other.methods != null ? new MethodMap(other.methods) : null;
       this.fields = other.fields != null ? new HashMap<>(other.fields) : null;
@@ -69,7 +60,7 @@ public class SSBinaryBlock extends SSNativeObject {
          final SSObject[] args) {
 
       if (method.startsWith("execute")) {
-         return this.code.apply(stack, args);
+         return this.code.run(stack, this.heap, args);
       }
       final var thisArgs = prependThisTo(args);
       if (this.methods != null) {
@@ -79,31 +70,32 @@ public class SSBinaryBlock extends SSNativeObject {
          }
       }
       return switch (method) {
-         case "arguments" -> argumentNames();
-         case "invoke::with:" -> invokeWith(stack, thisArgs);
-         case "addField::withValue:" -> addFieldWithValue(stack, thisArgs);
-         case "addMethod::using:" -> addMethod(stack, thisArgs);
-         case "asString" -> asString(stack, thisArgs);
-         case "at:" -> at(stack, thisArgs);
+         case "arguments" -> argumentNames(stack);
+         case "invoke::with:" -> invokeWith(stack, this.heap, thisArgs);
+         case "addField::withValue:" ->
+            addFieldWithValue(stack, this.heap, thisArgs);
+         case "addMethod::using:" -> addMethod(stack, this.heap, thisArgs);
+         case "asString" -> asString(stack, this.heap, thisArgs);
+         case "at:" -> at(stack, this.heap, thisArgs);
          case "clone" -> new SSBinaryBlock(this);
-         case "close" -> returnThis(stack, thisArgs);
-         case "collectTo:" -> collectTo(stack, thisArgs);
-         case "fields" -> getFields(stack, thisArgs);
-         case "forEach:" -> forEach(stack, thisArgs);
-         case "hash" -> hashCode(stack, thisArgs);
-         case "isEqualTo:" -> isEqualTo(stack, thisArgs);
-         case "isNotEqualTo:" -> isNotEqualTo(stack, thisArgs);
-         case "method:" -> getMethod(stack, thisArgs);
-         case "methods" -> getMethods(stack, thisArgs);
-         case "nature" -> new SSString("binaryBlock");
-         case "orDefault:" -> returnThis(stack, thisArgs);
-         case "selectIf:" -> selectIf(stack, thisArgs);
-         case "size" -> new SSLong(1);
-         case "throw" -> throwThis(stack, thisArgs);
-         case "transformUsing:" -> transformUsing(stack, thisArgs);
-         case "try:" -> try_(stack, thisArgs);
-         case "try::catch:" -> tryCatch(stack, thisArgs);
-         default -> doesNotUnderstand(stack, method, thisArgs);
+         case "close" -> returnThis(stack, this.heap, thisArgs);
+         case "collectTo:" -> collectTo(stack, this.heap, thisArgs);
+         case "fields" -> getFields(stack, this.heap, thisArgs);
+         case "forEach:" -> forEach(stack, this.heap, thisArgs);
+         case "hash" -> hashCode(stack, this.heap, thisArgs);
+         case "isEqualTo:" -> isEqualTo(stack, this.heap, thisArgs);
+         case "isNotEqualTo:" -> isNotEqualTo(stack, this.heap, thisArgs);
+         case "method:" -> getMethod(stack, this.heap, thisArgs);
+         case "methods" -> getMethods(stack, this.heap, thisArgs);
+         case "nature" -> this.heap.newString("binaryBlock");
+         case "orDefault:" -> returnThis(stack, this.heap, thisArgs);
+         case "selectIf:" -> selectIf(stack, this.heap, thisArgs);
+         case "size" -> this.heap.newLong(1);
+         case "throw" -> throwThis(stack, this.heap, thisArgs);
+         case "transformUsing:" -> transformUsing(stack, this.heap, thisArgs);
+         case "try:" -> try_(stack, this.heap, thisArgs);
+         case "try::catch:" -> tryCatch(stack, this.heap, thisArgs);
+         default -> doesNotUnderstand(stack, this.heap, method, thisArgs);
       };
    }
    /****************************************************************************
@@ -114,7 +106,7 @@ public class SSBinaryBlock extends SSNativeObject {
    @Override
    public SSObject execute(final Stack stack) {
 
-      return this.code.apply(stack, emptyArgs);
+      return this.code.run(stack, this.heap, emptyArgs);
    }
    /****************************************************************************
     * Executes encompassed object performing necessary computations if needed.
@@ -124,7 +116,7 @@ public class SSBinaryBlock extends SSNativeObject {
    @Override
    public SSObject execute(final Stack stack, final SSObject[] args) {
 
-      return this.code.apply(stack, args);
+      return this.code.run(stack, this.heap, args);
    }
    /****************************************************************************
     * 
@@ -148,51 +140,55 @@ public class SSBinaryBlock extends SSNativeObject {
     * 
    ****************************************************************************/
    @Override
-   protected Set<SSObject> getMethods() {
+   protected Set<SSObject> getMethods(final Stack stack) {
 
       final Set<SSObject> result = new HashSet<>();
-      result.add(new SSString("execute"));
-      result.add(new SSString("arguments")); 
-      result.add(new SSString("invoke::with:"));
-      result.add(new SSString("addField::withValue:"));
-      result.add(new SSString("addMethod::using:"));
-      result.add(new SSString("asString"));
-      result.add(new SSString("at:"));
-      result.add(new SSString("clone"));
-      result.add(new SSString("close"));
-      result.add(new SSString("collectTo:"));
-      result.add(new SSString("fields"));
-      result.add(new SSString("forEach:"));
-      result.add(new SSString("hash"));
-      result.add(new SSString("isEqualTo:"));
-      result.add(new SSString("isNotEqualTo:"));
-      result.add(new SSString("method:"));
-      result.add(new SSString("methods"));
-      result.add(new SSString("nature"));
-      result.add(new SSString("orDefault:"));
-      result.add(new SSString("selectIf:"));
-      result.add(new SSString("size"));
-      result.add(new SSString("throw"));
-      result.add(new SSString("transformUsing:"));
-      result.add(new SSString("try:"));
-      result.add(new SSString("try::catch:")); 
+
+      result.add(this.heap.newString("execute"));
+      result.add(this.heap.newString("arguments"));
+      result.add(this.heap.newString("invoke::with:"));
+      result.add(this.heap.newString("addField::withValue:"));
+      result.add(this.heap.newString("addMethod::using:"));
+      result.add(this.heap.newString("asString"));
+      result.add(this.heap.newString("at:"));
+      result.add(this.heap.newString("clone"));
+      result.add(this.heap.newString("close"));
+      result.add(this.heap.newString("collectTo:"));
+      result.add(this.heap.newString("fields"));
+      result.add(this.heap.newString("forEach:"));
+      result.add(this.heap.newString("hash"));
+      result.add(this.heap.newString("isEqualTo:"));
+      result.add(this.heap.newString("isNotEqualTo:"));
+      result.add(this.heap.newString("method:"));
+      result.add(this.heap.newString("methods"));
+      result.add(this.heap.newString("nature"));
+      result.add(this.heap.newString("orDefault:"));
+      result.add(this.heap.newString("selectIf:"));
+      result.add(this.heap.newString("size"));
+      result.add(this.heap.newString("throw"));
+      result.add(this.heap.newString("transformUsing:"));
+      result.add(this.heap.newString("try:"));
+      result.add(this.heap.newString("try::catch:"));
       if (this.methods != null) {
-         this.methods.keySet().stream().map(SSString::new).forEach(result::add);
-      } 
+         for (final String methodName : this.methods.keySet()) {
+            result.add(this.heap.newString(methodName));
+         }
+      }
       return result;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSObject doesNotUnderstand(final Stack stack, final String method,
-         final SSObject[] args) {
+   private SSObject doesNotUnderstand(final Stack stack, final Heap heap,
+         final String method, final SSObject[] args) {
 
-      final var message = new SSDynamicObject();
-      message.addField(stack, "nature", new SSString("message"));
-      message.addField(stack, "method", new SSString(method));
-      message.addField(stack, "args", new SSList(asList(args)));
+      final var message = heap.newObject();
+      message.addField(stack, "nature", this.heap.newString("message"));
+      message.addField(stack, "method", this.heap.newString(method));
+      final var arguments = heap.newList(stream(args));
+      message.addField(stack, "args", arguments);
 
-      return doesNotUnderstand(stack, new SSObject[] { this, message });
+      return doesNotUnderstand(stack, heap, new SSObject[] { this, message });
    }
    /****************************************************************************
     * Returns an object which can accept method calls performing necessary
@@ -208,9 +204,9 @@ public class SSBinaryBlock extends SSNativeObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSList argumentNames() {
+   private SSList argumentNames(final Stack stack) {
 
-      return new SSList(this.argumentNames.stream().map(SSString::new).toList());
+      return heap.newList(this.argumentNames.stream().map(this.heap::newString));
    }
    /****************************************************************************
     * 
@@ -223,6 +219,6 @@ public class SSBinaryBlock extends SSNativeObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private final BiFunction<Stack, SSObject[], SSObject> code;
+   private final Code code;
    private final List<String> argumentNames;
 }

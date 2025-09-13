@@ -30,7 +30,7 @@ public class StringUseCases extends UseCaseBase {
       assertSSTrue("\"abc\" nature isEqualTo: \"string\";");
       assertSSTrue("\"abc\" nature nature isEqualTo: \"string\";");
       assertSSTrue("\"abc\" asString isEqualTo: \"abc\";");
-      assertResultEquals(new SSLong(96354), "\"abc\" hash;");
+      assertResultEquals(createLong(96354), "\"abc\" hash;");
       assertSSTrue("""
             !o = "B";
             o orDefault: "a" isEqualTo: o;
@@ -55,7 +55,7 @@ public class StringUseCases extends UseCaseBase {
    @Test
    public void at_returnsCharacterAtPosition() throws Exception {
       
-      assertResultEquals(new SSString("a"), "\"abc\" at: 0;");
+      assertResultEquals(createString("a"), "\"abc\" at: 0;");
       assertSSTrue("""
             true try: {
                \"abc\" at: -1;
@@ -81,8 +81,8 @@ public class StringUseCases extends UseCaseBase {
    @Test
    public void stringsCanBeConcatenated() throws Exception {
       
-      assertResultEquals(new SSString("abcd"), "\"abc\" concatenate: \"d\";");
-      assertResultEquals(new SSString("abcd"), "\"abc\" append: \"d\";");
+      assertResultEquals(createString("abcd"), "\"abc\" concatenate: \"d\";");
+      assertResultEquals(createString("abcd"), "\"abc\" append: \"d\";");
    }
    /****************************************************************************
     * 
@@ -195,7 +195,4 @@ public class StringUseCases extends UseCaseBase {
             "" method: "startsWith:" arguments isEqualTo: (List append: "text");
             """);
    }
-   /****************************************************************************
-    * 
-    ***************************************************************************/
 }

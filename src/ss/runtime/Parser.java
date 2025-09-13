@@ -34,8 +34,9 @@ public final class Parser {
    /****************************************************************************
     * Creates a new parser.
     ***************************************************************************/
-   public Parser() {
+   public Parser(final Heap heap) {
 
+      this.heap = heap;
       this.buffer = new char[16];
       this.bufferSize = this.buffer.length;
    }
@@ -71,7 +72,7 @@ public final class Parser {
          final List<String> argNames = sentences.isEmpty() ? emptyList()
                : sentences.get(0).trimArgumentsDeclarations();
 
-         return new SSBlock(sentences.stream().map(Supplier::get).toList(),
+         return this.heap.newBlock(sentences.stream().map(Supplier::get).toList(),
                argNames);
 
       } finally {
@@ -83,7 +84,7 @@ public final class Parser {
    ****************************************************************************/
    private Sentence parseExpression(int currentChar) throws IOException {
 
-      final Sentence result = new Sentence();
+      final Sentence result = new Sentence(this.heap);
 
       do {
          if (isWhitespace(currentChar)) {
@@ -135,7 +136,7 @@ public final class Parser {
       final List<String> argNames = sentences.isEmpty() ? emptyList()
             : sentences.get(0).trimArgumentsDeclarations();
       return () -> {
-         return new SSBlock(sentences.stream().map(Supplier::get).toList(),
+         return this.heap.newBlock(sentences.stream().map(Supplier::get).toList(),
                argNames);
       };
    }
@@ -144,7 +145,7 @@ public final class Parser {
    ****************************************************************************/
    private Sentence parseBrackets() throws IOException {
 
-      final Sentence result = new Sentence();
+      final Sentence result = new Sentence(this.heap);
 
       int currentChar = consumeWhitespace(read());
       while (currentChar != ')') {
@@ -182,8 +183,7 @@ public final class Parser {
          // integer - no exponent
          unread(currentChar);
          final long result = integer * signum;
-         return () -> new SSLong(result);
-         // return new LongConstant(integer * signum);
+         return () -> this.heap.newLong(result);
       } else if (currentChar == '.') {
          // floating point
          currentChar = read();
@@ -205,7 +205,7 @@ public final class Parser {
          if (isEndOfValue(currentChar)) {
             unread(currentChar);
             final double result = (integer + decimal) * signum;
-            return () -> new SSDouble(result);
+            return () -> this.heap.newDouble(result);
          }
          throwUnexpected(currentChar);
 
@@ -230,7 +230,7 @@ public final class Parser {
       }
 
       final var result = new String(this.buffer, 0, this.bufIndex).intern();
-      return () -> new SSString(result);
+      return () -> this.heap.newString(result);
    }
    /****************************************************************************
    * 
@@ -249,7 +249,7 @@ public final class Parser {
       } while (!isEndOfValue(currentChar));
 
       unread(currentChar);
-      return new Symbol(new String(this.buffer, 0, this.bufIndex).intern());
+      return new Symbol(this.heap, new String(this.buffer, 0, this.bufIndex).intern());
    }
    /****************************************************************************
    * 
@@ -386,6 +386,7 @@ public final class Parser {
    * 
    ****************************************************************************/
    private PushbackReader reader;
+   private final Heap heap;
    private int position = 0;
    private char[] buffer;
    private int bufferSize;
@@ -462,8 +463,9 @@ final class Symbol implements Supplier<SSObject> {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public Symbol(final String value) {
+   public Symbol(final Heap heap, final String value) {
 
+      this.heap = heap;
       this.value = value;
    }
    /****************************************************************************
@@ -536,12 +538,13 @@ final class Symbol implements Supplier<SSObject> {
    ****************************************************************************/
    public SSObject get() {
 
-      return new SSVariableReference(this.value);
+      return this.heap.newVariableReference(this.value);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
    private final String value;
+   private final Heap heap;
 }
 
 /*******************************************************************************
@@ -549,6 +552,12 @@ final class Symbol implements Supplier<SSObject> {
  ******************************************************************************/
 final class Sentence extends ArrayList<Supplier<SSObject>>
       implements Supplier<SSObject> {
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   Sentence(final Heap heap) {
+      this.heap = heap;
+   }
    /****************************************************************************
     * 
    ****************************************************************************/
@@ -587,22 +596,22 @@ final class Sentence extends ArrayList<Supplier<SSObject>>
 
       switch (size()) {
          case 0:
-            return new SSVariableReference("null");
+            return this.heap.newVariableReference("null");
          case 1:
             return get(0).get();
          case 2:
             if (isAssignment()) {
                throw new RuntimeException("Syntax error. Missing assignment value.");
             } else {
-               return new SSExpression(get(0).get(), get(1).toString());
+               return this.heap.newExpression(get(0).get(), get(1).toString(), emptyList());
             }
          default:
             if (isAssignment()) {
                if (((Symbol) get(0)).isVariableDeclaration()) {
-                  return new SSNewVariableAssignment(get(0).toString().substring(1),
+                  return this.heap.newNewVariableAssignment(get(0).toString().substring(1),
                         subSentence(2).get());
                } else {
-                  return new SSExistingVariableAssignment(get(0).toString(),
+                  return this.heap.newExistingVariableAssignment(get(0).toString(),
                         subSentence(2).get());
                }
             } else {
@@ -623,7 +632,7 @@ final class Sentence extends ArrayList<Supplier<SSObject>>
    ****************************************************************************/
    private Sentence subSentence(final int from) {
 
-      final var sentence = new Sentence();
+      final var sentence = new Sentence(this.heap);
       stream().skip(from).forEach(sentence::add);
 
       return sentence;
@@ -637,7 +646,7 @@ final class Sentence extends ArrayList<Supplier<SSObject>>
          return subject;
       } else if (get(index) instanceof Symbol s) {
          if (s.isMethodWithNoArgs()) {
-            return createExpression(new SSExpression(subject, s.toString()),
+            return createExpression(this.heap.newExpression(subject, s.toString(), emptyList()),
                   index + 1);
          } else if (s.isMethodWithArgs()) {
             final StringBuilder methodName = new StringBuilder(s.toString());
@@ -664,7 +673,7 @@ final class Sentence extends ArrayList<Supplier<SSObject>>
                }
             }
             return createExpression(
-                  new SSExpression(subject, methodName.toString(), args), index);
+                  this.heap.newExpression(subject, methodName.toString(), args), index);
          } else {
             return null;
          }
@@ -676,4 +685,5 @@ final class Sentence extends ArrayList<Supplier<SSObject>>
    /****************************************************************************
     * 
    ****************************************************************************/
+   private final Heap heap;
 }

@@ -15,8 +15,6 @@
 //-----------------------------------------------------------------------------
 package ss.runtime;
 
-import static ss.runtime.SSBinaryBlock.bb;
-
 import java.util.List;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
@@ -26,23 +24,26 @@ public final class SSString extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public SSString(final String value) {
+   SSString(final Heap heap, final MethodMap methods,  final String value) {
 
-      super(sharedMethods);
+      super(heap, methods);
       this.value = value;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   static MethodMap putMethods(final MethodMap methods) {
+   static MethodMap putMethods(final Heap heap, final MethodMap methods) {
 
-      methods.add("append:", bb(SSString::concatenate, List.of("text")));
-      methods.add("at:", bb(SSString::at, List.of("index")));
-      methods.add("clone", bb(SSString::clone));
-      methods.add("concatenate:", bb(SSString::concatenate, List.of("text")));
-      methods.add("nature", bb((s, a) -> nature));
-      methods.add("size", bb(SSString::size));
-      methods.add("startsWith:", bb(SSString::startsWith, List.of("text")));
+      methods.add("append:",
+            heap.newBinaryBlock(SSString::concatenate, List.of("text")));
+      methods.add("at:", heap.newBinaryBlock(SSString::at, List.of("index")));
+      methods.add("clone", heap.newBinaryBlock(SSString::clone));
+      methods.add("concatenate:",
+            heap.newBinaryBlock(SSString::concatenate, List.of("text")));
+      methods.add("nature", heap.newBinaryBlock((s, h, a) -> h.newString("string")));
+      methods.add("size", heap.newBinaryBlock(SSString::size));
+      methods.add("startsWith:",
+            heap.newBinaryBlock(SSString::startsWith, List.of("text")));
 
       return methods;
    }
@@ -57,46 +58,49 @@ public final class SSString extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject at(final Stack stack, final SSObject[] args) {
+   static SSObject at(final Stack stack, final Heap heap, final SSObject[] args) {
 
       final var subject = (SSString) args[0];
       final var index = ((SSLong) args[1]).intValue();
       if (index > -1 & index < subject.value.length()) {
-         return new SSString(subject.value.substring(index, index + 1));
+         return heap.newString(subject.value.substring(index, index + 1));
       } else {
-         return throwException(stack, args[1],
+         return throwException(stack, heap, args[1],
                "Index " + index + " out of bounds.");
       }
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject clone(final Stack stack, final SSObject[] args) {
+   private static SSObject clone(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       return new SSString((SSString) args[0]);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject concatenate(final Stack stack,
+   private static SSObject concatenate(final Stack stack, final Heap heap,
          final SSObject[] args) {
 
       final var subject = (SSString) args[0];
-      return new SSString(
-            subject.value.concat(args[1].evaluate(stack).toString()));
+      return heap
+            .newString(subject.value.concat(args[1].evaluate(stack).toString()));
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject size(final Stack stack, final SSObject[] args) {
+   private static SSObject size(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       final var subject = (SSString) args[0];
-      return new SSLong(subject.value.length());
+      return heap.newLong(subject.value.length());
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject startsWith(final Stack stack, final SSObject[] args) {
+   private static SSObject startsWith(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       final var subject = (SSString) args[0];
       return stack.get(subject.value.startsWith(args[1].toString()));
@@ -108,6 +112,12 @@ public final class SSString extends SSDynamicObject {
    public String toString() {
 
       return this.value;
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   void setValue(final String value) {
+      this.value = value;
    }
    /****************************************************************************
     * 
@@ -128,9 +138,5 @@ public final class SSString extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private final String value;
-
-   final static MethodMap sharedMethods = putMethods(
-         new MethodMap(SSDynamicObject.sharedMethods, true));
-   private final static SSString nature = new SSString("string");
+   private String value;
 }

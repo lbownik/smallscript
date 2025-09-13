@@ -190,7 +190,7 @@ public class BinaryBlockUseCases extends UseCaseBase {
              block field isEqualTo: 3;
             """);
       
-      assertResultEquals(new SSLong(2), """
+      assertResultEquals(createLong(2), """
             !block = Object method: "asString";
             block addMethod: "return:" :using: { !this !value | value };
             block return: 2;
@@ -202,7 +202,7 @@ public class BinaryBlockUseCases extends UseCaseBase {
    @Test
    public void blockCanGetAssignedNewMethods() throws Exception {
       
-      assertResultEquals(new SSLong(2), """
+      assertResultEquals(createLong(2), """
             !block = Object method: "asString";
             block addMethod: "return:" :using: { !this !value | value };
             block return: 2;

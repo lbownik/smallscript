@@ -15,12 +15,14 @@
 //-----------------------------------------------------------------------------
 package ss.runtime;
 
+import static java.util.Collections.emptyList;
+
 import java.util.List;
 
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
-final class SSException {
+public final class SSException {
    /****************************************************************************
     Object new addMethod: "withMessage:" :using: 
            {!this !message |
@@ -35,30 +37,30 @@ final class SSException {
                              addField: "cause"   :withValue: cause;
            };
     ****************************************************************************/
-   static SSObject createException() {
+   public static SSObject newFactory(final Heap heap) {
 
-      final var result = new SSDynamicObject();
+      final var result = heap.newObject();
 
-      final List<SSObject> exceptionArg = List.of(new SSString("nature"),
-            new SSString("exception"));
-      final List<SSObject> messageArg = List.of(new SSString("message"),
-            new SSVariableReference("message"));
-      final List<SSObject> causeArg = List.of(new SSString("cause"),
-            new SSVariableReference("cause"));
+      final List<SSObject> exceptionArg = List.of(heap.newString("nature"),
+            heap.newString("exception"));
+      final List<SSObject> messageArg = List.of(heap.newString("message"),
+            heap.newVariableReference("message"));
+      final List<SSObject> causeArg = List.of(heap.newString("cause"),
+            heap.newVariableReference("cause"));
 
-      final var newObject = new SSExpression(new SSVariableReference("Object"),
-            "new");
-      final var addNature = new SSExpression(newObject, "addField::withValue:",
+      final var newObject = heap.newExpression(heap.newVariableReference("Object"), "new",
+            emptyList());
+      final var addNature = heap.newExpression(newObject, "addField::withValue:",
             exceptionArg);
-      final var addMessage = new SSExpression(addNature, "addField::withValue:",
+      final var addMessage = heap.newExpression(addNature, "addField::withValue:",
             messageArg);
-      final var addCause = new SSExpression(addMessage, "addField::withValue:",
+      final var addCause = heap.newExpression(addMessage, "addField::withValue:",
             causeArg);
 
       result.addMethod("withMessage:",
-            new SSBlock(List.of(addMessage), listOfThisAndMessage));
+            heap.newBlock(List.of(addMessage), listOfThisAndMessage));
       result.addMethod("withCause::andMessage:",
-            new SSBlock(List.of(addCause), listOfThisCauseAndMessage));
+            heap.newBlock(List.of(addCause), listOfThisCauseAndMessage));
 
       return result;
    }

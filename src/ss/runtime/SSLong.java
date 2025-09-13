@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.function.DoubleBinaryOperator;
 import java.util.function.LongBinaryOperator;
 import java.util.stream.LongStream;
-import static ss.runtime.SSBinaryBlock.bb;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
  ******************************************************************************/
@@ -27,42 +26,41 @@ public final class SSLong extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public SSLong(final long value) {
+   SSLong(final Heap heap, final MethodMap methods, final long value) {
 
-      super(sharedMethods);
+      super(heap, methods);
       this.value = value;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   static MethodMap putMethods(final MethodMap methods) {
+   static MethodMap putMethods(final Heap heap, final MethodMap methods) {
 
       final List<String> listOfNumber = List.of("number");
-      
-      methods.add("asDouble", bb(SSLong::asDouble));
-      methods.add("asLong", bb((SSLong::asLong)));
-      methods.add("clone", bb(SSLong::clone));
-      methods.add("incremented", bb(SSLong::incremented));
-      methods.add("isGreaterThan:", bb(SSLong::isGreaterThan, listOfNumber));
-      methods.add("isGreaterOrEqualTo:", bb(SSLong::isGreaterOrEqualTo, listOfNumber));
-      methods.add("isLessThan:", bb(SSLong::isLessThan, listOfNumber));
-      methods.add("isLessOrEqualTo:", bb(SSLong::isLessOrEqualTo, listOfNumber));
-      methods.add("dividedBy:", bb(SSLong::dividedBy, listOfNumber));
-      methods.add("minus:", bb(SSLong::minus, listOfNumber));
-      methods.add("multipliedBy:", bb(SSLong::multipliedBy, listOfNumber));
-      methods.add("nature", bb((s, a) -> nature));
-      methods.add("plus:", bb(SSLong::plus, listOfNumber));
-      methods.add("times:", bb(SSLong::times, List.of("block")));
-      methods.add("to:", bb(SSLong::to, listOfNumber));
+
+      methods.add("asDouble", heap.newBinaryBlock(SSLong::asDouble));
+      methods.add("asLong", heap.newBinaryBlock((SSLong::asLong)));
+      methods.add("clone", heap.newBinaryBlock(SSLong::clone));
+      methods.add("incremented", heap.newBinaryBlock(SSLong::incremented));
+      methods.add("isGreaterThan:",
+            heap.newBinaryBlock(SSLong::isGreaterThan, listOfNumber));
+      methods.add("isGreaterOrEqualTo:",
+            heap.newBinaryBlock(SSLong::isGreaterOrEqualTo, listOfNumber));
+      methods.add("isLessThan:",
+            heap.newBinaryBlock(SSLong::isLessThan, listOfNumber));
+      methods.add("isLessOrEqualTo:",
+            heap.newBinaryBlock(SSLong::isLessOrEqualTo, listOfNumber));
+      methods.add("dividedBy:",
+            heap.newBinaryBlock(SSLong::dividedBy, listOfNumber));
+      methods.add("minus:", heap.newBinaryBlock(SSLong::minus, listOfNumber));
+      methods.add("multipliedBy:",
+            heap.newBinaryBlock(SSLong::multipliedBy, listOfNumber));
+      methods.add("nature", heap.newBinaryBlock((s, h, a) -> h.newString("number")));
+      methods.add("plus:", heap.newBinaryBlock(SSLong::plus, listOfNumber));
+      methods.add("times:", heap.newBinaryBlock(SSLong::times, List.of("block")));
+      methods.add("to:", heap.newBinaryBlock(SSLong::to, listOfNumber));
 
       return methods;
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   public SSLong(final int value) {
-
-      this((long) value);
    }
    /****************************************************************************
     * 
@@ -75,131 +73,140 @@ public final class SSLong extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSObject calc(final Stack stack, final SSObject[] args,
+   private SSObject calc(final Stack stack, final Heap heap, final SSObject[] args,
          final LongBinaryOperator opLong, final DoubleBinaryOperator opDouble) {
 
       final var arg = args[1].evaluate(stack);
 
       if (arg instanceof SSLong l) {
-         return new SSLong(opLong.applyAsLong(this.value, l.value));
+         return heap.newLong(opLong.applyAsLong(this.value, l.value));
       } else if (arg instanceof SSDouble d) {
-         return new SSDouble(opDouble.applyAsDouble(this.value, d.value));
+         return heap.newDouble(opDouble.applyAsDouble(this.value, d.value));
       } else {
          final var n = arg.invoke(stack, "nature").toString();
-         throwException(stack, arg, "Cannot cast " + n + " to number.");
+         throwException(stack, heap, arg, "Cannot cast " + n + " to number.");
          return stack.getNull(); // never happens
       }
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static long evaluateSecond(final SSObject[] args, final Stack stack) {
+   private static long evaluateSecond(final SSObject[] args, final Heap heap,
+         final Stack stack) {
 
       return ((SSLong) args[1].evaluate(stack)).value;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject asDouble(final Stack stack, final SSObject[] args) {
+   private static SSObject asDouble(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       final var subject = (SSLong) args[0];
-      return new SSDouble((double) subject.value);
+      return heap.newDouble((double) subject.value);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject clone(final Stack stack, final SSObject[] args) {
+   private static SSObject clone(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       return new SSLong((SSLong) args[0]);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject incremented(final Stack stack,
+   private static SSObject incremented(final Stack stack, final Heap heap,
          final SSObject[] args) {
 
       final var subject = (SSLong) args[0];
-      return new SSLong(subject.value + 1);
+      return heap.newLong(subject.value + 1);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject asLong(final Stack stack, final SSObject[] args) {
+   private static SSObject asLong(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       return args[0];
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject dividedBy(final Stack stack, final SSObject[] args) {
-
-      final var subject = (SSLong) args[0];
-      return subject.calc(stack, args, (x, y) -> x / y, (x, y) -> x / y);
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject isGreaterThan(final Stack stack,
+   private static SSObject dividedBy(final Stack stack, final Heap heap,
          final SSObject[] args) {
 
       final var subject = (SSLong) args[0];
-      return stack.get(subject.value > evaluateSecond(args, stack));
+      return subject.calc(stack, heap, args, (x, y) -> x / y, (x, y) -> x / y);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject isGreaterOrEqualTo(final Stack stack,
+   private static SSObject isGreaterThan(final Stack stack, final Heap heap,
          final SSObject[] args) {
 
       final var subject = (SSLong) args[0];
-      return stack.get(subject.value >= evaluateSecond(args, stack));
+      return stack.get(subject.value > evaluateSecond(args, heap, stack));
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject isLessThan(final Stack stack, final SSObject[] args) {
-
-      final var subject = (SSLong) args[0];
-      return stack.get(subject.value < evaluateSecond(args, stack));
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject isLessOrEqualTo(final Stack stack,
+   private static SSObject isGreaterOrEqualTo(final Stack stack, final Heap heap,
          final SSObject[] args) {
 
       final var subject = (SSLong) args[0];
-      return stack.get(subject.value <= evaluateSecond(args, stack));
+      return stack.get(subject.value >= evaluateSecond(args, heap, stack));
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject minus(final Stack stack, final SSObject[] args) {
-
-      final var subject = (SSLong) args[0];
-      return subject.calc(stack, args, (x, y) -> x - y, (x, y) -> x - y);
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject multipliedBy(final Stack stack,
+   private static SSObject isLessThan(final Stack stack, final Heap heap,
          final SSObject[] args) {
 
       final var subject = (SSLong) args[0];
-      return subject.calc(stack, args, (x, y) -> x * y, (x, y) -> x * y);
+      return stack.get(subject.value < evaluateSecond(args, heap, stack));
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject plus(final Stack stack, final SSObject[] args) {
+   private static SSObject isLessOrEqualTo(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       final var subject = (SSLong) args[0];
-      return subject.calc(stack, args, (x, y) -> x + y, (x, y) -> x + y);
+      return stack.get(subject.value <= evaluateSecond(args, heap, stack));
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject times(final Stack stack, final SSObject[] args) {
+   private static SSObject minus(final Stack stack, final Heap heap,
+         final SSObject[] args) {
+
+      final var subject = (SSLong) args[0];
+      return subject.calc(stack, heap, args, (x, y) -> x - y, (x, y) -> x - y);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject multipliedBy(final Stack stack, final Heap heap,
+         final SSObject[] args) {
+
+      final var subject = (SSLong) args[0];
+      return subject.calc(stack, heap, args, (x, y) -> x * y, (x, y) -> x * y);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject plus(final Stack stack, final Heap heap,
+         final SSObject[] args) {
+
+      final var subject = (SSLong) args[0];
+      return subject.calc(stack, heap, args, (x, y) -> x + y, (x, y) -> x + y);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject times(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       var value = ((SSLong) args[0]).value;
       final var block = args[1];
@@ -213,12 +220,13 @@ public final class SSLong extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject to(final Stack stack, final SSObject[] args) {
+   private static SSObject to(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       final var startInclusive = ((SSLong) args[0]).value;
       final var endExclusive = ((SSLong) args[1]).value;
-      return new SSStream(
-            LongStream.range(startInclusive, endExclusive).mapToObj(SSLong::new));
+      return heap.newStream(
+            LongStream.range(startInclusive, endExclusive).mapToObj(heap::newLong));
    }
    /****************************************************************************
     * 
@@ -255,8 +263,4 @@ public final class SSLong extends SSDynamicObject {
     * 
    ****************************************************************************/
    public final long value;
-
-   private final static SSString nature = new SSString("number");
-   final static MethodMap sharedMethods = putMethods(
-         new MethodMap(SSDynamicObject.sharedMethods, true));
 }

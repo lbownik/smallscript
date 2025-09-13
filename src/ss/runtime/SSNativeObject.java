@@ -17,8 +17,6 @@
 package ss.runtime;
 
 import static java.lang.System.arraycopy;
-import static java.util.stream.Collectors.toSet;
-import static ss.runtime.SSBinaryBlock.bb;
 
 import java.util.HashMap;
 import java.util.List;
@@ -38,19 +36,22 @@ public abstract class SSNativeObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   protected abstract SSObject getMethod(final String name, final SSObject defaultValue);
+   protected abstract SSObject getMethod(final String name,
+         final SSObject defaultValue);
    /****************************************************************************
     * 
    ****************************************************************************/
-   protected abstract Set<SSObject> getMethods();
+   protected abstract Set<SSObject> getMethods(final Stack stack);
    /****************************************************************************
     * 
    ****************************************************************************/
    SSObject addField(final Stack stack, String name, final SSObject value) {
 
       final String iName = name.intern();
-      addMethod(name, bb((s, a) -> getField(s, iName, a)));
-      addMethod(name + ":", bb((s, a) -> setField(s, iName, a), List.of("value")));
+      addMethod(name,
+            this.heap.newBinaryBlock((s, h, a) -> getField(s, h, iName, a)));
+      addMethod(name + ":", this.heap.newBinaryBlock(
+            (s, h, a) -> setField(s, h, iName, a), List.of("value")));
 
       if (this.fields == null) {
          this.fields = new HashMap<>();
@@ -79,7 +80,8 @@ public abstract class SSNativeObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject addField(final Stack stack, final SSObject[] args) {
+   static SSObject addField(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       final var subject = (SSNativeObject) args[0];
       final var name = args[1].evaluate(stack).toString().intern();
@@ -88,7 +90,8 @@ public abstract class SSNativeObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject addFieldWithValue(final Stack stack, final SSObject[] args) {
+   static SSObject addFieldWithValue(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       final var subject = (SSNativeObject) args[0];
       final var name = args[1].evaluate(stack).toString().intern();
@@ -98,7 +101,8 @@ public abstract class SSNativeObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject addMethod(final Stack stack, final SSObject[] args) {
+   static SSObject addMethod(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       final var subject = (SSNativeObject) args[0];
       final var name = args[1].evaluate(stack).toString();
@@ -110,43 +114,48 @@ public abstract class SSNativeObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject asString(final Stack stack, final SSObject[] args) {
+   static SSObject asString(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
-      return new SSString(args[0].toString());
+      return heap.newString(args[0].toString());
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject at(final Stack stack, final SSObject[] args) {
+   static SSObject at(final Stack stack, final Heap heap, final SSObject[] args) {
 
       final var index = ((SSLong) args[1]).intValue();
       if (index == 0) {
          return args[0];
       } else {
-         return throwException(stack, args[1], "Index " + index + " out of bounds.");
+         return throwException(stack, heap, args[1],
+               "Index " + index + " out of bounds.");
       }
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject doesNotUnderstand(final Stack stack, final SSObject[] args) {
+   static SSObject doesNotUnderstand(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       final var message = args[1];
       final var method = message.invoke(stack, "method");
-      return throwException(stack, message,
+      return throwException(stack, heap, message,
             "Method '" + method + "' is not defined.");
    }
    /****************************************************************************
     * 
     ****************************************************************************/
-   static SSObject evaluate(final Stack stack, final SSObject[] args) {
+   static SSObject evaluate(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       return args[0].evaluate(stack);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject forEach(final Stack stack, final SSObject[] args) {
+   static SSObject forEach(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       final var subject = args[0];
       args[1].invoke(stack, "executeWith:", new SSObject[] { subject });
@@ -155,7 +164,7 @@ public abstract class SSNativeObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject getField(final Stack stack, final String name,
+   static SSObject getField(final Stack stack, final Heap heap, final String name,
          final SSObject[] args) {
 
       final var subject = (SSNativeObject) args[0];
@@ -164,7 +173,8 @@ public abstract class SSNativeObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject getMethod(final Stack stack, final SSObject[] args) {
+   static SSObject getMethod(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       final var subject = (SSNativeObject) args[0];
       return subject.getMethod(args[1].toString(), stack.getNull());
@@ -172,54 +182,61 @@ public abstract class SSNativeObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject getMethods(final Stack stack, final SSObject[] args) {
+   static SSObject getMethods(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       final var subject = (SSNativeObject) args[0];
-      return new SSSet(subject.getMethods());
+      return heap.newSet(subject.getMethods(stack).stream());
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject hashCode(final Stack stack, final SSObject[] args) {
+   static SSObject hashCode(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
-      return new SSLong(args[0].hashCode());
+      return heap.newLong(args[0].hashCode());
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject invokeWith(final Stack stack, final SSObject[] args) {
+   static SSObject invokeWith(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       final var subject = (SSObject) args[0];
       final var method = args[1].evaluate(stack).toString();
-      final var argList = ((SSList) args[2].evaluate(stack)).elements.toArray(emptyArgs);
+      final var argList = ((SSList) args[2].evaluate(stack)).elements
+            .toArray(emptyArgs);
 
       return subject.invoke(stack, method, argList);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject isNotEqualTo(final Stack stack, final SSObject[] args) {
+   static SSObject isNotEqualTo(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       return stack.get(!args[0].equals(args[1].evaluate(stack)));
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject isEqualTo(final Stack stack, final SSObject[] args) {
+   static SSObject isEqualTo(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       return stack.get(args[0].equals(args[1].evaluate(stack)));
    }
    /****************************************************************************
     * 
     ****************************************************************************/
-   static SSObject returnThis(final Stack stack, final SSObject[] args) {
+   static SSObject returnThis(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       return args[0];
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject setField(final Stack stack, final String name,
+   static SSObject setField(final Stack stack, final Heap heap, final String name,
          final SSObject[] args) {
 
       final var subject = (SSNativeObject) args[0];
@@ -229,7 +246,8 @@ public abstract class SSNativeObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject selectIf(final Stack stack, final SSObject[] args) {
+   static SSObject selectIf(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       final var subject = args[0];
 
@@ -241,26 +259,28 @@ public abstract class SSNativeObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject throwException(final Stack stack, final SSObject cause,
-         final String message) {
+   static SSObject throwException(final Stack stack, final Heap heap,
+         final SSObject cause, final String message) {
 
-      final var exception = new SSDynamicObject();
-      exception.addField(stack, "nature", new SSString("exception"));
+      final var exception = heap.newObject();
+      exception.addField(stack, "nature", heap.newString("exception"));
       exception.addField(stack, "cause", cause);
-      exception.addField(stack, "message", new SSString(message));
+      exception.addField(stack, "message", heap.newString(message));
       throw new AuxiliaryException(exception);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject throwThis(final Stack stack, final SSObject[] args) {
+   static SSObject throwThis(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       throw new AuxiliaryException(args[0]);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject transformUsing(final Stack stack, final SSObject[] args) {
+   static SSObject transformUsing(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       return args[1].invoke(stack, "executeWith:",
             new SSObject[] { args[0].evaluate(stack) });
@@ -268,7 +288,8 @@ public abstract class SSNativeObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject collectTo(final Stack stack, final SSObject[] args) {
+   static SSObject collectTo(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       return args[1].invoke(stack, "append:",
             new SSObject[] { args[0].evaluate(stack) });
@@ -276,7 +297,8 @@ public abstract class SSNativeObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject tryCatch(final Stack stack, final SSObject[] args) {
+   static SSObject tryCatch(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       final var subject = args[0];
       try {
@@ -290,7 +312,7 @@ public abstract class SSNativeObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject try_(final Stack stack, final SSObject[] args) {
+   static SSObject try_(final Stack stack, final Heap heap, final SSObject[] args) {
 
       final var subject = args[0];
       try {
@@ -302,19 +324,20 @@ public abstract class SSNativeObject implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject getFields(final Stack stack, final SSObject[] args) {
+   static SSObject getFields(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       final var subject = (SSNativeObject) args[0];
       if (subject.fields != null) {
-         return new SSSet(
-               subject.fields.keySet().stream().map(SSString::new).collect(toSet()));
+         return heap.newSet(subject.fields.keySet().stream().map(heap::newString));
       } else {
-         return new SSSet();
-      }
+         return heap.newSet();
+      } 
    }
    /****************************************************************************
    * 
    ****************************************************************************/
    protected HashMap<String, SSObject> fields;
    protected MethodMap methods;
+   protected Heap heap;
 }

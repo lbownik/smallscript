@@ -27,7 +27,7 @@ public class LongUseCases extends UseCaseBase {
    public void longHasSetBasicProperties() throws Exception {
 
       assertSSTrue("1 asString isEqualTo: \"1\";");
-      assertResultEquals(new SSLong(1), "1 hash;");
+      assertResultEquals(createLong(1), "1 hash;");
 
       assertSSTrue("1 asDouble isEqualTo: 1.0;");
       assertSSTrue("1 asLong isEqualTo: 1;");
@@ -65,15 +65,15 @@ public class LongUseCases extends UseCaseBase {
    @Test
    public void longCanPerformAritmetics() throws Exception {
 
-      assertResultEquals(new SSLong(1), "1;");
-      assertResultEquals(new SSLong(2), "1 plus: 1;");
-      assertResultEquals(new SSDouble(2), "1 plus: 1.0;");
-      assertResultEquals(new SSLong(0), "1 minus: 1;");
-      assertResultEquals(new SSDouble(0), "1 minus: 1.0;");
-      assertResultEquals(new SSLong(4), "2 multipliedBy: 2;");
-      assertResultEquals(new SSDouble(4), "2 multipliedBy: 2.0;");
-      assertResultEquals(new SSLong(3), "6 dividedBy: 2;");
-      assertResultEquals(new SSDouble(3), "6 dividedBy: 2.0;");
+      assertResultEquals(createLong(1), "1;");
+      assertResultEquals(createLong(2), "1 plus: 1;");
+      assertResultEquals(createDouble(2), "1 plus: 1.0;");
+      assertResultEquals(createLong(0), "1 minus: 1;");
+      assertResultEquals(createDouble(0), "1 minus: 1.0;");
+      assertResultEquals(createLong(4), "2 multipliedBy: 2;");
+      assertResultEquals(createDouble(4), "2 multipliedBy: 2.0;");
+      assertResultEquals(createLong(3), "6 dividedBy: 2;");
+      assertResultEquals(createDouble(3), "6 dividedBy: 2.0;");
    }
    /****************************************************************************
     * 

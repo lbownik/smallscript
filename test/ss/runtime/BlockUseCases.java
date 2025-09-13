@@ -70,19 +70,19 @@ public class BlockUseCases extends UseCaseBase {
    public void execute_exacutesStatementsInBlock_forProperInvocation()
          throws Exception {
 
-      assertResultEquals(new SSLong(2), "!y = 1; {!x | x plus: 1;} executeWith: y;");
-      assertResultEquals(new SSLong(3), """
+      assertResultEquals(createLong(2), "!y = 1; {!x | x plus: 1;} executeWith: y;");
+      assertResultEquals(createLong(3), """
             !a = 1;
             !b = 2;
             {!x1 !x2 | x1 plus: x2;} executeWith: a :and: b;
             """);
-      assertResultEquals(new SSLong(6), """
+      assertResultEquals(createLong(6), """
             !a = 1;
             !b = 2;
             !c = 3;
             {!x1 !x2 !x3 | (x1 plus: x2) plus: x3;} executeWith: a :and: b :and: c;
             """);
-      assertResultEquals(new SSLong(10), """
+      assertResultEquals(createLong(10), """
             !a = 1;
             !b = 2;
             !c = 3;
@@ -90,7 +90,7 @@ public class BlockUseCases extends UseCaseBase {
             {!x1 !x2 !x3 !x4| (x1 plus: x2) plus: (x3 plus: x4);}
                 executeWith: a :and: b :and: c :and: d;
             """);
-      assertResultEquals(new SSLong(15), """
+      assertResultEquals(createLong(15), """
             !a = 1;
             !b = 2;
             !c = 3;
@@ -99,7 +99,7 @@ public class BlockUseCases extends UseCaseBase {
             {!x1 !x2 !x3 !x4 !x5 | ((x1 plus: x2) plus: (x3 plus: x4)) plus: x5;}
                  executeWith: a :and: b :and: c :and: d :and: e;
             """);
-      assertResultEquals(new SSLong(21),
+      assertResultEquals(createLong(21),
             """
                   !a = 1;
                   !b = 2;
@@ -119,7 +119,7 @@ public class BlockUseCases extends UseCaseBase {
    public void whileTrue_iteratesProperly_forProperInvocation()
          throws Exception {
 
-      assertResultEquals(new SSLong(10), """
+      assertResultEquals(createLong(10), """
             !counter = 0;
             {counter isLessThan: 10;} whileTrue: {
                 counter = (counter plus: 1);
@@ -133,10 +133,10 @@ public class BlockUseCases extends UseCaseBase {
    public void arguments_returnsArgumentNames_forProperInvocation()
          throws Exception {
 
-      assertResultEquals(new SSString("arg"), """
+      assertResultEquals(heap.newString("arg"), """
             {!arg | null;} arguments at: 0;
             """);
-      assertResultEquals(new SSLong(0), """
+      assertResultEquals(createLong(0), """
             {} arguments size;
             """);
    }
@@ -208,11 +208,10 @@ public class BlockUseCases extends UseCaseBase {
    @Test 
    public void parsingBlock_works() throws Exception {
       
-      SSBlock block = new Parser().parse("!arg | arg;");
-      SSString arg = new SSString("abc");
-      Stack stack = Stack.create();
+      SSBlock block = new Parser(this.heap).parse("!arg | arg;");
+      SSString arg = createString("abc");
       
-      assertEquals(arg, block.execute(stack, new SSObject[] {arg}));
+      assertEquals(arg, block.execute(this.stack, new SSObject[] {arg}));
    }
    /****************************************************************************
     * 
@@ -249,7 +248,7 @@ public class BlockUseCases extends UseCaseBase {
             block field isEqualTo: 3;
             """);
       
-      assertResultEquals(new SSLong(2), """
+      assertResultEquals(createLong(2), """
             !block = {};
             block addMethod: "return:" :using: { !this !value | value };
             block return: 2;
@@ -261,7 +260,7 @@ public class BlockUseCases extends UseCaseBase {
    @Test
    public void blockCanGetAssignedNewMethods() throws Exception {
       
-      assertResultEquals(new SSLong(2), """
+      assertResultEquals(createLong(2), """
             !block = {};
             block addMethod: "return:" :using: { !this !value | value };
             block return: 2;

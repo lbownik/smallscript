@@ -12,58 +12,60 @@
 //WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 //See the License for the specific language governing permissions and
 //limitations under the License.
-//-----------------------------------------------------------------------------
+//------------------------------------------------------------------------------
 package ss.runtime;
 
-import static ss.runtime.SSBinaryBlock.bb;
+import static java.util.Arrays.stream;
+import static ss.runtime.SSNativeObject.throwException;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.util.stream.Stream;
+import java.util.function.BiFunction;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
  ******************************************************************************/
-public final class SSApplication extends SSDynamicObject {
+public final class SSApplication {
 
    /****************************************************************************
     * 
-   ****************************************************************************/
-   public SSApplication(final Interpreter interpreter, final BufferedReader in,
-         final PrintStream out, final PrintStream err) {
+    ****************************************************************************/
+   public static SSObject newApplication(final Heap heap, final String[] args,
+         final BiFunction<Stack, String, SSObject> load) {
 
-      this.interpreter = interpreter;
+      final var result = heap.newObject();
 
-      addField(null, "input", new SSInput(in));
-      addField(null, "output", new SSOutput(out));
-      addField(null, "error", new SSOutput(err));
+      result.addField(null, "arguments",
+            heap.newList(stream(args).map(heap::newString)));
+      result.addField(null, "input",
+            heap.newInput(new BufferedReader(new InputStreamReader(System.in))));
+      result.addField(null, "output", heap.newOutput(System.out));
+      result.addField(null, "error", heap.newOutput(System.err));
 
-      addMethod("clone", bb(SSApplication::clone));
-      addMethod("exit:", bb(SSApplication::exit));
-      addMethod("load:", bb(SSApplication::load));
+      result.addMethod("clone", heap.newBinaryBlock(SSApplication::clone));
+      result.addMethod("exit:", heap.newBinaryBlock(SSApplication::exit));
+      result.addMethod("load:", heap.newBinaryBlock((s, h, a) -> {
+         try {
+            return load.apply(s, a[1].toString());
+         } catch (final Exception e) {
+            return throwException(s, h, a[0], e.getMessage());
+         }
+      }));
 
-      addField(null, "arguments",
-            new SSList(Stream.of(interpreter.args).map(SSString::new).toList()));
+      return result;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   public SSApplication(final Interpreter interpreter) {
-
-      this(interpreter, new BufferedReader(new InputStreamReader(System.in)),
-            System.out, System.err);
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject clone(final Stack stack, final SSObject[] args) {
+   private static SSObject clone(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       return args[0];
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject exit(final Stack stack, final SSObject[] args) {
+   private static SSObject exit(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       System.exit(((SSLong) args[1]).intValue());
       return stack.getNull();
@@ -71,33 +73,4 @@ public final class SSApplication extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject load(final Stack stack, final SSObject[] args) {
-
-      try {
-         final var app = (SSApplication) args[0];
-         return app.interpreter.load(stack, args[1].toString());
-      } catch (final Exception e) {
-         return throwException(stack, args[0], e.getMessage());
-      }
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   @Override
-   public String toString() {
-
-      return "application";
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   @Override
-   public boolean equals(final Object obj) {
-
-      return getClass().equals(obj.getClass());
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private final Interpreter interpreter;
 }

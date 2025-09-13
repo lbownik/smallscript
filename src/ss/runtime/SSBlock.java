@@ -16,7 +16,6 @@
 package ss.runtime;
 
 import static java.util.Collections.emptySet;
-import static ss.runtime.SSBinaryBlock.bb;
 import static ss.runtime.Stack.isTopLevelVariable;
 
 import java.util.HashSet;
@@ -30,10 +29,10 @@ public class SSBlock extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public SSBlock(final List<SSObject> statements,
+   SSBlock(final Heap heap, final MethodMap methods, List<SSObject> statements,
          final List<String> argumentNames) {
 
-      super(sharedMethods);
+      super(heap, methods);
       this.statements = statements;
       this.argumentNames = argumentNames;
       this.enclosedVariables = referencedVariables();
@@ -45,7 +44,7 @@ public class SSBlock extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public SSBlock(final SSBlock other) {
+   public SSBlock(final Heap heap, final SSBlock other) {
 
       super(other);
       this.statements = other.statements;
@@ -57,16 +56,16 @@ public class SSBlock extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   static MethodMap putMethods(final MethodMap methods) {
+   static MethodMap putMethods(final Heap heap, final MethodMap methods) {
 
       final var listOfOther = List.of("other");
 
-      methods.add("arguments", bb(SSBlock::getArguments));
-      methods.add("clone", bb(SSBlock::clone));
-      methods.add("isEqualTo:", bb(SSBlock::equals, listOfOther));
-      methods.add("isNotEqualTo:", bb(SSBlock::isNotEqualTo, listOfOther));
-      methods.add("nature", bb((s, a) -> nature));
-      methods.add("whileTrue:", bb(SSBlock::whileTrue, List.of("block")));
+      methods.add("arguments", heap.newBinaryBlock(SSBlock::getArguments));
+      methods.add("clone", heap.newBinaryBlock(SSBlock::clone));
+      methods.add("isEqualTo:", heap.newBinaryBlock(SSBlock::equals, listOfOther));
+      methods.add("isNotEqualTo:", heap.newBinaryBlock(SSBlock::isNotEqualTo, listOfOther));
+      methods.add("nature", heap.newBinaryBlock((s, h, a) -> h.newString("block")));
+      methods.add("whileTrue:", heap.newBinaryBlock(SSBlock::whileTrue, List.of("block")));
 
       return methods;
    }
@@ -125,14 +124,14 @@ public class SSBlock extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject clone(final Stack stack, final SSObject[] args) {
+   private static SSObject clone(final Stack stack, final Heap heap, final SSObject[] args) {
 
-      return new SSBlock((SSBlock) args[0]);
+      return new SSBlock(heap, (SSBlock) args[0]);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject equals(final Stack stack, final SSObject[] args) {
+   private static SSObject equals(final Stack stack, final Heap heap, final SSObject[] args) {
 
       var subject = args[0];
       var arg = args[1].evaluate(stack);
@@ -146,7 +145,7 @@ public class SSBlock extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject isNotEqualTo(final Stack stack,
+   static SSObject isNotEqualTo(final Stack stack, final Heap heap,
          final SSObject[] args) {
 
       var subject = args[0];
@@ -161,16 +160,16 @@ public class SSBlock extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject getArguments(final Stack stack,
+   private static SSObject getArguments(final Stack stack,final Heap heap,
          final SSObject[] args) {
 
       final var subject = (SSBlock) args[0];
-      return new SSList(subject.argumentNames.stream().map(SSString::new).toList());
+      return heap.newList(subject.argumentNames.stream().map(heap::newString));
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject whileTrue(final Stack stack, final SSObject[] args) {
+   private static SSObject whileTrue(final Stack stack, final Heap heap, final SSObject[] args) {
 
       var result = stack.getNull();
       final var subject = (SSBlock) args[0];
@@ -262,8 +261,4 @@ public class SSBlock extends SSDynamicObject {
    private final List<String> argumentNames;
    private final Set<String> enclosedVariables;
    private final boolean declaresVariables;
-
-   final static MethodMap sharedMethods = putMethods(
-         new MethodMap(SSDynamicObject.sharedMethods, true));
-   private final static SSString nature = new SSString("block");
 }

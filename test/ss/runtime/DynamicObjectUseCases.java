@@ -275,6 +275,39 @@ public class DynamicObjectUseCases extends UseCaseBase {
             object asString startsWith: "@object#";
             """);
    }
+   
+   /****************************************************************************
+   * 
+   ****************************************************************************/
+   @Test
+   public void method_Object_new_cannotBeOverriden() throws Exception {
+
+      assertSSTrue("""
+            Object try: {
+               Object addMethod: "new" :using: {};
+               false;
+            } :catch: {!e | 
+               e message isEqualTo: "Method 'Object new' cannot be overriden.";
+            };
+            """);
+   }
+   
+   /****************************************************************************
+   * 
+   ****************************************************************************/
+   @Test
+   public void method_Object_newOfNature_cannotBeOverriden() throws Exception {
+
+      assertSSTrue("""
+            Object try: {
+               Object addMethod: "newOfNature:" :using: {};
+               false;
+            } :catch: {!e | 
+               e message isEqualTo: "Method 'Object newOfNature:' cannot be overriden.";
+            };
+            """);
+   }
+   
    /****************************************************************************
    * 
    ****************************************************************************/

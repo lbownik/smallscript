@@ -180,6 +180,37 @@ public class MapUseCases extends UseCaseBase {
             """);
    }
    /****************************************************************************
+   * 
+   ****************************************************************************/
+   @Test
+   public void method_Map_new_cannotBeOverriden() throws Exception {
+
+      assertSSTrue("""
+            Object try: {
+               Map addMethod: "new" :using: {};
+               false;
+            } :catch: {!e | 
+               e message isEqualTo: "Method 'Map new' cannot be overriden.";
+            };
+            """);
+   }
+   
+   /****************************************************************************
+   * 
+   ****************************************************************************/
+   @Test
+   public void method_Map_atPut_cannotBeOverriden() throws Exception {
+
+      assertSSTrue("""
+            Object try: {
+               Map addMethod: "at::put:" :using: {};
+               false;
+            } :catch: {!e | 
+               e message isEqualTo: "Method 'Map at::put:' cannot be overriden.";
+            };
+            """);
+   }
+   /****************************************************************************
     * 
    ****************************************************************************/
    @Test

@@ -15,10 +15,11 @@
 //-----------------------------------------------------------------------------
 package ss.runtime;
 
-import static ss.runtime.SSBinaryBlock.bb;
+import static java.util.Collections.emptyMap;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
  ******************************************************************************/
@@ -26,45 +27,71 @@ public final class SSMap extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private SSMap() {
+   SSMap(final Heap heap, final MethodMap methods, final Map<SSObject, SSObject> elements) {
 
-      this(new HashMap<>());
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   public SSMap(final HashMap<SSObject, SSObject> elements) {
-
-      super(sharedMethods);
+      super(heap, methods);
       this.elements = new HashMap<>(elements);
    }
 
    /****************************************************************************
     * 
    ****************************************************************************/
-   static MethodMap putMethods(final MethodMap methods) {
+   static MethodMap putMethods(final Heap heap, final MethodMap methods) {
 
       final var listOfKey = List.of("key");
       final var listOfKeyValue = List.of("key", "value");
       
-      methods.add("at:", bb(SSMap::at, listOfKey));
-      methods.add("at::put:", bb(SSMap::atPut, listOfKeyValue));
+      methods.add("at:", heap.newBinaryBlock(SSMap::at, listOfKey));
+      methods.add("at::put:", heap.newBinaryBlock(SSMap::atPut, listOfKeyValue));
       methods.add("at::put::andGetPreviousValue",
-            bb(SSMap::atPutAndReturnPreviousValue, listOfKeyValue));
-      methods.add("forEach:", bb(SSMap::forEach, List.of("block")));
-      methods.add("keys", bb(SSMap::keys));
-      methods.add("nature", bb((s, a) -> nature));
-      methods.add("removeAt:", bb(SSMap::removeAt, listOfKey));
+            heap.newBinaryBlock(SSMap::atPutAndReturnPreviousValue, listOfKeyValue));
+      methods.add("forEach:", heap.newBinaryBlock(SSMap::forEach, List.of("block")));
+      methods.add("keys", heap.newBinaryBlock(SSMap::keys));
+      methods.add("nature", heap.newBinaryBlock((s, h, a) -> h.newString("map")));
+      methods.add("removeAt:", heap.newBinaryBlock(SSMap::removeAt, listOfKey));
       methods.add("removeAt::andGetRemovedValue",
-            bb(SSMap::removeAtAndReturnRemovedValue, listOfKey));
-      methods.add("size", bb(SSMap::size));
+            heap.newBinaryBlock(SSMap::removeAtAndReturnRemovedValue, listOfKey));
+      methods.add("size", heap.newBinaryBlock(SSMap::size));
 
       return methods;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject at(final Stack stack, final SSObject[] args) {
+   static SSObject newFactory(final Heap heap) {
+
+      final var result = heap.newObject();
+      
+      result.addMethod("new", heap.newBinaryBlock((s, h ,a) -> h.newMap(emptyMap())));
+      result.addMethod("at::put:", heap.newBinaryBlock(SSMap::atPutToNew, List.of("key", "value")));
+      result.addMethod("addMethod::using:", heap
+            .newBinaryBlock(SSMap::addMethodToFactory, List.of("name", "block")));
+
+      return result;
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   static SSObject addMethodToFactory(final Stack stack, final Heap heap,
+         final SSObject[] args) {
+
+      final var subject = (SSNativeObject) args[0];
+      final var name = args[1].evaluate(stack).toString();
+
+      if (name.equals("new")) {
+         return SSNativeObject.throwException(stack, heap, subject,
+               "Method 'Map new' cannot be overriden.");
+      } else if (name.equals("at::put:")) {
+         return SSNativeObject.throwException(stack, heap, subject,
+               "Method 'Map at::put:' cannot be overriden.");
+      } else {
+         return SSNativeObject.addMethod(stack, heap, args);
+      }
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   static SSObject at(final Stack stack, final Heap heap, final SSObject[] args) {
 
       final var subject = (SSMap) args[0];
       final var key = args[1].evaluate(stack);
@@ -74,15 +101,27 @@ public final class SSMap extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject atPut(final Stack stack, final SSObject[] args) {
+   private static SSObject atPut(final Stack stack, final Heap heap, final SSObject[] args) {
 
-      atPutAndReturnPreviousValue(stack, args);
+      atPutAndReturnPreviousValue(stack, heap, args);
       return args[0];
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject atPutAndReturnPreviousValue(final Stack stack,
+   private static SSObject atPutToNew(final Stack stack, final Heap heap, final SSObject[] args) {
+
+      final var result =  heap.newMap(emptyMap());
+      final var key = args[1].evaluate(stack);
+      final var value = args[2].evaluate(stack);
+
+      result.elements.put(key, value);
+      return result;
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject atPutAndReturnPreviousValue(final Stack stack, final Heap heap,
          final SSObject[] args) {
 
       final var subject = (SSMap) args[0];
@@ -95,15 +134,16 @@ public final class SSMap extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject removeAt(final Stack stack, final SSObject[] args) {
+   private static SSObject removeAt(final Stack stack, final Heap heap, final SSObject[] args) {
 
-      removeAtAndReturnRemovedValue(stack, args);
+      removeAtAndReturnRemovedValue(stack, heap, args);
       return args[0];
    }
    /****************************************************************************
     * 
    ****************************************************************************/
    private static SSObject removeAtAndReturnRemovedValue(final Stack stack,
+         final Heap heap,
          final SSObject[] args) {
 
       final var subject = (SSMap) args[0];
@@ -115,7 +155,7 @@ public final class SSMap extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject forEach(final Stack stack, final SSObject[] args) {
+   static SSObject forEach(final Stack stack, final Heap heap, final SSObject[] args) {
 
       final var subject = (SSMap) args[0];
       for (var item : subject.elements.entrySet()) {
@@ -127,18 +167,18 @@ public final class SSMap extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject keys(final Stack stack, final SSObject[] args) {
+   private static SSObject keys(final Stack stack, final Heap heap, final SSObject[] args) {
 
       final var subject = (SSMap) args[0];
-      return new SSSet(subject.elements.keySet());
+      return heap.newSet(subject.elements.keySet().stream());
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject size(final Stack stack, final SSObject[] args) {
+   private static SSObject size(final Stack stack, final Heap heap, final SSObject[] args) {
 
       final var subject = (SSMap) args[0];
-      return new SSLong(subject.elements.size());
+      return heap.newLong(subject.elements.size());
    }
    /****************************************************************************
     * 
@@ -168,33 +208,4 @@ public final class SSMap extends SSDynamicObject {
     * 
    ****************************************************************************/
    private final HashMap<SSObject, SSObject> elements;
-   
-   final static MethodMap sharedMethods = putMethods(
-         new MethodMap(SSDynamicObject.sharedMethods, true));
-   private final static SSString nature = new SSString("map");
-   /****************************************************************************
-    * 
-    ***************************************************************************/
-   public final static class Factory extends SSDynamicObject {
-      /*************************************************************************
-       * 
-      *************************************************************************/
-      public Factory() {
-
-         addMethod("new", bb((s,a) -> new SSMap()));
-         addMethod("at::put:", bb(SSMap.Factory::atPut, List.of("key", "value")));
-      }
-      /*************************************************************************
-       * 
-      *************************************************************************/
-      private static SSObject atPut(final Stack stack, final SSObject[] args) {
-
-         final var result = new SSMap();
-         final var key = args[1].evaluate(stack);
-         final var value = args[2].evaluate(stack);
-
-         result.elements.put(key, value);
-         return result;
-      }
-   }
 }

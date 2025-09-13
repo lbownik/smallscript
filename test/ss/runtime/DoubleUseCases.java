@@ -67,14 +67,14 @@ public class DoubleUseCases extends UseCaseBase {
    @Test
    public void doubleCanPerformAritmetics() throws Exception {
 
-      assertResultEquals(new SSDouble(2.1), "1.0 plus: 1.1;");
-      assertResultEquals(new SSDouble(2.0), "1.0 plus: 1;");
-      assertResultEquals(new SSDouble(0), "1.0 minus: 1.0;");
-      assertResultEquals(new SSDouble(0), "1.0 minus: 1;");
-      assertResultEquals(new SSDouble(4.0), "2.0 multipliedBy: 2.0;");
-      assertResultEquals(new SSDouble(4.0), "2.0 multipliedBy: 2;");
-      assertResultEquals(new SSDouble(3.0), "6.0 dividedBy: 2;");
-      assertResultEquals(new SSDouble(3.0), "6 dividedBy: 2.0;");
+      assertResultEquals(createDouble(2.1), "1.0 plus: 1.1;");
+      assertResultEquals(createDouble(2.0), "1.0 plus: 1;");
+      assertResultEquals(createDouble(0), "1.0 minus: 1.0;");
+      assertResultEquals(createDouble(0), "1.0 minus: 1;");
+      assertResultEquals(createDouble(4.0), "2.0 multipliedBy: 2.0;");
+      assertResultEquals(createDouble(4.0), "2.0 multipliedBy: 2;");
+      assertResultEquals(createDouble(3.0), "6.0 dividedBy: 2;");
+      assertResultEquals(createDouble(3.0), "6 dividedBy: 2.0;");
    }
    /****************************************************************************
     * 

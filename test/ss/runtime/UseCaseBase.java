@@ -67,5 +67,28 @@ public class UseCaseBase {
    /****************************************************************************
     * 
     ***************************************************************************/
+   protected SSString createString(final String s) {
+      
+      return this.heap.newString(s);
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   protected SSDouble createDouble(final double value) {
+      
+      return this.heap.newDouble(value);
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   protected SSLong createLong(final long value) {
+      
+      return this.heap.newLong(value);
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
    protected final Interpreter interpreter = new Interpreter();
+   protected final Stack stack = interpreter.getStack();
+   protected final Heap heap = interpreter.getHeap();
 }

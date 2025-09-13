@@ -15,8 +15,6 @@
 //-----------------------------------------------------------------------------
 package ss.runtime;
 
-import static ss.runtime.SSBinaryBlock.bb;
-
 import java.io.PrintStream;
 import java.util.List;
 /*******************************************************************************
@@ -27,46 +25,47 @@ public final class SSOutput extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public SSOutput(final PrintStream out) {
+   public SSOutput(final Heap heap, final MethodMap methods, final PrintStream out) {
 
+      super(heap, methods);
       final var listOfObject = List.of("object");
       
       this.out = out;
-      addMethod("clone", bb(SSOutput::clone));
-      addMethod("writeLine:", bb(SSOutput::writeLine, listOfObject));
-      addMethod("append:", bb(SSOutput::append, listOfObject));
+      addMethod("clone", this.heap.newBinaryBlock(SSOutput::clone));
+      addMethod("writeLine:", this.heap.newBinaryBlock(SSOutput::writeLine, listOfObject));
+      addMethod("append:", this.heap.newBinaryBlock(SSOutput::append, listOfObject));
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject clone(final Stack stack, final SSObject[] args) {
+   private static SSObject clone(final Stack stack, final Heap heap, final SSObject[] args) {
 
       return args[0];
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject writeLine(final Stack stack, final SSObject[] args) {
+   private static SSObject writeLine(final Stack stack, final Heap heap, final SSObject[] args) {
 
       final var subject = (SSOutput) args[0];
       try {
          subject.out.println(args[1].invoke(stack, "asString", emptyArgs));
          return subject;
       } catch (final Exception e) {
-         return throwException(stack, subject, e.getMessage());
+         return throwException(stack, heap, subject, e.getMessage());
       }
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject append(final Stack stack, final SSObject[] args) {
+   private static SSObject append(final Stack stack, final Heap heap,final SSObject[] args) {
 
       final var subject = (SSOutput) args[0];
       try {
          subject.out.print(args[1].invoke(stack, "asString", emptyArgs));
          return subject;
       } catch (final Exception e) {
-         return throwException(stack, subject, e.getMessage());
+         return throwException(stack, heap, subject, e.getMessage());
       }
    }
 

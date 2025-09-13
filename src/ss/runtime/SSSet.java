@@ -15,11 +15,8 @@
 //-----------------------------------------------------------------------------
 package ss.runtime;
 
-import static ss.runtime.SSBinaryBlock.bb;
-
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
  ******************************************************************************/
@@ -27,41 +24,66 @@ public final class SSSet extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public SSSet() {
+   SSSet(final Heap heap, final MethodMap methods) {
 
-      this(new HashSet<>());
+      super(heap, methods);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   public SSSet(final Set<SSObject> elements) {
-
-      super(sharedMethods);
-      this.elements = new HashSet<>(elements);
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   static MethodMap putMethods(final MethodMap methods) {
+   static MethodMap putMethods(final Heap heap, final MethodMap methods) {
 
       final var listOfItem = List.of("item");
       final var listOfBlock = List.of("block");
 
-      methods.add("add:", bb(SSSet::append, listOfItem));
-      methods.add("append:", bb(SSSet::append, listOfItem));
-      methods.add("forEach:", bb(SSSet::forEach, listOfBlock));
-      methods.add("nature", bb((s, a) -> nature));
-      methods.add("remove:", bb(SSSet::remove, listOfItem));
-      methods.add("size", bb(SSSet::size));
-      methods.add("selectIf:", bb(SSSet::selectIf, listOfBlock));
-      methods.add("transformUsing:", bb(SSSet::transformUsing, listOfBlock));
+      methods.add("add:", heap.newBinaryBlock(SSSet::append, listOfItem));
+      methods.add("append:", heap.newBinaryBlock(SSSet::append, listOfItem));
+      methods.add("forEach:", heap.newBinaryBlock(SSSet::forEach, listOfBlock));
+      methods.add("nature", heap.newBinaryBlock((s, h, a) -> h.newString("set")));
+      methods.add("remove:", heap.newBinaryBlock(SSSet::remove, listOfItem));
+      methods.add("size", heap.newBinaryBlock(SSSet::size));
+      methods.add("selectIf:", heap.newBinaryBlock(SSSet::selectIf, listOfBlock));
+      methods.add("transformUsing:", heap.newBinaryBlock(SSSet::transformUsing, listOfBlock));
 
       return methods;
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject append(final Stack stack, final SSObject[] args) {
+   static SSObject newFactory(final Heap heap) {
+
+      final var result = heap.newObject();
+      
+      result.addMethod("new", heap.newBinaryBlock((s, h, a) -> h.newSet()));
+      result.addMethod("append:", heap.newBinaryBlock(SSSet::appendToNew, List.of("item")));
+      result.addMethod("addMethod::using:", heap
+            .newBinaryBlock(SSSet::addMethodToFactory, List.of("name", "block")));
+
+      return result;
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   static SSObject addMethodToFactory(final Stack stack, final Heap heap,
+         final SSObject[] args) {
+
+      final var subject = (SSNativeObject) args[0];
+      final var name = args[1].evaluate(stack).toString();
+
+      if (name.equals("new")) {
+         return SSNativeObject.throwException(stack, heap, subject,
+               "Method 'Set new' cannot be overriden.");
+      } else if (name.equals("append:")) {
+         return SSNativeObject.throwException(stack, heap, subject,
+               "Method 'Set append:' cannot be overriden.");
+      } else {
+         return SSNativeObject.addMethod(stack, heap, args);
+      }
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject append(final Stack stack, final Heap heap, final SSObject[] args) {
 
       final var subject = (SSSet) args[0];
       subject.elements.add(args[1].evaluate(stack));
@@ -70,7 +92,16 @@ public final class SSSet extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject remove(final Stack stack, final SSObject[] args) {
+   private static SSObject appendToNew(final Stack stack, final Heap heap, final SSObject[] args) {
+
+      final var result = heap.newSet();
+      result.elements.add(args[1].evaluate(stack));
+      return result;
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private static SSObject remove(final Stack stack, final Heap heap, final SSObject[] args) {
 
       final var subject = (SSSet) args[0];
 
@@ -80,7 +111,7 @@ public final class SSSet extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject forEach(final Stack stack, final SSObject[] args) {
+   static SSObject forEach(final Stack stack, final Heap heap, final SSObject[] args) {
 
       final var subject = (SSSet) args[0];
       for (var item : subject.elements) {
@@ -92,15 +123,15 @@ public final class SSSet extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject size(final Stack stack, final SSObject[] args) {
+   private static SSObject size(final Stack stack, final Heap heap, final SSObject[] args) {
 
       final var subject = (SSSet) args[0];
-      return new SSLong(subject.elements.size());
+      return heap.newLong(subject.elements.size());
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject selectIf(final Stack stack, final SSObject[] args) {
+   static SSObject selectIf(final Stack stack, final Heap heap, final SSObject[] args) {
 
       final var subject = (SSSet) args[0];
       final var newStream = subject.elements.stream().filter(item -> {
@@ -108,17 +139,17 @@ public final class SSSet extends SSDynamicObject {
                new SSObject[] { item.evaluate(stack) });
          return result == stack.getTrue();
       });
-      return new SSStream(newStream);
+      return heap.newStream(newStream);
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   static SSObject transformUsing(final Stack stack, final SSObject[] args) {
+   static SSObject transformUsing(final Stack stack, final Heap heap, final SSObject[] args) {
 
       final var subject = (SSSet) args[0];
       final var newStream = subject.elements.stream().map(item -> args[1]
             .invoke(stack, "executeWith:", new SSObject[] { item.evaluate(stack) }));
-      return new SSStream(newStream);
+      return heap.newStream(newStream);
    }
    /****************************************************************************
     * 
@@ -147,31 +178,12 @@ public final class SSSet extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private final HashSet<SSObject> elements;
-
-   final static MethodMap sharedMethods = putMethods(
-         new MethodMap(SSDynamicObject.sharedMethods, true));
-   private final static SSString nature = new SSString("set");
+   void add(final SSObject o) {
+      
+      this.elements.add(o);
+   }
    /****************************************************************************
     * 
-    ***************************************************************************/
-   public final static class Factory extends SSDynamicObject {
-      /*************************************************************************
-       * 
-      *************************************************************************/
-      public Factory() {
-
-         addMethod("new", bb((s, a) -> new SSSet()));
-         addMethod("append:", bb(SSSet.Factory::append, List.of("item")));
-      }
-      /*************************************************************************
-       * 
-      *************************************************************************/
-      private static SSObject append(final Stack stack, final SSObject[] args) {
-
-         final var result = new SSSet();
-         result.elements.add(args[1].evaluate(stack));
-         return result;
-      }
-   }
+   ****************************************************************************/
+   private final HashSet<SSObject> elements = new HashSet<>();
 }

@@ -15,10 +15,7 @@
 //-----------------------------------------------------------------------------
 package ss.runtime;
 
-import static ss.runtime.SSBinaryBlock.bb;
-
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com {
  ******************************************************************************/
@@ -26,37 +23,34 @@ public final class SSInput extends SSDynamicObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public SSInput(final BufferedReader reader) {
+   public SSInput(final Heap heap, final MethodMap methods, final BufferedReader reader) {
 
+      super(heap, methods);
       this.reader = reader;
-      addMethod("clone", bb(SSInput::clone));
-      addMethod("readLine", bb(SSInput::readLine));
+      addMethod("clone", this.heap.newBinaryBlock(SSInput::clone));
+      addMethod("readLine", this.heap.newBinaryBlock(SSInput::readLine));
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   public SSInput() {
-
-      this(new BufferedReader(new InputStreamReader(System.in)));
-   }
-   /****************************************************************************
-    * 
-   ****************************************************************************/
-   private static SSObject clone(final Stack stack, final SSObject[] args) {
+   private static SSObject clone(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       return args[0];
    }
    /****************************************************************************
     * 
    ****************************************************************************/
-   private static SSObject readLine(final Stack stack, final SSObject[] args) {
+   private static SSObject readLine(final Stack stack, final Heap heap,
+         final SSObject[] args) {
 
       final var subject = (SSInput) args[0];
       try {
          final var line = subject.reader.readLine();
-         return line != null ? new SSString(line) : stack.getNull();
+         return line != null ? heap.newString(line)
+               : stack.getNull();
       } catch (final Exception e) {
-         return throwException(stack, subject, e.getMessage());
+         return throwException(stack, heap, subject, e.getMessage());
       }
    }
    /****************************************************************************

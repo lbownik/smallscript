@@ -28,49 +28,49 @@ public class InterpreterUseCases extends UseCaseBase {
 
       assertSSTrue("true;");
       assertSSTrue("(true);");
-      assertResultEquals(new SSString("true"), "true asString;");
-      assertResultEquals(new SSLong(3569038), "true asString hash;");
-      assertResultEquals(new SSString("3569038"), "true asString hash asString;");
-      assertResultEquals(new SSString("3569038"),
+      assertResultEquals(createString("true"), "true asString;");
+      assertResultEquals(createLong(3569038), "true asString hash;");
+      assertResultEquals(createString("3569038"), "true asString hash asString;");
+      assertResultEquals(createString("3569038"),
             "1 isEqualTo: 1 asString hash asString;");
-      assertResultEquals(new SSString("3569038"),
+      assertResultEquals(createString("3569038"),
             "1 asString isEqualTo: \"1\" asString hash asString;");
-      assertResultEquals(new SSString("true"),
+      assertResultEquals(createString("true"),
             "1 asString isEqualTo: \"1\" isEqualTo: true asString;");
-      assertResultEquals(new SSString("true"),
+      assertResultEquals(createString("true"),
             "1 asString isEqualTo: \"1\" ifTrue: true :ifFalse: false asString;");
-      assertResultEquals(new SSString("true"),
+      assertResultEquals(createString("true"),
             "!x = 1 asString isEqualTo: \"1\" ifTrue: (1 isEqualTo: 1) :ifFalse: {!x = 1; false;} asString; x;");
-      assertResultEquals(new SSLong(1),
+      assertResultEquals(createLong(1),
             "true addMethod: \"a::b\" :using: {!this !param | param;}; true a: 1 :b;");
-      assertResultEquals(new SSString("1"),
+      assertResultEquals(createString("1"),
             "true addMethod: \"a::b\" :using: {!this !param | param;}; true a: 1 :b asString;");
       
-      assertResultEquals(new SSDouble(3), "6 dividedBy: 2.0;");
-      assertResultEquals(new SSLong(4), "(2 multipliedBy: 1) plus: 2;");
-      assertResultEquals(new SSLong(6), "2 multipliedBy: (1 plus: 2);");
-      assertResultEquals(new SSLong(1), "1 hash;");
-      assertResultEquals(new SSLong(4), "({2 multipliedBy: 1;} execute) plus: 2;");
-      assertResultEquals(new SSLong(6), "2 multipliedBy: ({1 plus: 2;} execute);");
-      assertResultEquals(new SSLong(2), "(2 isGreaterThan: 1) ifTrue: 2;");
+      assertResultEquals(createDouble(3), "6 dividedBy: 2.0;");
+      assertResultEquals(createLong(4), "(2 multipliedBy: 1) plus: 2;");
+      assertResultEquals(createLong(6), "2 multipliedBy: (1 plus: 2);");
+      assertResultEquals(createLong(1), "1 hash;");
+      assertResultEquals(createLong(4), "({2 multipliedBy: 1;} execute) plus: 2;");
+      assertResultEquals(createLong(6), "2 multipliedBy: ({1 plus: 2;} execute);");
+      assertResultEquals(createLong(2), "(2 isGreaterThan: 1) ifTrue: 2;");
       assertSSTrue("(2 isGreaterThan: 1) ifFalse: 2 isEqualTo: null;");
-      assertResultEquals(new SSLong(2),
+      assertResultEquals(createLong(2),
             "(2 isGreaterThan: 1) ifTrue: 2 :ifFalse: 3;");
-      assertResultEquals(new SSLong(7),
+      assertResultEquals(createLong(7),
             "((2 isGreaterThan: 1) ifTrue: 2 :ifFalse: 3) plus: 5;");
-      assertResultEquals(new SSLong(8), 
+      assertResultEquals(createLong(8), 
             "(2 isLessThan: 1) ifTrue: 2 :ifFalse: (3 plus: 5);");
-      assertResultEquals(new SSLong(3),
+      assertResultEquals(createLong(3),
             "(2 isLessThan: 1) ifTrue: 2 :ifFalse: 3 execute;");
-      assertResultEquals(new SSLong(3),
+      assertResultEquals(createLong(3),
             "((2 isLessThan: 1) ifTrue: {2;} :ifFalse: {3;}) execute;");
-      assertResultEquals(new SSLong(18),
+      assertResultEquals(createLong(18),
             "((2 multipliedBy: 2) plus: 2) multipliedBy: 3;");
-      assertResultEquals(new SSLong(2), "!var = 2;");
-      assertResultEquals(new SSLong(2), "true ifTrue: 2;");
-      assertResultEquals(new SSLong(3), "!var = 2; var = 3; var;");
+      assertResultEquals(createLong(2), "!var = 2;");
+      assertResultEquals(createLong(2), "true ifTrue: 2;");
+      assertResultEquals(createLong(3), "!var = 2; var = 3; var;");
       
-      assertResultEquals(new SSLong(10),"!c = 1; {c isLessThan: 10} whileTrue: {c = c plus: 1}; c;");
+      assertResultEquals(createLong(10),"!c = 1; {c isLessThan: 10} whileTrue: {c = c plus: 1}; c;");
    }
    
    /****************************************************************************
@@ -90,7 +90,7 @@ public class InterpreterUseCases extends UseCaseBase {
               e;
             };
             """);
-      assertResultEquals(new SSString("Exception"),"""
+      assertResultEquals(createString("Exception"),"""
             1 try: {
               "Exception" throw;
             } :catch: {!e |
@@ -98,7 +98,7 @@ public class InterpreterUseCases extends UseCaseBase {
             };
             """);
       
-      assertResultEquals(new SSString("Exception"),"""
+      assertResultEquals(createString("Exception"),"""
             1 try: {
               {
                 "Exception" throw;
@@ -108,7 +108,7 @@ public class InterpreterUseCases extends UseCaseBase {
             };
             """);
       
-      assertResultEquals(new SSString("Exception2"),"""
+      assertResultEquals(createString("Exception2"),"""
             1 try: {
               1 try: {
                 {

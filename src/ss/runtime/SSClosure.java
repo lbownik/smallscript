@@ -15,15 +15,17 @@
 //------------------------------------------------------------------------------
 package ss.runtime;
 
+import java.util.Set;
+
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
-public final class SSClosure implements SSObject {
+public final class SSClosure extends SSNativeObject {
 
    /****************************************************************************
     * 
     ****************************************************************************/
-   public SSClosure(final Stack stack, final SSObject target) {
+   public SSClosure(final Stack stack, final SSNativeObject target) {
 
       this.enclosedStack = stack.createClosure(target.referencedVariables());
       this.target = target;
@@ -43,7 +45,30 @@ public final class SSClosure implements SSObject {
    /****************************************************************************
     * 
    ****************************************************************************/
-   private final Stack enclosedStack;
-   final SSObject target;
+   @Override
+   protected void addMethod(final String name, final SSObject block) {
+      
+      this.target.addMethod(name, block);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   @Override
+   protected SSObject getMethod(final String name, final SSObject defaultValue) {
+      
+      return this.target.getMethod(name, defaultValue);
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   @Override
+   protected Set<SSObject> getMethods() {
 
+      return this.target.getMethods();
+   }
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private final Stack enclosedStack;
+   final SSNativeObject target;
 }

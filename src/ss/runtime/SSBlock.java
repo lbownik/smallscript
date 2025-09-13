@@ -47,7 +47,7 @@ public class SSBlock extends SSDynamicObject {
    ****************************************************************************/
    public SSBlock(final SSBlock other) {
 
-      super(new MethodMap(other.methods));
+      super(other);
       this.statements = other.statements;
       this.argumentNames = other.argumentNames;
       this.enclosedVariables = other.enclosedVariables;

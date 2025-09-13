@@ -246,7 +246,7 @@ public class BlockUseCases extends UseCaseBase {
             !block = {};
             block addField: "field" :withValue: 2;
             block field: 3;
-             block field isEqualTo: 3;
+            block field isEqualTo: 3;
             """);
       
       assertResultEquals(new SSLong(2), """
@@ -271,6 +271,22 @@ public class BlockUseCases extends UseCaseBase {
     * 
     ****************************************************************************/
    @Test
+   public void methodsAssignedToOriginalBlock_areCopiedToClonedBlock() 
+         throws Exception {
+      
+      assertSSTrue("""
+            !block = {};
+            block addMethod: "return:" :using: { !this !value | value };
+            !clonedBlock = block clone;
+            
+            (block return: 2 isEqualTo: 2) 
+               and: (clonedBlock return: 2 isEqualTo: 2);
+            """);
+   }
+   /****************************************************************************
+    * 
+    ****************************************************************************/
+   @Test
    public void methodsAssignedToClonedBlock_areNotAssignedToOriginaBlock() 
          throws Exception {
       
@@ -285,6 +301,22 @@ public class BlockUseCases extends UseCaseBase {
             } :catch: { !e |
                clonedBlock return: 2 isEqualTo: 2;
             };
+            """);
+   }
+   /****************************************************************************
+    * 
+    ****************************************************************************/
+   @Test
+   public void fieldsAssignedToOriginalBlock_areCopiedToClonedBlock() 
+         throws Exception {
+      
+      assertSSTrue("""
+            !block = {};
+            block addField: "field" :withValue: 2;
+            !clonedBlock = block clone;
+            
+            (block field isEqualTo: 2) 
+               and: (clonedBlock field isEqualTo: 2);
             """);
    }
    /****************************************************************************

@@ -208,4 +208,42 @@ public class BinaryBlockUseCases extends UseCaseBase {
             block return: 2;
             """);
    }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void methodsAssignedToOriginalBlock_areCopiedToClonedBlock() 
+         throws Exception {
+      
+      assertSSTrue("""
+            !block = {};
+            block addMethod: "return:" :using: { !this !value | value };
+            !clonedBlock = block clone;
+            
+            (block return: 2 isEqualTo: 2) 
+               and: (clonedBlock return: 2 isEqualTo: 2);
+            """);
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void methodsAssignedToClonedBlock_areNotAssignedToOriginaBlock() 
+         throws Exception {
+      
+      assertSSTrue("""
+            !block = Object method: "asString";
+            !clonedBlock = block clone;
+            clonedBlock addMethod: "return:" :using: { !this !value | value };
+            
+            block try: {
+               block return: 2;
+               false;
+            } :catch: { !e |
+               clonedBlock return: 2 isEqualTo: 2;
+            };
+            """);
+   }
+   
+   
 }

@@ -18,8 +18,8 @@ package ss.runtime;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
 
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.BiFunction;
@@ -150,7 +150,36 @@ public class SSBinaryBlock extends SSNativeObject {
    @Override
    protected Set<SSObject> getMethods() {
 
-      return Collections.emptySet();
+      final Set<SSObject> result = new HashSet<>();
+      result.add(new SSString("execute"));
+      result.add(new SSString("arguments")); 
+      result.add(new SSString("invoke::with:"));
+      result.add(new SSString("addField::withValue:"));
+      result.add(new SSString("addMethod::using:"));
+      result.add(new SSString("asString"));
+      result.add(new SSString("at:"));
+      result.add(new SSString("clone"));
+      result.add(new SSString("close"));
+      result.add(new SSString("collectTo:"));
+      result.add(new SSString("fields"));
+      result.add(new SSString("forEach:"));
+      result.add(new SSString("hash"));
+      result.add(new SSString("isEqualTo:"));
+      result.add(new SSString("isNotEqualTo:"));
+      result.add(new SSString("method:"));
+      result.add(new SSString("methods"));
+      result.add(new SSString("nature"));
+      result.add(new SSString("orDefault:"));
+      result.add(new SSString("selectIf:"));
+      result.add(new SSString("size"));
+      result.add(new SSString("throw"));
+      result.add(new SSString("transformUsing:"));
+      result.add(new SSString("try:"));
+      result.add(new SSString("try::catch:")); 
+      if (this.methods != null) {
+         this.methods.keySet().stream().map(SSString::new).forEach(result::add);
+      } 
+      return result;
    }
    /****************************************************************************
     * 

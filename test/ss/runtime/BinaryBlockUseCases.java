@@ -216,7 +216,7 @@ public class BinaryBlockUseCases extends UseCaseBase {
          throws Exception {
       
       assertSSTrue("""
-            !block = {};
+            !block = Object method: "asString";
             block addMethod: "return:" :using: { !this !value | value };
             !clonedBlock = block clone;
             
@@ -244,6 +244,40 @@ public class BinaryBlockUseCases extends UseCaseBase {
             };
             """);
    }
-   
-   
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void fieldsAssignedToOriginalBlock_areCopiedToClonedBlock() 
+         throws Exception {
+      
+      assertSSTrue("""
+            !block = Object method: "asString";
+            block addField: "field" :withValue: 2;
+            !clonedBlock = block clone;
+            
+            (block field isEqualTo: 2) 
+               and: (clonedBlock field isEqualTo: 2);
+            """);
+   }
+   /****************************************************************************
+    * 
+    ***************************************************************************/
+   @Test
+   public void fieldsAssignedToClonedBlock_areNotAssignedToOriginaBlock() 
+         throws Exception {
+      
+      assertSSTrue("""
+            !block = Object method: "asString";
+            !clonedBlock = block clone;
+            clonedBlock addField: "field" :withValue: 2;
+            
+            block try: {
+               block field;
+               false;
+            } :catch: { !e |
+               clonedBlock field isEqualTo: 2;
+            };
+            """);
+   }
 }

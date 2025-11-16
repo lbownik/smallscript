@@ -31,6 +31,9 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+
+import ss.runtime.Stack.Frame;
+import ss.runtime.Stack.VariableNotFoud;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
@@ -113,15 +116,19 @@ public class Interpreter {
    /****************************************************************************
     * 
    ****************************************************************************/
-   public void repl() throws IOException {
+   public void repl(final boolean printResult) throws IOException {
 
       final var console = System.console();
       if (console != null) {
          out.print(">");
          var line = console.readLine();
+         final var stack = new StackProxy(this.stack.pushNewFrame());
          while (line != null) {
             try {
-               out.println(this.parser.parse(line).execute(this.stack));
+               final var result = this.parser.parse(line).execute(stack);
+               if (printResult) {
+                  out.println(result);
+               }
             } catch (final Exception e) {
                if (e instanceof AuxiliaryException ae) {
                   out.println(ae.getMessage(this.stack));
@@ -142,10 +149,14 @@ public class Interpreter {
    public static void main(String[] args) throws Exception {
 
       if (args.length == 0) {
-         new Interpreter(args).repl();
+         new Interpreter(args).repl(false);
       } else {
-         new Interpreter(args).execute(
-               Files.newBufferedReader(Paths.get(args[0]).toAbsolutePath()));
+         if (args[0].equals("-v")) {
+            new Interpreter(args).repl(true);
+         } else {
+            new Interpreter(args).execute(
+                  Files.newBufferedReader(Paths.get(args[0]).toAbsolutePath()));
+         }
       }
    }
    /****************************************************************************
@@ -155,4 +166,83 @@ public class Interpreter {
    private final Heap heap;
    private final Parser parser;
    final String[] args;
+
+   /****************************************************************************
+    * 
+   ****************************************************************************/
+   private final static class StackProxy implements Stack {
+
+      /*************************************************************************
+       * 
+      *************************************************************************/
+      public StackProxy(final Stack stack) {
+
+         this.stack = stack;
+      }
+      /*************************************************************************
+       * 
+      *************************************************************************/
+      @Override
+      public Stack addVariable(final String name, final SSObject value) {
+
+         return this.stack.addVariable(name, value);
+      }
+      /*************************************************************************
+       * 
+      *************************************************************************/
+      @Override
+      public Stack setVariable(final String name, final SSObject value) {
+
+         return this.stack.setVariable(name, value);
+      }
+      /*************************************************************************
+       * 
+      *************************************************************************/
+      @Override
+      public SSObject getVariable(final String name) {
+
+         return this.stack.getVariable(name);
+      }
+      /*************************************************************************
+       * 
+      *************************************************************************/
+      @Override
+      public SSObject getTrue() {
+
+         return this.stack.getTrue();
+      }
+      /*************************************************************************
+       * 
+      *************************************************************************/
+      @Override
+      public SSObject getFalse() {
+
+         return this.stack.getFalse();
+      }
+      /*************************************************************************
+       * 
+      *************************************************************************/
+      @Override
+      public SSObject get(final boolean bool) {
+
+         return this.stack.get(bool);
+      }
+      /*************************************************************************
+       * 
+      *************************************************************************/
+      @Override
+      public SSObject getNull() {
+
+         return this.stack.getNull();
+      }
+      /*************************************************************************
+       * 
+      *************************************************************************/
+      @Override
+      public Stack pushNewFrame() {
+
+         return this.stack;
+      }
+      private final Stack stack;
+   }
 }

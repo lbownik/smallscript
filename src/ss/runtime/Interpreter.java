@@ -32,8 +32,6 @@ import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
-import ss.runtime.Stack.Frame;
-import ss.runtime.Stack.VariableNotFoud;
 /*******************************************************************************
  * @author lukasz.bownik@gmail.com
  ******************************************************************************/
